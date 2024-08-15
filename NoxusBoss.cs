@@ -33,7 +33,7 @@ namespace NoxusBoss
         {
             get;
             private set;
-        }
+        } = false; // this needs to be set to false
 #endif
 
         public static Mod Instance
