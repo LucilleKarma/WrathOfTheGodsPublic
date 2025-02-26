@@ -9,7 +9,7 @@ using Terraria.ModLoader;
 namespace NoxusBoss.Content.MainMenuThemes;
 
 // I hate this internal name but it's necessary to ensure that the name is ordered after VisceralDimensionMainMenu.
-public class XAscentMainNenu : ModMenu
+public class XAscentMainMenu : ModMenu
 {
     public override string DisplayName => Language.GetTextValue($"Mods.{Mod.Name}.MenuThemes.AscentMainMenu.DisplayName");
 
