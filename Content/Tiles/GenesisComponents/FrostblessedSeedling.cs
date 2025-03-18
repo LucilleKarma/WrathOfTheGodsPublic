@@ -64,6 +64,7 @@ public class FrostblessedSeedling : ModTile, ICustomPlacementSound
     {
         Main.tileLighted[Type] = true;
         Main.tileFrameImportant[Type] = true;
+        TileID.Sets.CanBeClearedDuringGeneration[Type] = false;
         TileObjectData.newTile.CopyFrom(TileObjectData.Style2xX);
         TileObjectData.newTile.Width = Width;
         TileObjectData.newTile.Height = Height;

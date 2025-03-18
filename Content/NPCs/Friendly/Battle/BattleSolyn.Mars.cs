@@ -23,7 +23,6 @@ public partial class BattleSolyn : ModNPC
             }
 
             // If this is actually Solyn, turn into her non-battle form again.
-            // TODO -- Return to following player.
             NPC.Transform(ModContent.NPCType<Solyn>());
             return;
         }

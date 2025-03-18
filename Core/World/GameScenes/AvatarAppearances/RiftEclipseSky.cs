@@ -82,8 +82,10 @@ public class RiftEclipseSkyScene : ModSceneEffect
 
         float intensity = ModContent.GetInstance<GraphicalUniverseImagerSky>().EffectiveIntensity;
 
+        if (minDepth <= float.MinValue)
+            RenderFog(GetCustomSkyBackgroundMatrix(), intensity, 0.3f);
+
         // Prevent rendering anything but fog beyond the back layer.
-        RenderFog(GetCustomSkyBackgroundMatrix(), intensity, 0.3f);
         if (maxDepth < float.MaxValue || minDepth >= float.MaxValue)
             return;
 
@@ -246,8 +248,9 @@ public class RiftEclipseSky : CustomSky
         }
         RealisticSkyCompatibility.TemporarilyDisable();
 
-        // Prevent rendering anything but fog beyond the back layer.
-        RenderFog(GetCustomSkyBackgroundMatrix(), intensity * RiftScaleFactor / ScaleWhenOverSun, InverseLerp(0.1f, 0.4f, Main.ColorOfTheSkies.ToVector3().Length() / 1.732f));
+        if (minDepth <= float.MinValue)
+            RenderFog(GetCustomSkyBackgroundMatrix(), intensity * RiftScaleFactor / ScaleWhenOverSun, InverseLerp(0.1f, 0.4f, Main.ColorOfTheSkies.ToVector3().Length() / 1.732f));
+
         if (maxDepth < float.MaxValue || minDepth >= float.MaxValue)
             return;
 

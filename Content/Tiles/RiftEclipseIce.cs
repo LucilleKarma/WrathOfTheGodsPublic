@@ -84,13 +84,16 @@ public class RiftEclipseIce : ModTile
         bool shouldMelt = type == Type && !RiftEclipseManagementSystem.RiftEclipseOngoing;
         if (shouldMelt)
         {
-            byte originalLiquidQuantity = Main.tile[x, y].LiquidAmount;
             Main.tile[x, y].Clear(TileDataType.Tile | TileDataType.TilePaint);
-            Main.tile[x, y].Get<LiquidData>().Amount = originalLiquidQuantity;
+            Main.tile[x, y].Get<LiquidData>().Amount = 255;
             if (Main.netMode != NetmodeID.MultiplayerClient)
                 NetMessage.SendTileSquare(-1, x, y);
             return;
         }
+
+        // Only have a 50% chance for water to freeze.
+        if (!Main.rand.NextBool())
+            return;
 
         Tile t = Framing.GetTileSafely(x, y);
         Tile below = Framing.GetTileSafely(x, y + 1);

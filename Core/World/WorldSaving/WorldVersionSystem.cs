@@ -1,4 +1,5 @@
-﻿using Terraria.GameContent.Generation;
+﻿using SubworldLibrary;
+using Terraria.GameContent.Generation;
 using Terraria.IO;
 using Terraria.ModLoader;
 using Terraria.ModLoader.IO;
@@ -32,9 +33,17 @@ public class WorldVersionSystem : ModSystem
     /// </summary>
     public static string OldVersionText => "Before Avatar Update";
 
-    public override void OnWorldLoad() => WorldVersionText = OldVersionText;
+    public override void OnWorldLoad()
+    {
+        if (!SubworldSystem.AnyActive())
+            WorldVersionText = OldVersionText;
+    }
 
-    public override void OnWorldUnload() => WorldVersionText = OldVersionText;
+    public override void OnWorldUnload()
+    {
+        if (!SubworldSystem.AnyActive())
+            WorldVersionText = OldVersionText;
+    }
 
     public override void ModifyWorldGenTasks(List<GenPass> tasks, ref double totalWeight)
     {

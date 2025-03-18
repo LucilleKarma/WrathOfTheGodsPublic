@@ -26,7 +26,7 @@ AvatarOfEmptiness: {
 NamelessDeityBoss: {
 	DisplayName: Безымянное божество
 	DisplayNameSingular: Безымянное божество
-	SillyDeathCountSuffix: ", мучитель нохиттеров"
+	SillyDeathCountSuffix: ", мучитель ноухиттеров"
 	TestOfResolveName: БЕСКОНЕЧНОЕ БОЖЕСТВО
 
 	BossChecklistIntegration: {

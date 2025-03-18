@@ -341,11 +341,6 @@ public class GennedAssets
             public static readonly LazyAsset<Texture2D> NamelessAuricSoul = LazyAsset<Texture2D>.FromPath("NoxusBoss/Assets/Textures/Content/Items/HuntAuricSouls/NamelessAuricSoul");
         }
 
-        public class ImportantSlots
-        {
-            public static readonly LazyAsset<Texture2D> ImportantInventorySlot = LazyAsset<Texture2D>.FromPath("NoxusBoss/Assets/Textures/UI/ImportantSlots/ImportantInventorySlot");
-        }
-
         public class Items
         {
             public static readonly LazyAsset<Texture2D> CheatPermissionSlip = LazyAsset<Texture2D>.FromPath("NoxusBoss/Assets/Textures/Content/Items/CheatPermissionSlip");
@@ -650,6 +645,7 @@ public class GennedAssets
             public static readonly LazyAsset<Texture2D> StarblessedPlatform = LazyAsset<Texture2D>.FromPath("NoxusBoss/Assets/Textures/Content/Items/Placeable/StarblessedPlatform");
             public static readonly LazyAsset<Texture2D> StarlitCampfire = LazyAsset<Texture2D>.FromPath("NoxusBoss/Assets/Textures/Content/Items/Placeable/StarlitCampfire");
             public static readonly LazyAsset<Texture2D> StarlitForge = LazyAsset<Texture2D>.FromPath("NoxusBoss/Assets/Textures/Content/Items/Placeable/StarlitForge");
+            public static readonly LazyAsset<Texture2D> StrangeFlagpole = LazyAsset<Texture2D>.FromPath("NoxusBoss/Assets/Textures/Content/Items/Placeable/StrangeFlagpole");
         }
 
         public class Projectiles
@@ -1030,11 +1026,6 @@ public class GennedAssets
         public class VanityEffects
         {
             public static readonly LazyAsset<Texture2D> DeificTouch = LazyAsset<Texture2D>.FromPath("NoxusBoss/Assets/Textures/Content/Items/Accessories/VanityEffects/DeificTouch");
-        }
-
-        public class VoidFanny
-        {
-            public static readonly LazyAsset<Texture2D> HelperFannyVoid = LazyAsset<Texture2D>.FromPath("NoxusBoss/Assets/Textures/UI/VoidFanny/HelperFannyVoid");
         }
 
         public class Walls

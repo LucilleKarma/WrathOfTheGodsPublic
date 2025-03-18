@@ -1,11 +1,11 @@
 ﻿using NoxusBoss.Content.NPCs.Friendly;
+using SubworldLibrary;
 using Terraria;
 using Terraria.ModLoader;
 using Terraria.ModLoader.IO;
 
 namespace NoxusBoss.Core.SolynEvents;
 
-// TODO -- Integrate into Solyn's important discussion marker visual thing.
 /// <summary>
 /// Represents a progressable event involving Solyn, such as a quest.
 /// </summary>
@@ -65,9 +65,17 @@ public abstract class SolynEvent : ModSystem
             Solyn = Main.npc[solynIndex].As<Solyn>();
     }
 
-    public override void OnWorldLoad() => Stage = 0;
+    public override void OnWorldLoad()
+    {
+        if (!SubworldSystem.AnyActive())
+            Stage = 0;
+    }
 
-    public override void OnWorldUnload() => Stage = 0;
+    public override void OnWorldUnload()
+    {
+        if (!SubworldSystem.AnyActive())
+            Stage = 0;
+    }
 
     public override void NetSend(BinaryWriter writer) => writer.Write(Stage);
 

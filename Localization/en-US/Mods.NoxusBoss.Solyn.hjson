@@ -14,6 +14,15 @@ SolynIntroduction: {
 	Repeat: ...
 }
 
+SolynTentSetUpDialogue: {
+	Start: Oh, it's you again. Hello.
+	Solyn1: This is... a bit forward, but could you provide me with some assistance?
+	Player1: Sure. How can I help?
+	Solyn2: Thank you.
+	Solyn3: As you can tell, I... don't really have a home now. ^I want you to plant this flag somewhere suitable, in a nice open area.
+	Solyn4: Once you do, I'll set up a camp site nearby.
+}
+
 SolynDawnDialogue: {
 	Start: Good morning!^ A new day, a new big adventure.
 	Player1: That's... a slightly bombastic way of putting it, Solyn.

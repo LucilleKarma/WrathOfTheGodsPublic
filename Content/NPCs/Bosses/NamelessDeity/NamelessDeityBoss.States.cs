@@ -106,7 +106,7 @@ public partial class NamelessDeityBoss : ModNPC, IBossChecklistSupport
                 DifficultyFactor += Pow(minutesPassed - 6f, 0.71f);
 
             // Relax the difficulty factor.
-            DifficultyFactor = Pow(DifficultyFactor, 0.4f);
+            DifficultyFactor = Pow(DifficultyFactor, 0.27f);
             if (minutesPassed > 12f)
                 DifficultyFactor += (minutesPassed - 12f) * 0.174f;
         }

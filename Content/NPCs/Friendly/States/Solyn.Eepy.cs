@@ -19,6 +19,9 @@ public partial class Solyn : ModNPC, IPixelatedPrimitiveRenderer
     {
         get
         {
+            if (SolynCampsiteWorldGen.CampSitePosition == Vector2.Zero)
+                return false;
+
             if (Main.dayTime)
                 return false;
 

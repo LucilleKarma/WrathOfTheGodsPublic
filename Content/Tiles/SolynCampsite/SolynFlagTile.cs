@@ -2,6 +2,9 @@
 using Microsoft.Xna.Framework.Graphics;
 using NoxusBoss.Assets;
 using NoxusBoss.Content.Tiles.TileEntities;
+using NoxusBoss.Core.Netcode;
+using NoxusBoss.Core.Netcode.Packets;
+using NoxusBoss.Core.World.WorldGeneration;
 using Terraria;
 using Terraria.DataStructures;
 using Terraria.Enums;
@@ -48,6 +51,15 @@ public class SolynFlagTile : ModTile
         AddMapEntry(new Color(80, 53, 79));
 
         HitSound = SoundID.Tink;
+    }
+
+    public override void PlaceInWorld(int i, int j, Item item)
+    {
+        if (SolynCampsiteWorldGen.FlagPosition == Point.Zero)
+        {
+            SolynCampsiteWorldGen.FlagPosition = new Point(i, j);
+            PacketManager.SendPacket<SetSolynFlagPositionPacket>(SolynCampsiteWorldGen.FlagPosition);
+        }
     }
 
     public override void KillMultiTile(int i, int j, int frameX, int frameY)

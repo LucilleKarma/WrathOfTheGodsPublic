@@ -31,6 +31,7 @@ public class TestOfResolveSystem : ModSystem
     {
         PlayerDataManager.PreKillEvent += ModifyKillText;
         PlayerDataManager.OnHurtEvent += RemoveHeartsOnHit;
+        PlayerDataManager.ModifyHurtEvent += DisableHitAbsorption;
 
         new ManagedILEdit("Make Player Hearts Removeable: Classic Display Set", Mod, edit =>
         {
@@ -148,6 +149,15 @@ public class TestOfResolveSystem : ModSystem
                 ScreenShakeSystem.StartShake(5f);
                 GeneralScreenEffectSystem.ChromaticAberration.Start(Main.LocalPlayer.Center, 0.85f, 60);
             }
+        }
+    }
+
+    private void DisableHitAbsorption(PlayerDataManager p, ref Player.HurtModifiers hurtInfo)
+    {
+        if (IsActive)
+        {
+            // This resets the ModifyHurtInfo event subscribers prematurely.
+            hurtInfo.ToHurtInfo(0, 0, 0f, 0f, true);
         }
     }
 

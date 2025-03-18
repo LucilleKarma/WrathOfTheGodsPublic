@@ -1,6 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using NoxusBoss.Content.Items.SummonItems;
+using NoxusBoss.Core.Autoloaders.SolynBooks;
 using NoxusBoss.Core.DataStructures;
 using NoxusBoss.Core.DataStructures.DropRules;
 using Terraria;
@@ -88,6 +89,9 @@ public partial class GlobalNPCEventHandlers : GlobalNPC
             LeadingConditionRule infernumActive = new LeadingConditionRule(new InfernumActiveDropRule());
             infernumActive.OnSuccess(ItemDropRule.Common(ModContent.ItemType<Terminal>()));
             infernumActive.OnSuccess(ItemDropRule.Common(FakeTerminus.TerminusID));
+
+            if (SolynBookAutoloader.Books.TryGetValue("AbsenceNotice", out AutoloadableSolynBook? book))
+                infernumActive.OnSuccess(ItemDropRule.Common(book.Type));
 
             npcLoot.Add(infernumActive);
         }

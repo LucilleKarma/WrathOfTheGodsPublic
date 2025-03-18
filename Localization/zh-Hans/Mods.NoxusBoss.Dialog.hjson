@@ -60,6 +60,7 @@ TelescopeRepairFailText: 修复的材料不足！
 AvatarPlayerDeathText: 你死了。
 PermafrostKeepMapIconText: 神秘堡垒
 SummonMarsButtonText: 召唤（玛尔斯）
+SummonMarsButtonTextInitial: 召唤（索琳任务）
 
 SolynDraedonInteraction: {
 	Draedon1: 嗯！我可敬的实验对象又发起了联络，这次还带着同伴。

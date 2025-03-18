@@ -71,6 +71,10 @@ public class PlayerDataManager : ModPlayer
 
     public static event OnHurtDelegate? OnHurtEvent;
 
+    public delegate void ModifyHurtDelegate(PlayerDataManager p, ref Player.HurtModifiers hurtInfo);
+
+    public static event ModifyHurtDelegate? ModifyHurtEvent;
+
     public override void Load()
     {
         new ManagedILEdit("Update Max Fall Speed", Mod, edit =>
@@ -222,6 +226,11 @@ public class PlayerDataManager : ModPlayer
     public override void OnHurt(Player.HurtInfo info)
     {
         OnHurtEvent?.Invoke(this, info);
+    }
+
+    public override void ModifyHurt(ref Player.HurtModifiers modifiers)
+    {
+        ModifyHurtEvent?.Invoke(this, ref modifiers);
     }
 
     public override bool PreKill(double damage, int hitDirection, bool pvp, ref bool playSound, ref bool genDust, ref PlayerDeathReason damageSource)

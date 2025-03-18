@@ -251,6 +251,7 @@ public class SolynDialogUI : UIState
             bool textChanged = true;
             if (anyChildren)
             {
+                oldNode.InvokeClickAction();
                 if (DialogueText == ResponseToSay || ResponseToSay is null)
                 {
                     CurrentDialogueNode = childrenNodes.First();
@@ -259,7 +260,6 @@ public class SolynDialogUI : UIState
                 else
                 {
                     DialogueText = ResponseToSay;
-                    oldNode.InvokeClickAction();
                     textChanged = false;
                 }
             }

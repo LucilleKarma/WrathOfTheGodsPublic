@@ -209,7 +209,7 @@ public class TESolynTent : ModTileEntity, IClientSideTileEntityUpdater
             Vector2 velocity = velocityCurve.Evaluate(sampleInterpolant) * 0.3f;
 
             // Emit light at the point of the ornament.
-            Lighting.AddLight(ornamentWorldPosition, Color.Wheat.ToVector3());
+            Lighting.AddLight(ornamentWorldPosition, Color.Wheat.ToVector3() * 0.3f);
 
             int windGridTime = 20;
             Point ornamentTilePosition = ornamentWorldPosition.ToTileCoordinates();

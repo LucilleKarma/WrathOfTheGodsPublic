@@ -18,9 +18,20 @@ public class MapStyleLockingSystem : ModSystem
     public override void OnModLoad()
     {
         On_Main.DrawInterface += DisableMapOverlay;
+        On_Main.DrawMap += DisableMapOverlay2;
     }
 
     private void DisableMapOverlay(On_Main.orig_DrawInterface orig, Main self, GameTime gameTime)
+    {
+        MapDisablingWrapper(() => orig(self, gameTime));
+    }
+
+    private void DisableMapOverlay2(On_Main.orig_DrawMap orig, Main self, GameTime gameTime)
+    {
+        MapDisablingWrapper(() => orig(self, gameTime));
+    }
+
+    private static void MapDisablingWrapper(Action action)
     {
         int oldMapStyle = Main.mapStyle;
         bool mapWasEnabled = Main.mapEnabled;
@@ -43,7 +54,7 @@ public class MapStyleLockingSystem : ModSystem
 
         try
         {
-            orig(self, gameTime);
+            action();
         }
         finally
         {

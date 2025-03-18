@@ -142,7 +142,7 @@ public class CelestialDreamcatcher : ModProjectile, IProjOwnedByBoss<NamelessDei
                 SoundEngine.PlaySound(GennedAssets.Sounds.NamelessDeity.FeatherPreDisappear).WithVolumeBoost(1.5f);
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
-                    int damage = NamelessDeityBoss.PurifyingMatterDamage;
+                    int damage = PurifyingMatterDamage;
                     for (int i = 0; i < 9; i++)
                     {
                         Vector2 purifyingMatterSpawnPosition = Projectile.Center + (TwoPi * i / 9f).ToRotationVector2() * 1600f;

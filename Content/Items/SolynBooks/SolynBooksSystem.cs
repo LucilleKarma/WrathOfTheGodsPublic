@@ -37,8 +37,8 @@ public partial class SolynBooksSystem : ModSystem
         LoadInstructionManualObtainment();
         LoadInvisibleInkDissertationObtainment();
         LoadOminousStorybookObtainment();
-
         LoadRageOfTheDeitiesObtainment();
+        LoadSeapmapCollectionObtainment();
         LoadSulfuricLeafletObtainmentObtainment_Wrapper();
         LoadTwentyTwomeObtainment();
         LoadWulfrumAssemblyGuideObtainment_Wrapper();
@@ -60,7 +60,6 @@ public partial class SolynBooksSystem : ModSystem
         TryToSpawnAcidicPrayerbook_Wrapper();
         TryToSpawnCloverManual();
         TryToSpawnHowToFlyBook();
-        TryToSpawnSeamapCollection();
         TryToSpawnUnfinishedColoringBook();
     }
 

@@ -27,14 +27,14 @@ public partial class NamelessDeityBoss : ModNPC
                 if (TestOfResolveSystem.IsActive)
                 {
                     phaseCycle.AddRange(Phase1Cycle);
-                    if (DifficultyFactor >= 1.35f)
+                    if (DifficultyFactor >= 1.24f)
                     {
                         phaseCycle.AddRange(Phase2Cycle);
                         phaseCycle.Add(NamelessAIType.PsychedelicFeatherStrikes);
                     }
-                    if (DifficultyFactor >= 1.6f)
+                    if (DifficultyFactor >= 1.4f)
                         phaseCycle.AddRange(Phase3Cycle);
-                    if (DifficultyFactor >= 2.5f)
+                    if (DifficultyFactor >= 2f)
                         phaseCycle.Add(NamelessAIType.Glock);
 
                     // Remove certain attacks from the cycle.
@@ -46,7 +46,7 @@ public partial class NamelessDeityBoss : ModNPC
 
                     }
 
-                    if (DifficultyFactor <= 1.45f)
+                    if (DifficultyFactor <= 1.35f)
                         phaseCycle.Add(NamelessAIType.PerpendicularPortalLaserbeams);
 
                     phaseCycle = phaseCycle.OrderByDescending(a => Main.rand.NextFloat()).Distinct().ToList();

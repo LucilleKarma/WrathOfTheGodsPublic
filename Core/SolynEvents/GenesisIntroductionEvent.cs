@@ -15,7 +15,7 @@ public class GenesisIntroductionEvent : SolynEvent
     {
         DialogueManager.RegisterNew("GenesisRevealDiscussion", "Start").
             LinkFromStartToFinish().
-            WithAppearanceCondition(instance => !CanStart).
+            WithAppearanceCondition(instance => CanStart).
             WithRerollCondition(instance => !instance.AppearanceCondition()).
             MakeSpokenByPlayer("Player1", "Player2").
             WithRerollCondition(_ => Finished);
@@ -33,7 +33,7 @@ public class GenesisIntroductionEvent : SolynEvent
 
     public override void PostUpdateNPCs()
     {
-        if (!Finished && DialogueManager.FindByRelativePrefix("GenesisRevealDiscussion").SeenBefore("Solyn9"))
+        if (!Finished && DialogueManager.FindByRelativePrefix("GenesisRevealDiscussion").SeenBefore("Solyn9") && CanStart)
             SafeSetStage(1);
     }
 }

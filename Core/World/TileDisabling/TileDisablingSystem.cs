@@ -115,6 +115,7 @@ public class TileDisablingSystem : ModSystem
         On_SpawnMapLayer.Draw += DisableSpawnMapIcon;
         On_TeleportPylonsMapLayer.Draw += DisablePylonMapIcons;
         On_Rain.MakeRain += DisableRain;
+        On_Collision.GetEntityEdgeTiles += DisableAuricOreRejection;
 
         MonoModHooks.Add(typeof(TileLoader).GetMethod("TileFrame", UniversalBindingFlags), new hook_TileFrame(DisableAllTileFraming));
 
@@ -687,6 +688,12 @@ public class TileDisablingSystem : ModSystem
     {
         if (!TilesAreUninteractable)
             orig();
+    }
+
+    private void DisableAuricOreRejection(On_Collision.orig_GetEntityEdgeTiles orig, List<Point> p, Entity entity, bool left, bool right, bool up, bool down)
+    {
+        if (!TilesAreUninteractable)
+            orig(p, entity, left, right, up, down);
     }
 
     public override void OnWorldLoad() => TilesAreUninteractable = false;

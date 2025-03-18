@@ -230,6 +230,7 @@ public partial class MarsBody
             SoundEngine.PlaySound(GennedAssets.Sounds.NPCKilled.MarsDeath).WithVolumeBoost(1.25f);
             if (Main.netMode != NetmodeID.MultiplayerClient)
             {
+                NPC.NPCLoot();
                 NPC.active = false;
                 NPC.life = 0;
                 NewProjectileBetter(NPC.GetSource_Death(), NPC.Center, Vector2.Zero, ModContent.ProjectileType<SyntheticSeedlingProjectile>(), 0, 0f);

@@ -44,6 +44,7 @@ public class PermafrostDoor : ModTile
         Main.tileFrameImportant[Type] = true;
         Main.tileObsidianKill[Type] = false;
         Main.tileSolid[Type] = true;
+        TileID.Sets.CanBeClearedDuringGeneration[Type] = false;
 
         TileID.Sets.HasOutlines[Type] = true;
 

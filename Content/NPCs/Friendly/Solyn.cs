@@ -130,6 +130,15 @@ public partial class Solyn : ModNPC, IPixelatedPrimitiveRenderer
     }
 
     /// <summary>
+    /// How long it's been since anyone last talked to Solyn.
+    /// </summary>
+    public int TimeSinceLastTalk
+    {
+        get;
+        set;
+    }
+
+    /// <summary>
     /// Solyn's effective scale, taking into account her <see cref="Squish"/>.
     /// </summary>
     public Vector2 EffectiveScale => new Vector2(1f + Squish, 1f - Squish) * NPC.scale;
@@ -242,6 +251,7 @@ public partial class Solyn : ModNPC, IPixelatedPrimitiveRenderer
     public override void SendExtraAI(BinaryWriter writer)
     {
         writer.Write((int)CurrentState);
+        writer.Write(TimeSinceLastTalk);
         writer.Write(AITimer);
         writer.Write(WanderAbout_StuckTimer);
         writer.Write(SkyFallDirection);
@@ -251,6 +261,7 @@ public partial class Solyn : ModNPC, IPixelatedPrimitiveRenderer
     public override void ReceiveExtraAI(BinaryReader reader)
     {
         CurrentState = (SolynAIType)reader.ReadInt32();
+        TimeSinceLastTalk = reader.ReadInt32();
         AITimer = reader.ReadInt32();
         WanderAbout_StuckTimer = reader.ReadInt32();
         SkyFallDirection = reader.ReadInt32();
@@ -262,12 +273,6 @@ public partial class Solyn : ModNPC, IPixelatedPrimitiveRenderer
     #region AI
     public override void AI()
     {
-        if (Main.netMode != NetmodeID.MultiplayerClient && SolynCampsiteWorldGen.CampSitePosition == Vector2.Zero && !EternalGardenUpdateSystem.WasInSubworldLastUpdateFrame)
-        {
-            SolynCampsiteWorldGen.CampSitePosition = Vector2.One;
-            SolynCampsiteWorldGen.GenerateOnNewThread();
-        }
-
         // Reset things every frame.
         NPC.immortal = true;
         NPC.gfxOffY = 0f;
@@ -349,6 +354,9 @@ public partial class Solyn : ModNPC, IPixelatedPrimitiveRenderer
                 break;
         }
 
+        if (TimeSinceLastTalk >= 1)
+            TimeSinceLastTalk++;
+
         HandleConversationEffects();
 
         // Zoom in on Solyn based on the zoom interpolant.
@@ -388,6 +396,8 @@ public partial class Solyn : ModNPC, IPixelatedPrimitiveRenderer
 
     public void SpeakToPlayerEffects()
     {
+        TimeSinceLastTalk = 1;
+
         string currentDialogueUsedByUI = ModContent.GetInstance<SolynDialogSystem>().DialogUI.CurrentDialogueNode?.TextKey ?? string.Empty;
         if (!CurrentConversation.Tree.PossibleDialogue.Values.Any(d => d.TextKey == currentDialogueUsedByUI))
             ModContent.GetInstance<SolynDialogSystem>().DialogUI.CurrentDialogueNode = CurrentConversation.RootSelectionFunction();

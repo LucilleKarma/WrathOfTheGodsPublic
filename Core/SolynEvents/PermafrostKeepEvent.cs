@@ -85,8 +85,13 @@ public class PermafrostKeepEvent : SolynEvent
 
         // If the door was unlocked already and Solyn is waiting where the door would be, just transition to the next stage.
         // This is important for old worlds where the door was already unlocked by the Solyn questline is incomplete.
+        // Patch fix 3/17/2025: ONLY do this if Solyn is near the actual door, otherwise she will attempt to pathfind to the door from miles away and cause utterly insufferable lag.
         if (Stage == 1 && PermafrostKeepWorldGen.DoorHasBeenUnlocked)
-            SafeSetStage(2);
+        {
+            bool nearKeep = Solyn.NPC.WithinRange(PermafrostKeepWorldGen.KeepArea.Center().ToWorldCoordinates(), 2300f);
+            if (nearKeep)
+                SafeSetStage(2);
+        }
 
         switch (Stage)
         {

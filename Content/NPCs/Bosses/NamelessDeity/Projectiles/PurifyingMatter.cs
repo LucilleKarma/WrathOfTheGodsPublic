@@ -14,7 +14,7 @@ public class PurifyingMatter : ModProjectile, IProjOwnedByBoss<NamelessDeityBoss
     /// <summary>
     /// The ideal velocity of this matter.
     /// </summary>
-    public Vector2 IdealVelocity => Projectile.ai[0].ToRotationVector2() * NamelessDeityBoss.EnterPhase2_AttackPlayer_PurifyingMatterMaxSpeedFactor * 50f;
+    public Vector2 IdealVelocity => Projectile.ai[0].ToRotationVector2() * NamelessDeityBoss.EnterPhase2_AttackPlayer_PurifyingMatterMaxSpeedFactor * 30f;
 
     /// <summary>
     /// How long this matter has exist for so far, in frames.
@@ -70,7 +70,7 @@ public class PurifyingMatter : ModProjectile, IProjOwnedByBoss<NamelessDeityBoss
 
             Projectile dreamcatcher = dreamcatchers.First();
             Vector2 destination = dreamcatcher.Center;
-            float flySpeed = SmoothStep(25f, 44f, InverseLerp(250f, 60f, Projectile.Distance(destination))) * NamelessDeityBoss.EnterPhase2_AttackPlayer_PurifyingMatterMaxSpeedFactor;
+            float flySpeed = SmoothStep(21f, 39f, InverseLerp(250f, 60f, Projectile.Distance(destination))) * NamelessDeityBoss.EnterPhase2_AttackPlayer_PurifyingMatterMaxSpeedFactor;
 
             Projectile.velocity = Vector2.Lerp(Projectile.velocity, Projectile.SafeDirectionTo(destination) * flySpeed, 0.6f);
             if (Projectile.WithinRange(destination, 60f) || dreamcatcher.Opacity <= 0.4f)

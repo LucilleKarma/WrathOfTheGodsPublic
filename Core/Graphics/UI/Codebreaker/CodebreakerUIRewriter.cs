@@ -104,19 +104,14 @@ public class CodebreakerUIRewriter : ModSystem
 
     private static void RemakeDraedonSummonUI(orig_HandleDraedonSummonButton orig, TECodebreaker codebreakerTileEntity, Vector2 drawPosition)
     {
-        bool marsTakesPriority = !MarsCombatEvent.HasSpokenToDraedonBefore && ModContent.GetInstance<MarsCombatEvent>().Stage >= 1 && !ModContent.GetInstance<MarsCombatEvent>().Finished;
-        bool displayMarsIcon = MarsCombatEvent.HasSpokenToDraedonBefore && !codebreakerTileEntity.ContainsBloodSample;
+        bool marsIconCanAppear = ModContent.GetInstance<MarsCombatEvent>().Stage >= 1 && !ModContent.GetInstance<MarsCombatEvent>().Finished;
 
-        if (!marsTakesPriority)
-            HandleDraedonSummonButton_StandardExoMechs(codebreakerTileEntity, drawPosition);
-        if (displayMarsIcon || marsTakesPriority)
+        HandleDraedonSummonButton_StandardExoMechs(codebreakerTileEntity, drawPosition);
+        if (marsIconCanAppear)
         {
             // Offset the button to a place where there's clear space on the UI.
             // This doesn't happen if this button takes priority, because that means that the base position is free already.
             Vector2 drawOffset = new Vector2(84f, -56f) * GeneralScale;
-            if (marsTakesPriority)
-                drawOffset = Vector2.Zero;
-
             HandleDraedonSummonButton_Mars(codebreakerTileEntity, drawPosition + drawOffset);
         }
     }
@@ -229,10 +224,12 @@ public class CodebreakerUIRewriter : ModSystem
         // And display a text indicator that describes the function of the button.
         // The color of the text pulsates.
         string contactText = Language.GetTextValue("Mods.NoxusBoss.Dialog.SummonMarsButtonText");
-        if (!MarsCombatEvent.HasSpokenToDraedonBefore)
-            contactText = Language.GetTextValue("Mods.CalamityMod.UI.Summon");
-
         Color contactTextColor = Color.Lerp(Color.Wheat, Color.Cyan, Cos01(Main.GlobalTimeWrappedHourly * 7f) * 0.7f);
+        if (!MarsCombatEvent.HasSpokenToDraedonBefore)
+        {
+            contactText = Language.GetTextValue("Mods.NoxusBoss.Dialog.SummonMarsButtonTextInitial");
+            contactTextColor = Color.Lerp(Color.White, Color.Red, Cos01(Main.GlobalTimeWrappedHourly * 16f) * 0.8f);
+        }
 
         // Center the draw position and draw text.
         drawPosition.X -= FontAssets.MouseText.Value.MeasureString(contactText).X * GeneralScale * 0.5f;

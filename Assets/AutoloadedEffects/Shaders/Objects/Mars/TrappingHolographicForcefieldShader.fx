@@ -33,7 +33,7 @@ float4 PixelShaderFunction(float4 sampleColor : COLOR0, float2 coords : TEXCOORD
     // Calculate an edge glow value, to give the forcefield a strong outline.
     float distanceFromCenter = distance(coords, 0.5);
     float distanceFromEdge = distance(distanceFromCenter, 0.4);
-    float edgeGlow = sampleColor.a * 0.08 / distanceFromEdge;
+    float edgeGlow = sampleColor.a * 0.04 / pow(distanceFromEdge, 1.5);
     
     // Combine things together.
     float edgeFade = smoothstep(1.1, 0.9, distanceFromCenterSqr);

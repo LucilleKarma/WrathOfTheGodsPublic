@@ -66,6 +66,9 @@ public partial class Solyn : ModNPC, IPixelatedPrimitiveRenderer
 
                 if (SolynCampsiteWorldGen.TentPosition != Vector2.Zero)
                     WanderDestination = new Vector2(Lerp(WanderDestination.X, SolynCampsiteWorldGen.TentPosition.X, Main.rand.NextFloat(0.5f)), WanderDestination.Y);
+                else
+                    WanderDestination = new Vector2(Lerp(WanderDestination.X, NPC.Center.X, Main.rand.NextFloat(0.8f, 0.9f)), WanderDestination.Y);
+
                 if (EternalGardenUpdateSystem.WasInSubworldLastUpdateFrame)
                     WanderDestination = new Vector2(Lerp(WanderDestination.X, Main.maxTilesX * 8f, Main.rand.NextFloat(0.5f)), WanderDestination.Y);
 

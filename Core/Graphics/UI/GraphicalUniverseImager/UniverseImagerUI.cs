@@ -136,7 +136,6 @@ public class UniverseImagerUI : ModSystem
     } = new InstancedRequestableTarget();
 
     // TODO -- Implement this later.
-    // For you nosy data miners, the reason this isn't enabled is because the one (1) track that exists for this isn't finished.
     /// <summary>
     /// Whether the music options selector is ready for relase yet.
     /// </summary>

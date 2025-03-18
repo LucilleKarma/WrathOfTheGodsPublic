@@ -1,7 +1,14 @@
-﻿using Microsoft.Xna.Framework;
+﻿using System.Reflection;
+using Luminance.Core.Hooking;
+using Microsoft.Xna.Framework;
+using Mono.Cecil.Cil;
+using MonoMod.Cil;
+using NoxusBoss.Content.NPCs.Friendly;
 using NoxusBoss.Content.Tiles.SolynCampsite;
 using NoxusBoss.Content.Tiles.TileEntities;
+using NoxusBoss.Core.CrossCompatibility.Inbound.BaseCalamity;
 using NoxusBoss.Core.GlobalInstances;
+using NoxusBoss.Core.SolynEvents;
 using Terraria;
 using Terraria.DataStructures;
 using Terraria.ID;
@@ -13,7 +20,7 @@ namespace NoxusBoss.Core.World.WorldGeneration;
 
 public class SolynCampsiteWorldGen : ModSystem
 {
-    private static bool generatingAlready;
+    private static bool generating;
 
     /// <summary>
     /// The position of the camp site, in world coordinates.
@@ -43,9 +50,13 @@ public class SolynCampsiteWorldGen : ModSystem
     }
 
     /// <summary>
-    /// The width that the campsite generation checks when finding a spot to place.
+    /// The position of Solyn's flag, in tile coordinates. This is used for determining where Solyn should set up camp.
     /// </summary>
-    public static int CampsiteSurveyWidth => 65;
+    public static Point FlagPosition
+    {
+        get;
+        set;
+    }
 
     /// <summary>
     /// The closest that meteors can generate to Solyn's campsite.
@@ -53,491 +64,331 @@ public class SolynCampsiteWorldGen : ModSystem
     public static int MinMeteorDistance => 120;
 
     /// <summary>
-    /// The radius of unbreakability surrounding Solyn's campsite.
+    /// Whether Solyn has successfully set up camp.
     /// </summary>
-    public static float UnbreakableRadius => 736f;
-
-    /// <summary>
-    /// Attempts to find a position in the world where Solyn's camp site could be placed. Returns <see cref="Point.Zero"/> if none could be found.
-    /// </summary>
-    public static Point FindGenerationSpot()
-    {
-        for (int tries = 0; tries < 6400; tries++)
-        {
-            int x = (int)(WorldGen.genRand.NextFloat(0.054f, 0.46f) * Main.maxTilesX);
-            if (WorldGen.genRand.NextBool())
-                x = Main.maxTilesX - x;
-
-            int y = FindGroundVertical(new Point(x, 375)).Y;
-
-            // Reject positions that are too high up. That almost certainly means that a floating island was hit.
-            if (y <= Main.maxTilesY * 0.185f)
-                continue;
-
-            // Reject positions inside of water.
-            Point center = new Point(x, y);
-            if (Main.tile[center].LiquidAmount >= 1 || Main.tile[center].IsHalfBlock || Main.tile[center].Slope != SlopeType.Solid)
-                continue;
-
-            List<int> topography = CalculateGroundTopography(center, CampsiteSurveyWidth);
-
-            int previousTopography = topography[0];
-            int totalHeightChanges = 0;
-            float maximumLocalBumpiness = 0f;
-            for (int i = 1; i < topography.Count - 1; i++)
-            {
-                // Calculate how bumpy the current point is relative to its two neighbors.
-                int leftTopography = topography[i - 1];
-                int centerTopography = topography[i];
-                int rightTopography = topography[i + 1];
-                float localBumpiness = MathF.Max(Abs(leftTopography), Abs(rightTopography)) - Abs(centerTopography);
-
-                if (topography[i] != previousTopography)
-                {
-                    totalHeightChanges++;
-                    previousTopography = topography[i];
-                }
-
-                maximumLocalBumpiness = MathF.Max(maximumLocalBumpiness, localBumpiness);
-            }
-
-            // Reject positions that are too bumpy.
-            float averageBumpiness = topography.Average(t => Abs(t));
-            float maximumDisrepancy = Abs(topography.Max() - topography.Min());
-            float leniencyCoefficient = Lerp(1f, 4.2f, InverseLerp(0f, 4800f, tries).Squared());
-            if (averageBumpiness >= leniencyCoefficient * 1.5f || maximumLocalBumpiness >= leniencyCoefficient * 3f || maximumDisrepancy >= leniencyCoefficient * 4f || totalHeightChanges >= leniencyCoefficient * 5f)
-                continue;
-
-            // Reject positions that contain tiles indictative of a hostile biome.
-            if (AnyHostileBiomeTiles(center))
-                continue;
-
-            // Reject positions that would place a telescope in some awkward spot.
-            if (PerformTelescopeCheck(center) && tries <= 900)
-                continue;
-
-            return center;
-        }
-
-        return Point.Zero;
-    }
-
-    /// <summary>
-    /// Determines whether a given prospective area is fit for placement based on where a telescope might be placed, rejecting positions that would place it in a hole.
-    /// </summary>
-    /// <param name="center"></param>
-    /// <returns></returns>
-    public static bool PerformTelescopeCheck(Point center)
-    {
-        for (int dx = 34; dx < 85; dx++)
-        {
-            Point telescopePosition = FindGroundVertical(new(center.X - dx, center.Y));
-            Vector2 checkStart = telescopePosition.ToWorldCoordinates(8f, -32f);
-            Vector2 checkEndHorizontal = checkStart + new Vector2(-300f, -16f);
-            Vector2 checkEndDiagonal = checkStart + new Vector2(-300f, -300f);
-            if (!Collision.CanHitLine(checkStart, 16, 16, checkEndHorizontal, 16, 16) || !Collision.CanHitLine(checkStart, 16, 16, checkEndDiagonal, 16, 16))
-                return true;
-        }
-
-        return false;
-    }
-
-    /// <summary>
-    /// Calculates the topography of the ground at a given point, returning a set of listed offsets.
-    /// </summary>
-    /// <param name="start">The center point to perform topography calculations relative to.</param>
-    /// <param name="width">The width to survery.</param>
-    public static List<int> CalculateGroundTopography(Point start, int width)
-    {
-        List<int> topography = new List<int>(width);
-        for (int i = width / -2; i < width / 2; i++)
-        {
-            Point samplePoint = new Point(start.X + i, start.Y);
-            Point groundPosition = FindGroundVertical(samplePoint);
-            topography.Add(groundPosition.Y - start.Y);
-        }
-
-        return topography;
-    }
-
-    /// <summary>
-    /// Determines whether there are any crimson, corruption, or dungeon tiles in a given area by sparsely sampling tiles in the area.
-    /// </summary>
-    /// <param name="samplePoint">The base place to search.</param>
-    public static bool AnyHostileBiomeTiles(Point samplePoint)
-    {
-        for (int tries = 0; tries < 150; tries++)
-        {
-            Tile sampleTile = Main.tile[samplePoint.X + WorldGen.genRand.Next(-CampsiteSurveyWidth / 2, CampsiteSurveyWidth / 2), samplePoint.Y + WorldGen.genRand.Next(10)];
-            if (sampleTile.HasUnactuatedTile && (TileID.Sets.Crimson[sampleTile.TileType] || TileID.Sets.Corrupt[sampleTile.TileType] || TileID.Sets.DungeonBiome[sampleTile.TileType] >= 1))
-                return true;
-
-            // Reject tiles that are player-made, such as doors.
-            if (TileID.Sets.HousingWalls[sampleTile.TileType])
-                return true;
-        }
-
-        return false;
-    }
-
-    /// <summary>
-    /// Attempts to place a given tile at a given position.
-    /// </summary>
-    /// <param name="position">The place at which the tile should be placed.</param>
-    /// <param name="tileID">The tile ID.</param>
-    /// <param name="style">The tile's style frame.</param>
-    /// <param name="direction">The tile's direction.</param>
-    /// <param name="clearWater">Whether nearby water should be cleared.</param>
-    public static bool TryToPlaceTile(Point position, int tileID, int style = 0, int direction = -1, bool clearWater = false)
-    {
-        WorldGen.PlaceObject(position.X, position.Y, tileID, false, style, 0, -1, direction);
-        bool successful = Main.tile[position].TileType == tileID;
-
-        if (clearWater && Main.tile[position].LiquidAmount >= 1)
-        {
-            for (int dx = -56; dx < 56; dx++)
-            {
-                for (int dy = -1; dy < 6; dy++)
-                    Main.tile[new Point(position.X + dx, position.Y - dy)].LiquidAmount = 0;
-            }
-
-            Liquid.worldGenTilesIgnoreWater(true);
-            Liquid.QuickWater(3);
-            WorldGen.WaterCheck();
-
-            Liquid.quickSettle = true;
-
-            for (int i = 0; i < 10; i++)
-            {
-                int maxLiquid = Liquid.numLiquid + LiquidBuffer.numLiquidBuffer;
-                int m = maxLiquid * 5;
-                double maxLiquidDifferencePercentage = 0D;
-                while (Liquid.numLiquid > 0)
-                {
-                    m--;
-                    if (m < 0)
-                        break;
-
-                    double liquidDifferencePercentage = (maxLiquid - Liquid.numLiquid - LiquidBuffer.numLiquidBuffer) / (double)maxLiquid;
-                    if (Liquid.numLiquid + LiquidBuffer.numLiquidBuffer > maxLiquid)
-                        maxLiquid = Liquid.numLiquid + LiquidBuffer.numLiquidBuffer;
-
-                    if (liquidDifferencePercentage > maxLiquidDifferencePercentage)
-                        maxLiquidDifferencePercentage = liquidDifferencePercentage;
-
-                    Liquid.UpdateLiquid();
-                }
-                WorldGen.WaterCheck();
-            }
-            Liquid.quickSettle = false;
-            Liquid.worldGenTilesIgnoreWater(false);
-        }
-
-        return successful;
-    }
-
-    /// <summary>
-    /// Places a foundation for Solyn's campsite.
-    /// </summary>
-    public static Point GenerateGround(Point center)
-    {
-        center.Y -= 2;
-
-        // Determine which tile should be placed based on surrounding tiles.
-        int tileToPlace = TileID.Dirt;
-        for (int dx = -12; dx < 12; dx++)
-        {
-            Tile tile = Main.tile[center.X + dx, center.Y + WorldGen.genRand.Next(3, 10)];
-            if (tile.TileType == TileID.SnowBlock || tile.TileType == TileID.IceBlock)
-            {
-                tileToPlace = TileID.SnowBlock;
-                break;
-            }
-            if (tile.TileType == TileID.Sand)
-            {
-                tileToPlace = TileID.Sand;
-                break;
-            }
-            if (tile.TileType == TileID.Mud || tile.TileType == TileID.JungleGrass)
-            {
-                tileToPlace = TileID.Mud;
-                break;
-            }
-        }
-
-        for (int dx = -40; dx < 40; dx++)
-        {
-            Main.tile[center.X + dx, center.Y].Get<TileWallWireStateData>().Slope = SlopeType.Solid;
-
-            int y = center.Y + 1;
-            Tile tile = Main.tile[center.X + dx, y];
-
-            while (!tile.HasTile || !Main.tileSolid[tile.TileType])
-            {
-                WorldGen.KillTile(center.X + dx, y, noItem: true);
-                WorldGen.PlaceTile(center.X + dx, y, tileToPlace);
-
-                y++;
-                tile = Main.tile[center.X + dx, y];
-                tile.Get<TileWallWireStateData>().Slope = SlopeType.Solid;
-                tile.Get<TileWallWireStateData>().IsHalfBlock = false;
-
-                WorldGen.TileFrame(center.X + dx, y);
-            }
-        }
-
-        return center;
-    }
-
-    /// <summary>
-    /// Attempts to place Solyn's campfire at a given position.
-    /// </summary>
-    /// <param name="center">The center of Solyn's camp site.</param>
-    public static void PlaceCampfire(Point center)
-    {
-        for (int dx = -8; dx < 8; dx++)
-        {
-            Point campfirePosition = FindGroundVertical(new(center.X + dx, center.Y));
-
-            // Destroy piles and trees if they're in the way.
-            if (Main.tile[new Point(campfirePosition.X, campfirePosition.Y - 1)].TileType == TileID.SmallPiles)
-                WorldGen.KillTile(campfirePosition.X, campfirePosition.Y - 1, noItem: true);
-            for (int dy = 0; dy < 8; dy++)
-            {
-                Point treeCheckPosition = new Point(campfirePosition.X, campfirePosition.Y + dy);
-                if ((Main.tile[treeCheckPosition].TileType == TileID.Trees || Main.tile[treeCheckPosition].TileType == TileID.Cactus || Main.tile[treeCheckPosition].TileType == TileID.PalmTree) && Abs(dx) <= 2f)
-                    WorldGen.KillTile(treeCheckPosition.X, treeCheckPosition.Y, noItem: true);
-            }
-
-            Point leftChairPosition = FindGroundVertical(new(campfirePosition.X - 4, campfirePosition.Y));
-            Point rightChairPosition = FindGroundVertical(new(campfirePosition.X + 4, campfirePosition.Y));
-            if ((int)(Round(leftChairPosition.Y + rightChairPosition.Y + campfirePosition.Y) / 3f) != campfirePosition.Y)
-                continue;
-
-            if (TryToPlaceTile(campfirePosition, ModContent.TileType<StarlitCampfireTile>(), 0, -1, true))
-            {
-                for (int i = 2; i <= 4; i++)
-                {
-                    WorldGen.KillTile(campfirePosition.X - i, campfirePosition.Y, noItem: true);
-                    WorldGen.KillTile(campfirePosition.X + i, campfirePosition.Y, noItem: true);
-                }
-
-                WorldGen.KillTile(leftChairPosition.X, leftChairPosition.Y, noItem: true);
-                WorldGen.KillTile(rightChairPosition.X, rightChairPosition.Y, noItem: true);
-
-                TryToPlaceTile(leftChairPosition, TileID.Chairs, 27, 1, true);
-                TryToPlaceTile(rightChairPosition, TileID.Chairs, 27, -1, true);
-                break;
-            }
-        }
-    }
-
-    /// <summary>
-    /// Attempts to place Solyn's flag at a given position.
-    /// </summary>
-    /// <param name="center">The center of Solyn's camp site.</param>
-    public static void PlaceFlag(Point center)
-    {
-        int flagID = ModContent.TileType<SolynFlagTile>();
-        for (int dx = 14; dx < 45; dx++)
-        {
-            Point flagPosition = FindGroundVertical(new(center.X + dx, center.Y));
-            if (TryToPlaceTile(flagPosition, flagID, 0, -1, true))
-            {
-                TileEntity.PlaceEntityNet(flagPosition.X, flagPosition.Y - SolynFlagTile.Height + 1, ModContent.TileEntityType<TESolynFlag>());
-                break;
-            }
-        }
-    }
-
-    private static void PlaceTent_ClearTilesIfNecessary(Point point)
-    {
-        // Destroy piles and trees if they're in the way.
-        if (Main.tile[new Point(point.X, point.Y - 1)].TileType == TileID.SmallPiles)
-            WorldGen.KillTile(point.X, point.Y - 1, noItem: true);
-        for (int dy = 0; dy < 8; dy++)
-        {
-            if (Main.tile[point].TileType == TileID.Trees || Main.tile[point].TileType == TileID.Cactus || Main.tile[point].TileType == TileID.PalmTree)
-                WorldGen.KillTile(point.X, point.Y, noItem: true);
-            point.Y++;
-        }
-    }
-
-    /// <summary>
-    /// Attempts to place Solyn's tent at a given position.
-    /// </summary>
-    /// <param name="center">The center of Solyn's camp site.</param>
-    public static void PlaceTent(Point center)
-    {
-        for (int dx = 4; dx < 56; dx++)
-        {
-            PlaceTent_ClearTilesIfNecessary(new(center.X - dx, center.Y));
-            PlaceTent_ClearTilesIfNecessary(new(center.X + dx, center.Y));
-        }
-
-        int tentID = ModContent.TileType<SolynTent>();
-        for (int dx = 5; dx < 50; dx++)
-        {
-            Point tentPosition = FindGroundVertical(new(center.X + dx, center.Y));
-            if (TryToPlaceTile(tentPosition, tentID, 0, -1, true))
-            {
-                TentPosition = tentPosition.ToWorldCoordinates(8f, -8f);
-                TileObjectData.CallPostPlacementPlayerHook(tentPosition.X, tentPosition.Y, tentID, 0, -1, 0, default);
-                break;
-            }
-
-            tentPosition = FindGroundVertical(new(center.X - dx, center.Y));
-            if (TryToPlaceTile(tentPosition, tentID, 0, -1, true))
-            {
-                TentPosition = tentPosition.ToWorldCoordinates(8f, -8f);
-                TileObjectData.CallPostPlacementPlayerHook(tentPosition.X, tentPosition.Y, tentID, 0, -1, 0, default);
-                break;
-            }
-        }
-    }
-
-    /// <summary>
-    /// Attempts to place Solyn's telescope at a given position.
-    /// </summary>
-    /// <param name="center">The center of Solyn's camp site.</param>
-    public static void PlaceTelescope(Point center)
-    {
-        int telescopeID = ModContent.TileType<SolynTelescopeTile>();
-        for (int dx = 34; dx < 85; dx++)
-        {
-            Point telescopePosition = FindGroundVertical(new(center.X - dx, center.Y));
-            if (TryToPlaceTile(telescopePosition, telescopeID, 0, -1, true))
-            {
-                TelescopePosition = telescopePosition;
-
-                TileObjectData.CallPostPlacementPlayerHook(telescopePosition.X, telescopePosition.Y, telescopeID, 0, -1, 0, default);
-                return;
-            }
-        }
-
-        // Desperation.
-        for (int dx = 10; dx < 34; dx++)
-        {
-            Point telescopePosition = FindGroundVertical(new(center.X - dx, center.Y));
-            if (TryToPlaceTile(telescopePosition, telescopeID, 0, -1, true))
-            {
-                TelescopePosition = telescopePosition;
-
-                TileObjectData.CallPostPlacementPlayerHook(telescopePosition.X, telescopePosition.Y, telescopeID, 0, -1, 0, default);
-                return;
-            }
-        }
-    }
-
-    /// <summary>
-    /// Attempts to generate Solyn's camp site somewhere in the outer parts of the world.
-    /// </summary>
-    private static void Generate()
-    {
-        if (generatingAlready)
-            return;
-
-        generatingAlready = true;
-
-        Point center = FindGenerationSpot();
-
-        // Should never happen, but just in case??
-        if (center == Point.Zero)
-            return;
-
-        center = GenerateGround(center);
-
-        CampSitePosition = center.ToWorldCoordinates();
-
-        PlaceCampfire(center);
-        PlaceFlag(center);
-        PlaceTent(center);
-        PlaceTelescope(center);
-
-        if (Main.netMode != NetmodeID.SinglePlayer)
-        {
-            NetMessage.SendTileSquare(-1, center.X - 40, center.Y - 40, 80, 80);
-            NetMessage.SendData(MessageID.WorldData);
-        }
-
-        generatingAlready = false;
-    }
-
-    /// <summary>
-    /// Attempts to generate Solyn's camp site somewhere in the outer parts of the world on a new thread.
-    /// </summary>
-    public static void GenerateOnNewThread() => new Thread(Generate).Start();
+    public static bool CampHasBeenMade => CampSitePosition != Vector2.Zero;
 
     public override void OnModLoad()
     {
         On_WorldGen.meteor += DisallowMeteorsDestroyingTheCampsite;
-        On_Player.PlaceThing_Tiles_PlaceIt += DisableBlockPlacement;
-        On_Player.ItemCheck_UseMiningTools_ActuallyUseMiningTool += DisableGrassBreakage;
-        On_WorldGen.SpawnFallingBlockProjectile += PreventSandFromFalling;
-        GlobalTileEventHandlers.IsTileUnbreakableEvent += MakeCampsiteUnbreakable;
         GlobalNPCEventHandlers.EditSpawnRateEvent += DisableSpawnsNearCampsite;
-        GlobalTileEventHandlers.NearbyEffectsEvent += MakeTombsDisappearInProtectedSpot;
+
+        if (ModLoader.TryGetMod(CalamityCompatibility.ModName, out Mod cal))
+        {
+            MethodInfo? astralMeteorPlacementMethod = cal.Code.GetType("CalamityMod.World.AstralBiome")?.GetMethod("PlaceAstralMeteor", UniversalBindingFlags);
+            if (astralMeteorPlacementMethod is not null)
+            {
+                HookHelper.ModifyMethodWithIL(astralMeteorPlacementMethod, new ILContext.Manipulator(context =>
+                {
+                    ILCursor cursor = new ILCursor(context);
+                    if (!cursor.TryGotoNext(i => i.MatchNewobj<List<ushort>>()))
+                        return;
+
+                    int avoidanceListIndex = 0;
+                    if (!cursor.TryGotoNext(MoveType.After, i => i.MatchStloc(out avoidanceListIndex)))
+                        return;
+
+                    cursor.Emit(OpCodes.Ldloc, avoidanceListIndex);
+                    cursor.EmitDelegate((IList<ushort> avoidanceList) =>
+                    {
+                        avoidanceList.Add((ushort)ModContent.TileType<SolynTent>());
+                        avoidanceList.Add((ushort)ModContent.TileType<SolynTelescopeTile>());
+                    });
+                }));
+            }
+        }
     }
 
-    private bool PreventSandFromFalling(On_WorldGen.orig_SpawnFallingBlockProjectile orig, int i, int j, Tile tileCache, Tile tileTopCache, Tile tileBottomCache, int type)
+    // NOTE -- Use the CampSitePosition variable when inspecting for places to place camp.
+    // This is really important for backwards compatibility with worlds made prior to the patch.
+    public override void PreUpdateWorld()
     {
-        if (generatingAlready)
-            return false;
-
-        return orig(i, j, tileCache, tileTopCache, tileBottomCache, type);
-    }
-
-    private TileObject DisableBlockPlacement(On_Player.orig_PlaceThing_Tiles_PlaceIt orig, Player self, bool newObjectType, TileObject data, int tileToCreate)
-    {
-        Point point = new Point(Player.tileTargetX, Player.tileTargetY);
-        if (MakeCampsiteUnbreakable(point.X, point.Y, tileToCreate))
-            return data;
-
-        return orig(self, newObjectType, data, tileToCreate);
-    }
-
-    private static void DisableGrassBreakage(On_Player.orig_ItemCheck_UseMiningTools_ActuallyUseMiningTool orig, Player self, Item sItem, out bool canHitWalls, int x, int y)
-    {
-        canHitWalls = false;
-        if (MakeCampsiteUnbreakable(x, y, Framing.GetTileSafely(x, y).TileType))
+        // Don't do anything if Solyn isn't present.
+        if (!NPC.AnyNPCs(ModContent.NPCType<Solyn>()))
             return;
 
-        orig(self, sItem, out canHitWalls, x, y);
+        // Don't do anything if generation is already in progress on a separate thread.
+        if (generating)
+            return;
+
+        // If Solyn has not created a camp, check if she's ready to do so.
+        if (!CampHasBeenMade)
+        {
+            CheckCampViability();
+        }
+
+        // Constantly check if the flagpole is gone.
+        // If it is, wait for the player to put it somewhere else and set up camp there instead.
+        bool flagStillExists = FlagPosition != Point.Zero && Framing.GetTileSafely(FlagPosition).HasTile && Framing.GetTileSafely(FlagPosition).TileType == ModContent.TileType<SolynFlagTile>();
+        if (!flagStillExists)
+        {
+            FlagPosition = Point.Zero;
+            CampSitePosition = Vector2.Zero;
+        }
     }
 
-    private static bool MakeCampsiteUnbreakable(int x, int y, int type)
+    private static void CheckCampViability()
     {
-        Vector2 worldPosition = new Point(x, y).ToWorldCoordinates();
-        bool inProtectionRadius = worldPosition.WithinRange(CampSitePosition, UnbreakableRadius);
-        if (!inProtectionRadius)
+        if (FlagPosition == Point.Zero)
+            return;
+
+        Tile t = Framing.GetTileSafely(FlagPosition);
+        if (!t.HasTile || t.TileType != ModContent.TileType<SolynFlagTile>())
+            return;
+
+        if (generating)
+            return;
+
+        if (CampSitePosition != Vector2.Zero)
+            return;
+
+        bool anyoneNearFlag = false;
+        foreach (Player player in Main.ActivePlayers)
+        {
+            if (player.WithinRange(FlagPosition.ToWorldCoordinates(), 3300f))
+            {
+                anyoneNearFlag = true;
+                break;
+            }
+        }
+
+        if (anyoneNearFlag)
+            return;
+
+        if (Main.rand.NextBool(10))
+            PlaceCampOnNewThread(FlagPosition);
+    }
+
+    private static void CleanUpOldCampsite(List<Point> protectedPoints, Point tentPosition, Point telescopePosition)
+    {
+        int chairID = TileID.Chairs;
+        int campfireID = ModContent.TileType<StarlitCampfireTile>();
+        for (int dx = -80; dx < 80; dx++)
+        {
+            for (int dy = -32; dy < 32; dy++)
+            {
+                Tile t = Framing.GetTileSafely(tentPosition.X + dx, tentPosition.Y + dy);
+                if (!t.HasTile)
+                    continue;
+
+                if (protectedPoints.Contains(new Point(tentPosition.X + dx, tentPosition.Y + dy)))
+                    continue;
+
+                if (t.TileType == chairID || t.TileType == campfireID)
+                    Main.tile[tentPosition.X + dx, tentPosition.Y + dy].Get<TileWallWireStateData>().HasTile = false;
+            }
+        }
+
+        if (tentPosition != Point.Zero)
+            WorldGen.KillTile(tentPosition.X, tentPosition.Y, noItem: true);
+        if (telescopePosition != Point.Zero)
+            WorldGen.KillTile(telescopePosition.X, telescopePosition.Y, noItem: true);
+
+        CampSitePosition = Vector2.Zero;
+        TentPosition = Vector2.Zero;
+        TelescopePosition = Point.Zero;
+    }
+
+    private static bool FlatTerrainExists(Point checkPoint, int width, out Point result)
+    {
+        result = Point.Zero;
+        Point p = FindGroundVertical(checkPoint);
+
+        if (Distance(p.Y, checkPoint.Y) > 25f)
             return false;
 
-        int[] protectedTileIDs = new int[]
+        int coverageCheck = (int)Math.Ceiling(width * 0.5f) + 2;
+        for (int dx = -coverageCheck; dx <= coverageCheck; dx++)
         {
-            ModContent.TileType<SolynTent>(),
-            ModContent.TileType<SolynFlagTile>(),
-            ModContent.TileType<StarlitCampfireTile>(),
-            TileID.Chairs,
-        };
-        if (protectedTileIDs.Contains(type))
-            return true;
+            Point groundCheck = FindGroundVertical(new Point(p.X + dx, p.Y));
 
-        return y >= CampSitePosition.Y / 16f - 1f;
+            // Ground is not level, return false.
+            if (groundCheck.Y != p.Y)
+                return false;
+
+            // Check if there's anything in the way.
+            if (Framing.GetTileSafely(groundCheck.X, groundCheck.Y - 1).HasTile && !TileID.Sets.BreakableWhenPlacing[Framing.GetTileSafely(groundCheck.X, groundCheck.Y - 1).TileType])
+                return false;
+        }
+
+        result = p;
+        return true;
+    }
+
+    private static bool TryToPlaceTile(Point position, int tileID, int style = 0, int direction = -1)
+    {
+        // Clear tiles like grass and small rubble.
+        Tile existingTile = Framing.GetTileSafely(position);
+        if (existingTile.HasTile && TileID.Sets.BreakableWhenPlacing[existingTile.TileType])
+            WorldGen.KillTile(position.X, position.Y);
+
+        WorldGen.PlaceObject(position.X, position.Y, tileID, false, style, 0, -1, direction);
+        bool successful = Main.tile[position].TileType == tileID;
+        return successful;
+    }
+
+    internal static void GetPlacementPositions(Point point, out Point campfirePosition, out Point telescopePosition, out Point tentPosition)
+    {
+        campfirePosition = Point.Zero;
+        tentPosition = Point.Zero;
+        telescopePosition = Point.Zero;
+        List<int> blacklistedOffsets = new List<int>();
+
+        for (int i = 0; i < 160; i++)
+        {
+            int range = i / 3 + 1;
+            int dx = range * (i % 2 == 0).ToDirectionInt();
+            Point checkPoint = new Point(point.X + dx, point.Y);
+            if (blacklistedOffsets.Contains(dx))
+                continue;
+
+            // Try to find a position for the tent.
+            if (tentPosition == Point.Zero && FlatTerrainExists(checkPoint, SolynTent.Width, out Point tentResult))
+            {
+                tentPosition = tentResult;
+                blacklistedOffsets.AddRange(Enumerable.Range(dx - SolynTent.Width / 2 - 5, SolynTent.Width + 10));
+            }
+
+            if (blacklistedOffsets.Contains(dx))
+                continue;
+
+            // Try to find a position for the campfire.
+            if (campfirePosition == Point.Zero && FlatTerrainExists(checkPoint, 4, out Point campfireResult))
+            {
+                campfirePosition = campfireResult;
+                blacklistedOffsets.AddRange(Enumerable.Range(dx - 7, 14));
+            }
+
+            if (blacklistedOffsets.Contains(dx))
+                continue;
+
+            // Try to find a position for the telescope.
+            if (telescopePosition == Point.Zero && FlatTerrainExists(checkPoint, SolynTelescopeTile.Width, out Point telescopeResult))
+            {
+                telescopePosition = telescopeResult;
+                blacklistedOffsets.AddRange(Enumerable.Range(dx - SolynTelescopeTile.Width / 2 - 5, SolynTelescopeTile.Width + 10));
+            }
+
+            if (campfirePosition != Point.Zero && tentPosition != Point.Zero && telescopePosition != Point.Zero)
+                return;
+        }
+    }
+
+    private static bool PlaceCamp(Point point, List<Point> protectedPoints, out Point telescopePosition, out Point tentPosition)
+    {
+        GetPlacementPositions(point, out Point campfirePosition, out telescopePosition, out tentPosition);
+        if (tentPosition == Point.Zero || campfirePosition == Point.Zero || telescopePosition == Point.Zero)
+            return false;
+
+        // Try to place the tent.
+        int tentID = ModContent.TileType<SolynTent>();
+        List<Point> placedTilesSoFar = new List<Point>();
+        if (TryToPlaceTile(tentPosition, tentID))
+        {
+            TileObjectData.CallPostPlacementPlayerHook(tentPosition.X, tentPosition.Y, tentID, 0, -1, 0, default);
+            placedTilesSoFar.Add(tentPosition);
+        }
+        else
+            return false;
+
+        // Try to place the telescope.
+        // If it fails, delete everything made so far.
+        int telescopeID = ModContent.TileType<SolynTelescopeTile>();
+        if (TryToPlaceTile(telescopePosition, telescopeID))
+        {
+            TileObjectData.CallPostPlacementPlayerHook(telescopePosition.X, telescopePosition.Y, telescopeID, 0, -1, 0, default);
+            placedTilesSoFar.Add(telescopePosition);
+        }
+        else
+        {
+            foreach (Point p in placedTilesSoFar)
+                WorldGen.KillTile(p.X, p.Y);
+            return false;
+        }
+
+        // Try to place the campfire.
+        // If it fails, delete everything made so far.
+        if (TryToPlaceTile(campfirePosition, ModContent.TileType<StarlitCampfireTile>(), 0, -1))
+        {
+            int spacing = 4;
+            if (TryToPlaceTile(FindGroundVertical(new Point(campfirePosition.X - spacing, campfirePosition.Y)), TileID.Chairs, 27, 1))
+                protectedPoints.Add(new Point(campfirePosition.X - spacing, campfirePosition.Y));
+
+            if (TryToPlaceTile(FindGroundVertical(new Point(campfirePosition.X + spacing, campfirePosition.Y)), TileID.Chairs, 27, -1))
+                protectedPoints.Add(new Point(campfirePosition.X + spacing, campfirePosition.Y));
+
+            for (int dx = -1; dx <= 1; dx++)
+            {
+                for (int dy = -2; dy <= 0; dy++)
+                    protectedPoints.Add(new Point(campfirePosition.X + dx, campfirePosition.Y + dy));
+            }
+        }
+        else
+        {
+            foreach (Point p in placedTilesSoFar)
+                WorldGen.KillTile(p.X, p.Y);
+            return false;
+        }
+
+        return true;
+    }
+
+    public static void PlaceCampOnNewThread(Point point)
+    {
+        if (generating)
+            return;
+
+        new Thread(p =>
+        {
+            if (p is not Point pointParameter)
+                return;
+
+            generating = true;
+            try
+            {
+                Point oldTentPosition = new Point((int)Round(TentPosition.X / 16f), (int)Round(TentPosition.Y / 16f));
+                Point oldTelescopePosition = TelescopePosition;
+
+                WorldGen.KillTile(TelescopePosition.X, TelescopePosition.Y);
+                List<Point> protectedPoints = new List<Point>();
+                if (PlaceCamp(pointParameter, protectedPoints, out Point telescopePosition, out Point tentPosition))
+                {
+                    // Scuffed way of ensuring that tent points don't get broken if they happened to get placed in the exact same spot.
+                    if (oldTentPosition == tentPosition)
+                        oldTentPosition = Point.Zero;
+                    if (oldTelescopePosition == telescopePosition)
+                        oldTelescopePosition = Point.Zero;
+
+                    CleanUpOldCampsite(protectedPoints, oldTentPosition, oldTelescopePosition);
+                    TelescopePosition = telescopePosition;
+                    TentPosition = tentPosition.ToWorldCoordinates(8f, -8f);
+                    CampSitePosition = point.ToWorldCoordinates();
+
+                    bool telescopeIsRepaired = ModContent.GetInstance<StargazingEvent>().Finished;
+                    if (telescopeIsRepaired)
+                    {
+                        foreach (TileEntity te in TileEntity.ByID.Values)
+                        {
+                            if (te is TESolynTelescope telescope)
+                                telescope.IsRepaired = true;
+                        }
+                    }
+                }
+            }
+            finally
+            {
+                generating = false;
+            }
+        }).Start(point);
     }
 
     private static void DisableSpawnsNearCampsite(Player player, ref int spawnRate, ref int maxSpawns)
     {
-        if (CampSitePosition != Vector2.Zero && player.WithinRange(CampSitePosition, UnbreakableRadius * 1.2f))
+        if (CampSitePosition != Vector2.Zero && player.WithinRange(CampSitePosition, 884f))
         {
             spawnRate = int.MaxValue;
             maxSpawns = 0;
         }
-    }
-
-    private void MakeTombsDisappearInProtectedSpot(int x, int y, int type, bool closer)
-    {
-        if (type == TileID.Tombstones && MakeCampsiteUnbreakable(x, y, type))
-            Main.tile[x, y].Get<TileWallWireStateData>().HasTile = false;
     }
 
     public override void OnWorldLoad()
@@ -545,6 +396,7 @@ public class SolynCampsiteWorldGen : ModSystem
         CampSitePosition = Vector2.Zero;
         TelescopePosition = Point.Zero;
         TentPosition = Vector2.Zero;
+        FlagPosition = Point.Zero;
     }
 
     public override void OnWorldUnload()
@@ -552,6 +404,7 @@ public class SolynCampsiteWorldGen : ModSystem
         CampSitePosition = Vector2.Zero;
         TelescopePosition = Point.Zero;
         TentPosition = Vector2.Zero;
+        FlagPosition = Point.Zero;
     }
 
     public override void SaveWorldData(TagCompound tag)
@@ -562,6 +415,8 @@ public class SolynCampsiteWorldGen : ModSystem
         tag["TelescopePositionY"] = TelescopePosition.Y;
         tag["TentPositionX"] = TentPosition.X;
         tag["TentPositionY"] = TentPosition.Y;
+        tag["FlagPositionX"] = FlagPosition.X;
+        tag["FlagPositionY"] = FlagPosition.Y;
     }
 
     public override void LoadWorldData(TagCompound tag)
@@ -586,6 +441,13 @@ public class SolynCampsiteWorldGen : ModSystem
         if (tag.TryGet("TentPositionY", out float tentY))
             tentPosition.Y = tentY;
         TentPosition = tentPosition;
+
+        Point flagPosition = Point.Zero;
+        if (tag.TryGet("FlagPositionX", out int flagX))
+            flagPosition.X = flagX;
+        if (tag.TryGet("FlagPositionY", out int flagY))
+            flagPosition.Y = flagY;
+        FlagPosition = flagPosition;
     }
 
     public override void NetSend(BinaryWriter writer)
@@ -593,6 +455,7 @@ public class SolynCampsiteWorldGen : ModSystem
         writer.WriteVector2(CampSitePosition);
         writer.WriteVector2(TelescopePosition.ToVector2());
         writer.WriteVector2(TentPosition);
+        writer.WriteVector2(FlagPosition.ToVector2());
     }
 
     public override void NetReceive(BinaryReader reader)
@@ -600,6 +463,7 @@ public class SolynCampsiteWorldGen : ModSystem
         CampSitePosition = reader.ReadVector2();
         TelescopePosition = reader.ReadVector2().ToPoint();
         TentPosition = reader.ReadVector2();
+        FlagPosition = reader.ReadVector2().ToPoint();
     }
 
     private bool DisallowMeteorsDestroyingTheCampsite(On_WorldGen.orig_meteor orig, int i, int j, bool ignorePlayers)

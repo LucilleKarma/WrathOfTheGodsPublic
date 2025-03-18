@@ -39,6 +39,9 @@ public partial class NamelessDeityBoss : ModNPC
         NPC.velocity = Vector2.Zero;
         NPC.dontTakeDamage = true;
 
+        // To ensure that Nycro's nohit mod doesn't count this cutscene version of Nameless as a boss, disable the boss flag.
+        NPC.boss = false;
+
         if (AvatarOfEmptiness.Myself.As<AvatarOfEmptiness>().CurrentState == AvatarOfEmptiness.AvatarAIType.ParadiseReclaimed_NamelessDispelsStatic)
         {
             ZPosition = EasingCurves.Quartic.Evaluate(EasingType.InOut, 0f, 3f, Pow(InverseLerp(120f, 0f, AITimer), 0.75f));

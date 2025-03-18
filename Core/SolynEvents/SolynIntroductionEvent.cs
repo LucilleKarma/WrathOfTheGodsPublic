@@ -40,8 +40,8 @@ public class SolynIntroductionEvent : SolynEvent
 
     public override void PostUpdateNPCs()
     {
-        // Register this event as completed once Solyn has gone to sleep for the night.
-        if (Solyn is not null && Solyn.CurrentState == SolynAIType.Eepy)
+        // Register this event as completed once Solyn has existed for long enough.
+        if (Solyn is not null && Solyn.TimeSinceLastTalk >= 900 && Stage <= 0)
             Stage = 1;
     }
 }

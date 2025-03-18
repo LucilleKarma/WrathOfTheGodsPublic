@@ -118,7 +118,7 @@ public class RiftEclipseFogEventManager : ModSystem
     /// <summary>
     /// How long the game has to wait before the fog can happen again, so that it doesn't (albeit very rarely) happen shortly after a previous fog event.
     /// </summary>
-    public static readonly int FogRestartDelay = MinutesToFrames(10f);
+    public static readonly int FogRestartDelay = MinutesToFrames(240f);
 
     public override void OnModLoad()
     {

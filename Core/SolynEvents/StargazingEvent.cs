@@ -2,6 +2,7 @@
 using Luminance.Core.Graphics;
 using NoxusBoss.Content.Items;
 using NoxusBoss.Content.NPCs.Friendly;
+using NoxusBoss.Content.Tiles.TileEntities;
 using NoxusBoss.Core.DialogueSystem;
 using NoxusBoss.Core.World.GameScenes.Stargazing;
 using NoxusBoss.Core.World.Subworlds;
@@ -57,7 +58,7 @@ public class StargazingEvent : SolynEvent
         DialogueManager.FindByRelativePrefix("StargazeQuestSawRift").GetByRelativeKey("Talk8").ClickAction += seenBefore =>
         {
             if (!seenBefore)
-                Main.LocalPlayer.QuickSpawnItem(new EntitySource_WorldEvent(), ModContent.ItemType<StarCharm>());
+                DialogueSaveSystem.GiveItemToPlayer<StarCharm>(Main.LocalPlayer);
         };
         DialogueManager.FindByRelativePrefix("StargazeQuestSawRift").GetByRelativeKey("Talk10").EndAction += seenBefore =>
         {
@@ -70,6 +71,15 @@ public class StargazingEvent : SolynEvent
 
     public override void PostUpdateNPCs()
     {
+        if (Stage == 0)
+        {
+            foreach (TileEntity te in TileEntity.ByID.Values)
+            {
+                if (te is TESolynTelescope telescope && telescope.IsRepaired)
+                    SafeSetStage(1);
+            }
+        }
+
         if (Stage >= 1 && !Finished && Solyn is not null)
         {
             if (Solyn.CurrentState != SolynAIType.PuppeteeredByQuest)

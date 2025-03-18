@@ -1,4 +1,5 @@
-﻿using NoxusBoss.Core.SolynEvents;
+﻿using NoxusBoss.Core.DialogueSystem;
+using NoxusBoss.Core.SolynEvents;
 using NoxusBoss.Core.World.WorldGeneration;
 using Terraria;
 using Terraria.ID;
@@ -30,6 +31,10 @@ public class SolynQuestResetter : DebugItem
         foreach (SolynEvent solynEvent in ModContent.GetContent<SolynEvent>())
             solynEvent.Stage = 0;
 
+        DialogueSaveSystem.seenDialogue.Clear();
+        DialogueSaveSystem.clickedDialogue.Clear();
+        DialogueSaveSystem.givenItems.Clear();
+        MarsCombatEvent.HasSpokenToDraedonBefore = false;
         PermafrostKeepWorldGen.PlayerGivenKey = false;
         p.GetValueRef<bool>(PermafrostKeepWorldGen.PlayerWasGivenKeyVariableName).Value = false;
         return null;

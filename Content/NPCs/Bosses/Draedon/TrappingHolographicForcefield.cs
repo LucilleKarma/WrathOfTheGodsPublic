@@ -177,7 +177,7 @@ public class TrappingHolographicForcefield : ModNPC
 
         Color forcefieldColor = new Color(70, 174, 255).HueShift(Convert01To010(InverseLerp(0f, FadeInTime, Time)) * -0.08f);
         Vector2 drawPosition = NPC.Center - Main.screenPosition;
-        Main.spriteBatch.Draw(WhitePixel, drawPosition, null, NPC.GetAlpha(forcefieldColor), NPC.rotation, WhitePixel.Size() * 0.5f, forcefieldScale, 0, 0f);
+        Main.spriteBatch.Draw(WhitePixel, drawPosition, null, NPC.GetAlpha(forcefieldColor) * 0.6f, NPC.rotation, WhitePixel.Size() * 0.5f, forcefieldScale, 0, 0f);
 
         Main.spriteBatch.ResetToDefault();
     }

@@ -60,6 +60,7 @@ TelescopeRepairFailText: Insufficient materials for repair!
 AvatarPlayerDeathText: You have perished.
 PermafrostKeepMapIconText: Mysterious Keep
 SummonMarsButtonText: Summon (Mars)
+SummonMarsButtonTextInitial: Summon (Solyn Quest)
 
 SolynDraedonInteraction: {
 	Draedon1: Hmm! My esteemed test subject once again initiates contact, this time alongside their partner.

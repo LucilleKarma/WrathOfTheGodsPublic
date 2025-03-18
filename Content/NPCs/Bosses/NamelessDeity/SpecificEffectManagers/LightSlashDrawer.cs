@@ -57,7 +57,8 @@ public class LightSlashDrawer : ModSystem
         if (!anySlashes && ContinueRenderingCountdown <= 0)
             return;
 
-        ContinueRenderingCountdown = 30;
+        if (anySlashes)
+            ContinueRenderingCountdown = 30;
 
         var gd = Main.instance.GraphicsDevice;
 

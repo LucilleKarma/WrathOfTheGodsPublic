@@ -48,13 +48,13 @@ float4 PixelShaderFunction(float4 sampleColor : COLOR0, float2 coords : TEXCOORD
     float4 bottom = PixelOffsetColor(coords, float2(0, 2));
     
     // Make pixel black by default.
-    color *= float4(uSaturation, uSaturation, uSaturation, 1);
+    color *= float4(0.06, 0.06, 0.06, 1);
     
     // Make colors that neighbor an invisible pixel red.
     float redInterpolant = saturate((left.a <= 0) + (right.a <= 0) + (top.a <= 0) + (bottom.a <= 0));
     
     // Combine colors.
-    return lerp(color, float4(uColor, 1) * color.a * sampleColor.a, redInterpolant);
+    return lerp(color, float4(0.64, 0, 0.16, 1) * color.a * sampleColor.a, redInterpolant);
 }
 
 technique Technique1

@@ -12,7 +12,6 @@ using NoxusBoss.Core.World.Subworlds;
 using SubworldLibrary;
 using Terraria;
 using Terraria.Audio;
-using Terraria.DataStructures;
 using Terraria.ModLoader;
 using Terraria.ModLoader.IO;
 
@@ -104,12 +103,16 @@ public class AntiseedEvent : SolynEvent
         DialogueManager.FindByRelativePrefix("CeaselessVoidDiscussionAfterEnteringRift").GetByRelativeKey("Conversation6").ClickAction = seenBefore =>
         {
             if (!seenBefore)
-                Main.LocalPlayer.QuickSpawnItem(new EntitySource_WorldEvent(), ModContent.ItemType<TheAntiseed>());
+                DialogueSaveSystem.GiveItemToPlayer<TheAntiseed>(Main.LocalPlayer);
         };
         DialogueManager.FindByRelativePrefix("CeaselessVoidDiscussionAfterEnteringRift").GetByRelativeKey("Conversation7").EndAction = seenBefore =>
         {
             SafeSetStage(6);
             Solyn?.SwitchState(SolynAIType.WaitToTeleportHome);
+
+            // Desperation.
+            if (!DialogueSaveSystem.ItemHasBeenGiven<TheAntiseed>())
+                DialogueSaveSystem.GiveItemToPlayer<TheAntiseed>(Main.LocalPlayer);
         };
 
         ConversationSelector.PriorityConversationSelectionEvent += SelectAntiseedDialogue;
@@ -147,7 +150,7 @@ public class AntiseedEvent : SolynEvent
 
     public override void PostUpdateEverything()
     {
-        if (Stage == 0 && CommonCalamityVariables.CeaselessVoidDefeated && DialogueManager.FindByRelativePrefix("CeaselessVoidDiscussionBeforeBattle").SeenBefore("Conversation9"))
+        if (Stage == 0 && CommonCalamityVariables.CeaselessVoidDefeated && DialogueManager.FindByRelativePrefix("CeaselessVoidDiscussionBeforeBattle").SeenBefore("Conversation9") && CanStart)
             SafeSetStage(1);
 
         // No.

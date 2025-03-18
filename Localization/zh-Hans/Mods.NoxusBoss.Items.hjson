@@ -74,7 +74,7 @@ GoodApple: {
 }
 
 GoodAppleResetter: {
-	DisplayName: Good Apple重置器[DEBUG]
+	DisplayName: Good Apple重置器（DEBUG）
 	Tooltip: ""
 }
 
@@ -145,7 +145,7 @@ NoxiousEvocator: {
 }
 
 RiftEclipseToggler: {
-	DisplayName: 裂隙日食启动器[DEBUG]
+	DisplayName: 裂隙日食启动器（DEBUG）
 	Tooltip: ""
 }
 
@@ -285,7 +285,7 @@ StarKite: {
 }
 
 SolynDialogueResetter: {
-	DisplayName: 索琳对话重置器[DEBUG]
+	DisplayName: 索琳对话重置器（DEBUG）
 	Tooltip: ""
 }
 
@@ -351,12 +351,12 @@ WrathOfTheGods: {
 }
 
 SolynFollowSpawner: {
-	DisplayName: 索琳同伴生成器[DEBUG]
+	DisplayName: 索琳同伴生成器（DEBUG）
 	Tooltip: ""
 }
 
 SolynDeleter: {
-	DisplayName: 索琳删除器[DEBUG]
+	DisplayName: 索琳删除器（DEBUG）
 	Tooltip: ""
 }
 
@@ -402,22 +402,22 @@ CinnamonRollyn: {
 }
 
 SolynTentSpawner: {
-	DisplayName: 索琳帐篷生成器[DEBUG]
+	DisplayName: 索琳帐篷生成器（DEBUG）
 	Tooltip: ""
 }
 
 NamelessDeityDeathToggler: {
-	DisplayName: 无名光神击败设置器[DEBUG]
+	DisplayName: 无名光神击败设置器（DEBUG）
 	Tooltip: ""
 }
 
 AvatarDeathToggler: {
-	DisplayName: 虚无化身击败设置器[DEBUG]
+	DisplayName: 虚无化身击败设置器（DEBUG）
 	Tooltip: ""
 }
 
 EasyAvatarSummoner: {
-	DisplayName: 虚无化身简易召唤器[DEBUG]
+	DisplayName: 虚无化身简易召唤器（DEBUG）
 	Tooltip: 开启暗之裂隙
 	AlternateTooltip: 左键点击以召唤暗之裂隙的第二阶段，右键点击以召唤第一阶段
 }
@@ -513,7 +513,7 @@ DormantKey: {
 }
 
 SolynQuestResetter: {
-	DisplayName: 索琳任务重置器[DEBUG]
+	DisplayName: 索琳任务重置器（DEBUG）
 	Tooltip: 将所有索琳任务的状态重置为默认，将其标记为不在进行且未被完成
 }
 
@@ -598,17 +598,17 @@ StaffOfRejuvenation: {
 
 AvatarRiftMusicBox: {
 	DisplayName: 音乐盒（虚无化身之裂隙）
-	Tooltip: 播放“Static” 作者：ENNWAY!
+	Tooltip: 播放“PARADISE PARASITE” 作者：ENNWAY!
 }
 
 AvatarOfEmptinessP2MusicBox: {
 	DisplayName: 音乐盒（虚无化身第二阶段）
-	Tooltip: 播放“Paradise Parasite” 作者：ENNWAY!
+	Tooltip: 播放“PARADISE PARASITE” 作者：ENNWAY!
 }
 
 AvatarOfEmptinessP3MusicBox: {
 	DisplayName: 音乐盒（虚无化身第三阶段）
-	Tooltip: 播放“Paradise Parasite” 作者：ENNWAY!
+	Tooltip: 播放“PARADISE PARASITE” 作者：ENNWAY!
 }
 
 MarsMusicBox: {
@@ -618,11 +618,11 @@ MarsMusicBox: {
 
 NilkSongMusicBox: {
 	DisplayName: 音乐盒（谬奶）
-	Tooltip: 播放“The Nilk Song” 作者：ENNWAY!
+	Tooltip: 播放“2%” 作者：ENNWAY!
 }
 
 HemolacriaMusicBox: {
-	DisplayName: 音乐盒（裂隙天蚀之血月）
+	DisplayName: 音乐盒（血之天蚀）
 	Tooltip: 播放“Hemolacria” 作者：Moonburn
 }
 
@@ -657,7 +657,7 @@ SvalbardMusicBox: {
 }
 
 StellarRequiemMusicBox: {
-	DisplayName: 音乐盒（伤怀帐营） (Wistful Campsite)
+	DisplayName: 音乐盒（伤怀帐营）
 	Tooltip: 播放“Stellar Requiem” 作者：Moonburn
 }
 
@@ -752,7 +752,7 @@ FuturisticTreatise: {
 
 HowToFly: {
 	DisplayName: 《如何飞行》
-	ObtainmentHint: "[c/F79BC6:你可以在天空中找到这本书]"
+	ObtainmentHint: "[c/F79BC6:你可以在高速飞行时得到这本书]"
 	Tooltip:
 		'''
 		第一页是这样写的：
@@ -1050,7 +1050,7 @@ Otherworldly3: {
 }
 
 Otherworldly4: {
-	DisplayName: 《异界巨著 卷VI》
+	DisplayName: 《异界巨著 卷IV》
 	ObtainmentHint: "[c/F79BC6:我想自己找到这本书]"
 	Tooltip:
 		'''
@@ -1087,7 +1087,7 @@ SanguineWildlife: {
 
 SeamapCollection: {
 	DisplayName: 《海洋地图册》
-	ObtainmentHint: "[c/F79BC6:这本书有时可以在海岸线附近找到]"
+	ObtainmentHint: "[c/F79BC6:这本书是一位海盗船长的私藏]"
 	Tooltip:
 		'''
 		一个各种海洋地图的集锦，有一些看起来像藏宝图的标记
@@ -1136,7 +1136,7 @@ WulfrumAssemblyGuide: {
 }
 
 WorldUpdater: {
-	DisplayName: 世界版本更新器[DEBUG]
+	DisplayName: 世界版本更新器（DEBUG）
 	Tooltip:
 		'''
 		修改世界的基础版本数据，使其符合版本
@@ -1145,7 +1145,7 @@ WorldUpdater: {
 }
 
 SolynBookshelfResetter: {
-	DisplayName: 索琳书架重置器[DEBUG]
+	DisplayName: 索琳书架重置器（DEBUG）
 	Tooltip: 重置索琳书架上的所有书，包括所有未获得的奖励
 }
 
@@ -1180,11 +1180,23 @@ ParadiseDye: {
 }
 
 SolynQuestSkipper: {
-	DisplayName: 索琳任务跳过器[DEBUG]
+	DisplayName: 索琳任务跳过器（DEBUG）
 	Tooltip: 将索琳的所有任务标记为已完成，以允许你立即激活起源花
 }
 
 SolynTelescopeResetter: {
-	DisplayName: 索琳望远镜重置器[DEBUG]
+	DisplayName: 索琳望远镜重置器（DEBUG）
 	Tooltip: 恢复索琳望远镜的状态，以允许你重新修复它
+}
+
+StrangeFlagpole: {
+	DisplayName: 异界旗杆
+	Tooltip:
+		'''
+		用于为索琳选择露营地位置
+		请确保旗杆附近的地域开阔且平整，否则营帐将不能成功搭设
+		放置此旗杆可以显示周围的空间是否足够平整空旷
+		'''
+	NotFlatEnoughText: 附近的空间可能不够平整或者不够空旷！
+	FlatEnoughText: 这片空间很合适。
 }

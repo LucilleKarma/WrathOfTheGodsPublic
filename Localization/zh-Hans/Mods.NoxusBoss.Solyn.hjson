@@ -14,6 +14,15 @@ SolynIntroduction: {
 	Repeat: ……
 }
 
+SolynTentSetUpDialogue: {
+	Start: 哦，又是你。你好啊。
+	Solyn1: 也许……有点冒昧，不过你能帮我个忙吗？
+	Player1: 好啊。有什么我能帮你的？
+	Solyn2: 谢谢。
+	Solyn3: 你也看得出来，我……现在没有住处。^ 我希望你帮我找个开阔的好地方，然后插上这根旗杆。
+	Solyn4: 你找好了，我就会在附近搭一个露营帐篷。
+}
+
 SolynDawnDialogue: {
 	Start: 早上好！^新的一天，新的冒险。
 	Player1: 这就有点……浮夸了，索琳。

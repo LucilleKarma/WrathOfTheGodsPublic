@@ -3,10 +3,12 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using NoxusBoss.Content.Tiles.SolynCampsite;
 using NoxusBoss.Content.Tiles.TileEntities;
+using NoxusBoss.Core.Graphics.RenderTargets;
 using NoxusBoss.Core.Graphics.SpecificEffectManagers;
 using NoxusBoss.Core.World.TileDisabling;
 using Terraria;
 using Terraria.GameContent;
+using Terraria.ID;
 using Terraria.ModLoader;
 using Terraria.ObjectData;
 
@@ -36,16 +38,7 @@ public class SolynTentInteriorRenderer : ModSystem
     /// <summary>
     /// The render target that houses all tent contents.
     /// </summary>
-    public static ManagedRenderTarget TentTarget
-    {
-        get;
-        private set;
-    }
-
-    /// <summary>
-    /// The render target that houses all frontal tent contents.
-    /// </summary>
-    public static ManagedRenderTarget TentFrontTarget
+    public static InstancedRequestableTarget TentTarget
     {
         get;
         private set;
@@ -58,10 +51,15 @@ public class SolynTentInteriorRenderer : ModSystem
 
     public override void OnModLoad()
     {
-        TentTarget = new(true, ManagedRenderTarget.CreateScreenSizedTarget);
-        TentFrontTarget = new(true, ManagedRenderTarget.CreateScreenSizedTarget);
+        if (Main.netMode != NetmodeID.Server)
+        {
+            TentTarget = new InstancedRequestableTarget();
+            Main.ContentThatNeedsRenderTargets.Add(TentTarget);
+        }
+
         On_Main.DrawRain += DrawTentOverlayWrapper;
-        RenderTargetManager.RenderTargetUpdateLoopEvent += RenderToTentTarget;
+        RenderTargetManager.RenderTargetUpdateLoopEvent += RenderToTentTargetA;
+        RenderTargetManager.RenderTargetUpdateLoopEvent += RenderToTentTargetB;
     }
 
     public override void OnWorldLoad() => OutsideDarkness = 0f;
@@ -86,19 +84,20 @@ public class SolynTentInteriorRenderer : ModSystem
         if (cutsceneActive && SolynTentVisualCutsceneManager.CutsceneTarget.TryGetTarget(0, out RenderTarget2D? cutsceneTarget) && cutsceneTarget is not null)
             outsideZoneTexture = cutsceneTarget;
 
-        if (OutsideDarkness > 0f)
+        TentTarget.Request(Main.screenWidth, Main.screenHeight, 0, RenderToTentTargetA);
+        if (OutsideDarkness > 0f && TentTarget.TryGetTarget(0, out RenderTarget2D? backTentTarget) && backTentTarget is not null)
         {
             ManagedScreenFilter overlayShader = ShaderManager.GetFilter("NoxusBoss.SolynTentInteriorOverlayShader");
             overlayShader.TrySetParameter("darkness", OutsideDarkness);
             overlayShader.TrySetParameter("zoom", Main.GameViewMatrix.Zoom);
             overlayShader.TrySetParameter("screenOffset", (Main.screenPosition - Main.screenLastPosition) / Main.ScreenSize.ToVector2());
-            overlayShader.SetTexture(TentTarget, 1, SamplerState.PointClamp);
+            overlayShader.SetTexture(backTentTarget, 1, SamplerState.PointClamp);
             overlayShader.SetTexture(outsideZoneTexture, 2, SamplerState.PointClamp);
             overlayShader.Activate();
         }
     }
 
-    private void RenderToTentTarget()
+    private void RenderToTentTargetA()
     {
         if (Main.gameMenu)
             return;
@@ -110,10 +109,6 @@ public class SolynTentInteriorRenderer : ModSystem
         }
 
         CloseToTentTimer--;
-
-        GraphicsDevice gd = Main.instance.GraphicsDevice;
-        gd.SetRenderTarget(TentTarget);
-        gd.Clear(Color.Transparent);
 
         Main.spriteBatch.Begin();
 
@@ -133,9 +128,12 @@ public class SolynTentInteriorRenderer : ModSystem
         });
 
         Main.spriteBatch.End();
+    }
 
-        gd.SetRenderTarget(TentFrontTarget);
-        gd.Clear(Color.Transparent);
+    private void RenderToTentTargetB()
+    {
+        if (Main.gameMenu || CloseToTentTimer <= 0)
+            return;
 
         Main.spriteBatch.Begin();
 
@@ -204,9 +202,15 @@ public class SolynTentInteriorRenderer : ModSystem
         if (TileDisablingSystem.TilesAreUninteractable || CloseToTentTimer <= 0)
             return;
 
-        Main.spriteBatch.Draw(TentTarget, Main.screenLastPosition - Main.screenPosition, Color.White * (1f - OutsideDarkness));
+        TentTarget.Request(Main.screenWidth, Main.screenHeight, 0, RenderToTentTargetA);
+        if (TentTarget.TryGetTarget(0, out RenderTarget2D? backTentTarget) && backTentTarget is not null)
+            Main.spriteBatch.Draw(backTentTarget, Main.screenLastPosition - Main.screenPosition, Color.White * (1f - OutsideDarkness));
+
         SpecialLayeringSystem.EmptyDrawCache_NPC(SpecialLayeringSystem.DrawCacheOverTent);
-        Main.spriteBatch.Draw(TentFrontTarget, Main.screenLastPosition - Main.screenPosition, Color.White * (1f - OutsideDarkness));
+
+        TentTarget.Request(Main.screenWidth, Main.screenHeight, 1, RenderToTentTargetB);
+        if (TentTarget.TryGetTarget(1, out RenderTarget2D? frontTentTarget) && frontTentTarget is not null)
+            Main.spriteBatch.Draw(frontTentTarget, Main.screenLastPosition - Main.screenPosition, Color.White * (1f - OutsideDarkness));
         DrawTreeRopes();
     }
 }

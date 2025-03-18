@@ -4,6 +4,7 @@ using NoxusBoss.Content.NPCs.Friendly;
 using NoxusBoss.Core.CrossCompatibility.Inbound;
 using NoxusBoss.Core.World.WorldGeneration;
 using NoxusBoss.Core.World.WorldSaving;
+using SubworldLibrary;
 using Terraria;
 using Terraria.DataStructures;
 using Terraria.GameContent.Events;
@@ -20,6 +21,10 @@ public class RandomSolynSpawnSystem : ModSystem
         {
             // She's not coming back...
             if (BossDownedSaveSystem.HasDefeated<AvatarOfEmptiness>())
+                return false;
+
+            // What?
+            if (SubworldSystem.AnyActive())
                 return false;
 
             // Obviously, Solyn cannot spawn twice.
@@ -79,7 +84,7 @@ public class RandomSolynSpawnSystem : ModSystem
     /// <summary>
     /// The chance of Solyn being able to spawn every frame.
     /// </summary>
-    public static int SpawnChancePerFrame => MinutesToFrames(0.1f);
+    public static int SpawnChancePerFrame => MinutesToFrames(0.03f);
 
     public override void OnWorldLoad() => SolynHasAppearedBefore = false;
 
@@ -97,7 +102,7 @@ public class RandomSolynSpawnSystem : ModSystem
             else if (!SolynHasAppearedBefore && ShouldSpawn)
             {
                 Player closest = Main.player[Player.FindClosest(new(Main.maxTilesX * 8, 3000f), 1, 1)];
-                bool wideOpenArea = !Collision.SolidCollision(closest.Center - new Vector2(600f, 950f), 1200, 850);
+                bool wideOpenArea = !Collision.SolidCollision(closest.Center - new Vector2(400f, 750f), 800, 650);
                 if (wideOpenArea)
                     SummonSolynAsFallingHighVelocityCelestialObjectBecauseWhyNot(closest);
             }

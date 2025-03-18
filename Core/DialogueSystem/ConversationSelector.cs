@@ -1,4 +1,6 @@
 ﻿using NoxusBoss.Content.NPCs.Friendly;
+using NoxusBoss.Core.World.Subworlds;
+using SubworldLibrary;
 using Terraria;
 
 namespace NoxusBoss.Core.DialogueSystem;
@@ -37,6 +39,13 @@ public static class ConversationSelector
 
     private static void CheckForPriorityConversations(Solyn solyn)
     {
+        // Special case: Solyn needs to select the garden dialogue in the garden subworld.
+        if (SubworldSystem.IsActive<EternalGardenNew>())
+        {
+            solyn.CurrentConversation = DialogueManager.FindByRelativePrefix("PostNamelessDiscussion");
+            return;
+        }
+
         // Check for if there's any high priority conversations that should be used.
         Conversation? priorityConversation = null;
         foreach (Delegate d in PriorityConversationSelectionEvent.GetInvocationList())
@@ -79,7 +88,8 @@ public static class ConversationSelector
 
     private static void CheckForRerolls(Solyn solyn)
     {
-        if (solyn.CurrentConversation.RerollCondition())
+        bool beingSpokenTo = (Main.LocalPlayer.talkNPC == solyn.NPC.whoAmI && solyn.CanBeSpokenTo) || solyn.ForcedConversation;
+        if (!beingSpokenTo && solyn.CurrentConversation.RerollCondition())
             solyn.CurrentConversation = ChooseRandomSolynConversation(solyn);
     }
 

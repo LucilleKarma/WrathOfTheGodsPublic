@@ -222,7 +222,7 @@ NamelessDeityMask: {
 
 NamelessDeityMusicBox: {
 	DisplayName: Music Box (Nameless Deity)
-	Tooltip: Plays 'Twisted Garden' by Heart Plus Up! and ENNWAY!
+	Tooltip: Plays 'TWISTED GARDEN' by Heart Plus Up! and ENNWAY!
 }
 
 NamelessDeityMusicBoxP3: {
@@ -598,17 +598,17 @@ StaffOfRejuvenation: {
 
 AvatarRiftMusicBox: {
 	DisplayName: Music Box (Avatar of Emptiness Rift)
-	Tooltip: Plays 'Static' by ENNWAY!
+	Tooltip: Plays 'PARADISE PARASITE' by ENNWAY!
 }
 
 AvatarOfEmptinessP2MusicBox: {
 	DisplayName: Music Box (Avatar of Emptiness - Phase 2)
-	Tooltip: Plays 'Paradise Parasite' by ENNWAY!
+	Tooltip: Plays 'PARADISE PARASITE' by ENNWAY!
 }
 
 AvatarOfEmptinessP3MusicBox: {
 	DisplayName: Music Box (Avatar of Emptiness - Phase 3)
-	Tooltip: Plays 'Paradise Parasite' by ENNWAY!
+	Tooltip: Plays 'PARADISE PARASITE' by ENNWAY!
 }
 
 MarsMusicBox: {
@@ -618,11 +618,11 @@ MarsMusicBox: {
 
 NilkSongMusicBox: {
 	DisplayName: Music Box (Nilk)
-	Tooltip: Plays 'The Nilk Song' by ENNWAY!
+	Tooltip: Plays '2%' by ENNWAY!
 }
 
 HemolacriaMusicBox: {
-	DisplayName: Music Box (Rift Eclipse Blood Moon)
+	DisplayName: Music Box (Blood Eclipse)
 	Tooltip: Plays 'Hemolacria' by Moonburn
 }
 
@@ -752,7 +752,7 @@ FuturisticTreatise: {
 
 HowToFly: {
 	DisplayName: How To Fly
-	ObtainmentHint: "[c/F79BC6:You may find this book amidst the skies]"
+	ObtainmentHint: "[c/F79BC6:You may receive this book when flying at high speeds]"
 	Tooltip:
 		'''
 		The first page says the following:
@@ -1050,7 +1050,7 @@ Otherworldly3: {
 }
 
 Otherworldly4: {
-	DisplayName: Otherworldly Tome VI
+	DisplayName: Otherworldly Tome IV
 	ObtainmentHint: "[c/F79BC6:I'll try to find this one on my own]"
 	Tooltip:
 		'''
@@ -1087,7 +1087,7 @@ SanguineWildlife: {
 
 SeamapCollection: {
 	DisplayName: Seamap Collection
-	ObtainmentHint: "[c/F79BC6:This book may at times be found near the shoreline]"
+	ObtainmentHint: "[c/F79BC6:This book may be found in the possession of a pirate captain]"
 	Tooltip:
 		'''
 		A catalogued collection of various seamaps, with markers seemingly indicating treasure
@@ -1187,4 +1187,16 @@ SolynQuestSkipper: {
 SolynTelescopeResetter: {
 	DisplayName: Solyn Telescope Resetter (DEBUG)
 	Tooltip: Resets the state of Solyn's telescope, making it repairable again
+}
+
+StrangeFlagpole: {
+	DisplayName: Strange Flagpole
+	Tooltip:
+		'''
+		May be used to choose where Solyn will set up camp
+		Make sure that there's open, flat space near the flagpole, or the camp won't be able to appear
+		Placing this flagpole tells whether nearby space is sufficiently flat and open
+		'''
+	NotFlatEnoughText: This space is either not flat or open enough!
+	FlatEnoughText: This space is suitable.
 }

@@ -2,6 +2,7 @@
 using NoxusBoss.Core.Autoloaders.SolynBooks;
 using NoxusBoss.Core.Netcode;
 using NoxusBoss.Core.Netcode.Packets;
+using SubworldLibrary;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
@@ -50,7 +51,8 @@ public class SolynBookExchangeRegistry : ModSystem
 
     public override void OnWorldLoad()
     {
-        RedeemedBooks.Clear();
+        if (!SubworldSystem.AnyActive())
+            RedeemedBooks.Clear();
 
         List<AutoloadableSolynBook> books = SolynBookAutoloader.Books.Values.OrderBy(b => b.Data.Rarity).ThenBy(b => b.DisplayName.Value).ToList();
         if (WorldGen.crimson)
@@ -61,7 +63,11 @@ public class SolynBookExchangeRegistry : ModSystem
         ObtainableBooks = books;
     }
 
-    public override void OnWorldUnload() => RedeemedBooks.Clear();
+    public override void OnWorldUnload()
+    {
+        if (!SubworldSystem.AnyActive())
+            RedeemedBooks.Clear();
+    }
 
     /// <summary>
     /// Makes Solyn redeem a given book.

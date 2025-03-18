@@ -77,6 +77,16 @@ public class SolynTent : ModTile
         PlayerDataManager.SaveDataEvent += SaveBookshelfInteraction;
         PlayerDataManager.LoadDataEvent += LoadBookshelfInteraction;
         GlobalTileEventHandlers.IsTileUnbreakableEvent += MakeTilesBelowUnbreakable;
+        On_WorldGen.BlockBelowMakesSandFall += DisallowSandfallBeneathTent;
+    }
+
+    private bool DisallowSandfallBeneathTent(On_WorldGen.orig_BlockBelowMakesSandFall orig, int i, int j)
+    {
+        Tile t = Framing.GetTileSafely(i, j - 1);
+        if (t.TileType == Type && t.HasTile)
+            return false;
+
+        return orig(i, j);
     }
 
     private bool MakeTilesBelowUnbreakable(int x, int y, int type)

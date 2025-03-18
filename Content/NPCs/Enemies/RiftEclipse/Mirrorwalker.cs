@@ -3,6 +3,7 @@ using Luminance.Core.Graphics;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using NoxusBoss.Assets;
+using NoxusBoss.Content.NPCs.Bosses.Avatar.SecondPhaseForm;
 using NoxusBoss.Core.Graphics.GeneralScreenEffects;
 using NoxusBoss.Core.Graphics.RenderTargets;
 using NoxusBoss.Core.Graphics.SpecificEffectManagers;
@@ -72,6 +73,9 @@ public class Mirrorwalker : ModNPC
 
     public override void SetBestiary(BestiaryDatabase database, BestiaryEntry bestiaryEntry)
     {
+        int avatarID = ModContent.NPCType<AvatarOfEmptiness>();
+        bestiaryEntry.UIInfoProvider = new HighestOfMultipleUICollectionInfoProvider(new CommonEnemyUICollectionInfoProvider(ContentSamples.NpcBestiaryCreditIdsByNpcNetIds[Type], true),
+                                                                                     new CommonEnemyUICollectionInfoProvider(ContentSamples.NpcBestiaryCreditIdsByNpcNetIds[avatarID], true));
         bestiaryEntry.Info.AddRange(new IBestiaryInfoElement[]
         {
             BestiaryDatabaseNPCsPopulator.CommonTags.SpawnConditions.Biomes.Surface,

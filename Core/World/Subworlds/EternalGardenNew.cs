@@ -181,7 +181,7 @@ public class EternalGardenNew : Subworld
         HasMetNamelessDeity = savedWorldData.ContainsKey("HasMetNamelessDeity");
 
         if (savedWorldData.ContainsKey("AvatarDefeated"))
-            BossDownedSaveSystem.SetDefeatState<NamelessDeityBoss>(true);
+            BossDownedSaveSystem.SetDefeatState<AvatarOfEmptiness>(true);
         if (savedWorldData.ContainsKey("NamelessDeityDefeated"))
             BossDownedSaveSystem.SetDefeatState<NamelessDeityBoss>(true);
 
@@ -189,7 +189,8 @@ public class EternalGardenNew : Subworld
         CommonCalamityVariables.DeathModeActive = savedWorldData.ContainsKey("DeathMode");
         Main.zenithWorld = savedWorldData.ContainsKey("GFB");
 
-        WorldVersionSystem.WorldVersionText = savedWorldData.GetString("WorldVersionText");
+        if (savedWorldData.TryGet("WorldVersionText", out string version))
+            WorldVersionSystem.WorldVersionText = version;
         SolynBookExchangeRegistry.RedeemedBooks = savedWorldData.GetList<string>("RedeemedBooks").ToHashSet();
 
         NamelessDeityDeathCount = savedWorldData.GetInt("NamelessDeityDeathCount");

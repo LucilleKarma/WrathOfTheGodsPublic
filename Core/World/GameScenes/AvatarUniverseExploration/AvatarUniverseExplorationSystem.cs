@@ -84,8 +84,8 @@ public class AvatarUniverseExplorationSystem : ModSystem
         if (InAvatarUniverse)
         {
             int itemID = item.type;
-            bool mirror = itemID == ItemID.MagicMirror || itemID == ItemID.IceMirror || itemID == ItemID.CellPhone;
-            bool conch = itemID == ItemID.MagicConch || itemID == ItemID.DemonConch;
+            bool mirror = itemID == ItemID.MagicMirror || itemID == ItemID.IceMirror || itemID == ItemID.CellPhone || itemID == ItemID.Shellphone || itemID == ItemID.ShellphoneSpawn;
+            bool conch = itemID == ItemID.MagicConch || itemID == ItemID.DemonConch || itemID == ItemID.ShellphoneOcean || itemID == ItemID.ShellphoneHell;
             bool teleportPotion = itemID == ItemID.RecallPotion || itemID == ItemID.TeleportationPotion || itemID == ItemID.PotionOfReturn;
             if (mirror || conch || teleportPotion)
                 return false;

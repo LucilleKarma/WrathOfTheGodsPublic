@@ -87,7 +87,7 @@ public class SolynTagTeamBeam : ModProjectile, IProjOwnedByBoss<BattleSolyn>, IN
         }
 
         if (Time == 2f && Main.LocalPlayer.WithinRange(Projectile.Center, 3000f))
-            SoundEngine.PlaySound(GennedAssets.Sounds.Mars.SolynStarBeamFire).WithVolumeBoost(1.5f);
+            SoundEngine.PlaySound(GennedAssets.Sounds.Mars.SolynStarBeamFire).WithVolumeBoost(1.05f);
 
         AimTowardsMouse();
 

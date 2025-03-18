@@ -38,7 +38,7 @@ public class MarsCombatEvent : SolynEvent
     {
         Conversation conversation = DialogueManager.RegisterNew("DraedonBeforeCombatSimulation", "Start").
             LinkFromStartToFinish().
-            WithAppearanceCondition(instance => !CanStart).
+            WithAppearanceCondition(instance => CanStart).
             WithRerollCondition(instance => !instance.AppearanceCondition()).
             MakeSpokenByPlayer("Question1", "Question2", "Question3").
             WithRerollCondition(_ => Finished);

@@ -1,6 +1,6 @@
 EternalGardenBiome: {
-	DisplayName: Векожизный сад
-	TownNPCDialogueName: биом векожизного сада
+	DisplayName: Вечные сады
+	TownNPCDialogueName: биом вечных садов
 }
 
 DeadUniverseBiome: {

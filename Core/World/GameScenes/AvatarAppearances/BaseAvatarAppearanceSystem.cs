@@ -85,7 +85,8 @@ public abstract class BaseAvatarAppearanceSystem : ModSystem
         Player closestToSurface = Main.player[Player.FindClosest(new(Main.maxTilesX * 8f, 3000f), 1, 1)];
 
         // Perform an RNG check if the event can start.
-        bool eventCanStart = closestToSurface.ZoneForest && !AnyBosses() && Main.dayTime && !CreditsRollEvent.IsEventOngoing;
+        bool onSurface = closestToSurface.Center.Y <= Main.worldSurface * 16f - 200f;
+        bool eventCanStart = onSurface && !AnyBosses() && Main.dayTime && !CreditsRollEvent.IsEventOngoing;
         if (!eventCanStart || !Main.rand.NextBool(240))
             return;
 
