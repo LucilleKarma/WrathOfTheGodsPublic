@@ -10,7 +10,6 @@ using Terraria;
 using Terraria.GameContent;
 using Terraria.ID;
 using Terraria.ModLoader;
-using Terraria.ObjectData;
 
 namespace NoxusBoss.Core.Graphics.TentInterior;
 
@@ -121,7 +120,7 @@ public class SolynTentInteriorRenderer : ModSystem
             int frameY = t.TileFrameY;
 
             Vector2 drawPosition = new Vector2(x * 16, y * 16) - Main.screenPosition;
-            drawPosition.Y += TileObjectData.GetTileData(t).DrawYOffset;
+            drawPosition.Y += SolynTent.DrawYOffset;
             Color lightColor = Lighting.GetColor(x, y);
 
             Main.spriteBatch.Draw(tentTexture, drawPosition, new(frameX, frameY, 16, 16), lightColor, 0f, Vector2.Zero, 1f, 0, 0f);
@@ -145,7 +144,7 @@ public class SolynTentInteriorRenderer : ModSystem
             int frameY = t.TileFrameY;
 
             Vector2 drawPosition = new Vector2(x * 16, y * 16) - Main.screenPosition;
-            drawPosition.Y += TileObjectData.GetTileData(t).DrawYOffset;
+            drawPosition.Y += SolynTent.DrawYOffset;
             Color lightColor = Lighting.GetColor(x, y);
 
             Main.spriteBatch.Draw(tentFrontTexture, drawPosition, new(frameX, frameY, 16, 16), lightColor, 0f, Vector2.Zero, 1f, 0, 0f);

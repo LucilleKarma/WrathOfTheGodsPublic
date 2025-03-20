@@ -205,7 +205,7 @@ public class SolynTelescopeTile : ModTile
             baseTexture = PlatinumBaseTexture.Value;
 
         Vector2 drawOffset = Main.drawToScreen ? Vector2.Zero : new Vector2(Main.offScreenRange);
-        drawOffset.Y += TileObjectData.GetTileData(t).DrawYOffset;
+        drawOffset.Y += 2;
 
         Vector2 drawPosition = new Vector2(i * 16 - Main.screenPosition.X, j * 16 - Main.screenPosition.Y) + drawOffset;
         Color lightColor = Lighting.GetColor(i, j);

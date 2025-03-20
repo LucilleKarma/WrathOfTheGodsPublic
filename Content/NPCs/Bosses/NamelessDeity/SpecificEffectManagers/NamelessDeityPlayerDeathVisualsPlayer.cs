@@ -94,7 +94,9 @@ public class NamelessDeityPlayerDeathVisualsPlayer : ModPlayer
             Lighting.AddLight(player.Player.Center, Vector3.One);
 
             // Draw the player to the screenshot target.
+            Main.spriteBatch.Begin();
             Main.PlayerRenderer.DrawPlayer(Main.Camera, player.Player, player.Player.position, 0f, player.Player.fullRotationOrigin);
+            Main.spriteBatch.End();
 
             // Reset the player's position.
             player.Player.position = oldPlayerPosition;

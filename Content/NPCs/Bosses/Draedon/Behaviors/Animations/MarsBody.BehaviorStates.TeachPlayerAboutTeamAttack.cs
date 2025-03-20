@@ -7,6 +7,7 @@ using NoxusBoss.Content.NPCs.Bosses.Draedon.SpecificEffectManagers;
 using NoxusBoss.Content.NPCs.Friendly;
 using NoxusBoss.Core.CrossCompatibility.Inbound.BaseCalamity;
 using Terraria;
+using Terraria.DataStructures;
 using Terraria.Localization;
 using Terraria.ModLoader;
 
@@ -244,7 +245,14 @@ public partial class MarsBody
                 SolynPlayerTeamAttackTimer = 0;
                 NPC.netUpdate = true;
 
-                Projectile.NewProjectile(Target.GetSource_FromThis(), Target.Center, TagTeamBeamDirection.ToRotationVector2(), beamID, TagTeamBeamBaseDamage, 0f, Target.whoAmI, solyn.NPC.whoAmI);
+                // This looks stupid. And I gotta say, it is.
+                // But due to a non-defensive attempt by the PetsOverhaulCalamityAddon mod to access item data from projectile sources, this is necessary for compatibility with that mod in this fight.
+                // They make the mistaken assumption that damage to NPCs is all from player items and not potentially from miscellaneous/neutral sources for some reason, and I'm accomodating this via this
+                // scuffed solution (and making a PR to their repo shortly after).
+                // It doesn't really affect things otherwise it seems, so all is good.
+                EntitySource_ItemUse source = new EntitySource_ItemUse(Target, new Item());
+
+                Projectile.NewProjectile(source, Target.Center, TagTeamBeamDirection.ToRotationVector2(), beamID, TagTeamBeamBaseDamage, 0f, Target.whoAmI, solyn.NPC.whoAmI);
             }
 
             Target.channel = true;

@@ -118,8 +118,6 @@ public class RandomSolynSpawnSystem : ModSystem
             Main.npc[solyn].As<Solyn>().CurrentState = SolynAIType.FallFromTheSky;
             Main.npc[solyn].velocity = new Vector2(player.direction * 7.5f, 6f);
         }
-
-        SolynHasAppearedBefore = true;
     }
 
     public static void RespawnSolynAtCampsite()

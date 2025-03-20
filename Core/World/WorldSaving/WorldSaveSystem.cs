@@ -1,5 +1,6 @@
 ﻿using NoxusBoss.Content.NPCs.Bosses.Avatar.SecondPhaseForm;
 using NoxusBoss.Content.NPCs.Bosses.NamelessDeity;
+using NoxusBoss.Content.NPCs.Friendly;
 using NoxusBoss.Core.SolynEvents;
 using NoxusBoss.Core.World.GameScenes.SolynEventHandlers;
 using SubworldLibrary;
@@ -93,11 +94,11 @@ public class WorldSaveSystem : ModSystem
         if (HasPlacedCattail)
             tag["HasPlacedCattail"] = true;
         if (RandomSolynSpawnSystem.SolynHasAppearedBefore)
-            tag["SolynHasAppearedBefore"] = true;
+            tag["SolynHasAppearedBeforeButItActuallyFuckingWorksFineThisTime"] = true;
         if (RandomSolynSpawnSystem.SolynHasBeenSpokenTo)
-            tag["SolynHasBeenSpokenTo"] = RandomSolynSpawnSystem.SolynHasBeenSpokenTo;
+            tag["SolynHasBeenSpokenTo"] = true;
         if (AvatarHasKilledOldDuke)
-            tag["AvatarHasKilledOldDuke"] = AvatarHasKilledOldDuke;
+            tag["AvatarHasKilledOldDuke"] = true;
 
         tag["NamelessDeityDeathCount"] = NamelessDeityDeathCount;
         tag["GardenTreeSurfaceYOffset"] = GardenTreeSurfaceYOffset;
@@ -105,11 +106,12 @@ public class WorldSaveSystem : ModSystem
 
     public override void LoadWorldData(TagCompound tag)
     {
+        bool solynExists = NPC.AnyNPCs(ModContent.NPCType<Solyn>());
         HasMetNamelessDeity = tag.ContainsKey("HasMetNamelessDeity");
         OgsculeRulesOverTheUniverse = tag.ContainsKey("OgsculeRulesOverTheUniverse");
         HasCompletedGenesis = tag.ContainsKey("HasCompletedGenesis");
         HasPlacedCattail = tag.ContainsKey("HasPlacedCattail");
-        RandomSolynSpawnSystem.SolynHasAppearedBefore = tag.ContainsKey("SolynHasAppearedBefore");
+        RandomSolynSpawnSystem.SolynHasAppearedBefore = tag.ContainsKey("SolynHasAppearedBeforeButItActuallyFuckingWorksFineThisTime") || solynExists;
         RandomSolynSpawnSystem.SolynHasBeenSpokenTo = tag.ContainsKey("SolynHasBeenSpokenTo");
         AvatarHasKilledOldDuke = tag.ContainsKey("AvatarHasKilledOldDuke");
 

@@ -4,6 +4,7 @@ using NoxusBoss.Assets;
 using NoxusBoss.Content.NPCs.Bosses.NamelessDeity;
 using NoxusBoss.Content.Particles;
 using NoxusBoss.Core.Graphics.GeneralScreenEffects;
+using NoxusBoss.Core.World.GameScenes.SolynEventHandlers;
 using Terraria;
 using Terraria.Audio;
 using Terraria.ModLoader;
@@ -104,7 +105,10 @@ public partial class Solyn : ModNPC, IPixelatedPrimitiveRenderer
         }
 
         if (AITimer == 5)
+        {
             NamelessDeityBoss.CreateTwinkle(startingPosition, Vector2.One, Color.Cyan);
+            RandomSolynSpawnSystem.SolynHasAppearedBefore = true;
+        }
 
         if (AITimer == crashDelay - 75)
             SoundEngine.PlaySound(GennedAssets.Sounds.Solyn.StarFall, NPC.Center);

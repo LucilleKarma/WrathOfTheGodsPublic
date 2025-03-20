@@ -32,6 +32,8 @@ public class SolynTent : ModTile
 
     internal static LazyAsset<Texture2D> FrontTexture;
 
+    internal static int DrawYOffset => 2;
+
     /// <summary>
     /// The tiled width of this tent.
     /// </summary>
@@ -62,7 +64,7 @@ public class SolynTent : ModTile
         TileObjectData.newTile.Width = Width;
         TileObjectData.newTile.Height = Height;
         TileObjectData.newTile.Origin = new Point16(Width / 2, Height - 1);
-        TileObjectData.newTile.DrawYOffset = 2;
+        TileObjectData.newTile.DrawYOffset = DrawYOffset;
         TileObjectData.newTile.AnchorBottom = new AnchorData(AnchorType.SolidTile | AnchorType.SolidWithTop | AnchorType.SolidSide, TileObjectData.newTile.Width, 0);
         TileObjectData.newTile.CoordinateHeights = Enumerable.Repeat(16, TileObjectData.newTile.Height).ToArray();
         TileObjectData.newTile.LavaDeath = false;
@@ -175,7 +177,7 @@ public class SolynTent : ModTile
         Texture2D bookshelfOutline = GennedAssets.Textures.SolynCampsite.SolynTentBookshelfOutline.Value;
         Vector2 drawOffset = Main.drawToScreen ? Vector2.Zero : new Vector2(Main.offScreenRange);
         Vector2 drawPosition = new Vector2(i * 16 - Main.screenPosition.X, j * 16 - Main.screenPosition.Y) + drawOffset;
-        drawPosition.Y += TileObjectData.GetTileData(t).DrawYOffset;
+        drawPosition.Y += DrawYOffset;
         Color lightColor = Lighting.GetColor(i, j);
         if (frameY <= 16)
             lightColor = Color.White;
