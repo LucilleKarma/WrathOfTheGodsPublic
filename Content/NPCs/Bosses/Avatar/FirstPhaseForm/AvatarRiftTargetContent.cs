@@ -4,6 +4,7 @@ using Microsoft.Xna.Framework.Graphics;
 using NoxusBoss.Assets;
 using NoxusBoss.Content.NPCs.Bosses.Avatar.SecondPhaseForm;
 using NoxusBoss.Core.World.GameScenes.AvatarAppearances;
+using NoxusBoss.Core.World.GameScenes.RiftEclipse;
 using Terraria;
 using Terraria.DataStructures;
 using Terraria.ModLoader;
@@ -125,8 +126,17 @@ public static class AvatarRiftTargetContent
             time = npc.As<AvatarOfEmptiness>().RiftRotationTimer * 10f;
         if (npc.type == ModContent.NPCType<AvatarRift>() && npc.As<AvatarRift>().DrawnFromTelescope)
         {
-            what *= 0.25f;
-            blurOffset = 0.006f;
+            float scaleFactor = 0.25f;
+            if (NPC.downedPlantBoss)
+                scaleFactor = 0.5f;
+            if (NPC.downedAncientCultist)
+                scaleFactor = 0.97f;
+            if (RiftEclipseManagementSystem.RiftEclipseOngoing)
+                scaleFactor = Lerp(3f, 5f, RiftEclipseManagementSystem.IntensityInterpolant);
+
+            what *= scaleFactor;
+            blurOffset = InverseLerp(0.5f, 0.25f, scaleFactor) * 0.006f;
+
             time = Main.GlobalTimeWrappedHourly * 0.2f;
             opacity *= 0.66f;
         }

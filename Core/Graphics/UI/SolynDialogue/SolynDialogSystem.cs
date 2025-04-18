@@ -8,35 +8,35 @@ namespace NoxusBoss.Core.Graphics.UI.SolynDialogue;
 
 public class SolynDialogSystem : ModSystem
 {
-    private UserInterface dialogUserInterface;
-
     /// <summary>
     /// The UI responsible for drawing dialogue and player responses to said dialogue.
     /// </summary>
-    public SolynDialogUI DialogUI
+    public SolynDialogUIManager DialogUI
     {
         get;
         internal set;
-    }
+    } = new SolynDialogUIManager();
 
-    public override void Load()
+    /// <summary>
+    /// Whether the UI this system is responsible for is visible or not.
+    /// </summary>
+    public static bool Visible
     {
-        dialogUserInterface = new UserInterface();
-
-        // Initialize the underlying UI state.
-        DialogUI = new SolynDialogUI();
-        DialogUI.Activate();
+        get;
+        private set;
     }
+
+    public override void OnWorldLoad() => Visible = false;
+
+    public override void OnWorldUnload() => Visible = false;
 
     public override void UpdateUI(GameTime gameTime)
     {
-        // Disable the UI if the speaker is not present.
-        if (dialogUserInterface.CurrentState is not null && !NPC.AnyNPCs(ModContent.NPCType<Solyn>()))
+        if (Visible && !NPC.AnyNPCs(ModContent.NPCType<Solyn>()))
             HideUI();
 
-        // Update the UI.
-        if (dialogUserInterface?.CurrentState is not null)
-            dialogUserInterface?.Update(gameTime);
+        if (Visible)
+            DialogUI.Update();
     }
 
     public override void ModifyInterfaceLayers(List<GameInterfaceLayer> layers)
@@ -44,36 +44,28 @@ public class SolynDialogSystem : ModSystem
         // Draw the Solyn dialogue UI.
         int mouseTextIndex = layers.FindIndex(layer => layer.Name.Equals("Vanilla: Mouse Text", StringComparison.Ordinal));
         if (mouseTextIndex != -1)
-            layers.Insert(mouseTextIndex, new LegacyGameInterfaceLayer("Wrath of the Gods: Solyn Dialogue", DrawUIWrapper, InterfaceScaleType.None));
+        {
+            layers.Insert(mouseTextIndex, new LegacyGameInterfaceLayer("Wrath of the Gods: Solyn Dialogue", () =>
+            {
+                if (Visible)
+                    DialogUI.Render();
+                return true;
+            }, InterfaceScaleType.None));
+        }
     }
-
-    private bool DrawUIWrapper()
-    {
-        if (dialogUserInterface?.CurrentState is not null)
-            dialogUserInterface.Draw(Main.spriteBatch, new GameTime());
-        return true;
-    }
-
 
     /// <summary>
     /// Shows the dialogue UI.
     /// </summary>
     public static void ShowUI()
     {
-        var dialogSystem = ModContent.GetInstance<SolynDialogSystem>();
-        if (dialogSystem.dialogUserInterface.CurrentState is not null)
+        if (Visible)
             return;
 
-        dialogSystem.DialogUI ??= new SolynDialogUI();
-        dialogSystem.DialogUI.ResetUIElements();
-        dialogSystem.DialogUI.Activate();
-        dialogSystem.DialogUI.DialogueText = string.Empty;
-        dialogSystem.DialogUI.DialogueTextUI.SetText(string.Empty);
-        dialogSystem.DialogUI.PlayerTextUI.SetText(string.Empty);
-
-        var ui = dialogSystem.dialogUserInterface;
-        var uiState = dialogSystem.DialogUI;
-        ui?.SetState(uiState);
+        SolynDialogSystem system = ModContent.GetInstance<SolynDialogSystem>();
+        system.DialogUI.DialogueText = string.Empty;
+        system.DialogUI.ResetDialogueData();
+        Visible = true;
     }
 
     /// <summary>
@@ -81,13 +73,13 @@ public class SolynDialogSystem : ModSystem
     /// </summary>
     public static void HideUI()
     {
-        var dialogSystem = ModContent.GetInstance<SolynDialogSystem>();
-        if (dialogSystem.dialogUserInterface.CurrentState is null)
+        if (!Visible)
             return;
 
-        dialogSystem.dialogUserInterface?.SetState(null);
-        dialogSystem.DialogUI.CurrentDialogueNode = null;
-        dialogSystem.DialogUI.DialogueText = string.Empty;
-        dialogSystem.DialogUI.ResponseToSay = null;
+        SolynDialogSystem system = ModContent.GetInstance<SolynDialogSystem>();
+        system.DialogUI.CurrentDialogueNode = null;
+        system.DialogUI.DialogueText = string.Empty;
+        system.DialogUI.ResponseToSay = null;
+        Visible = false;
     }
 }

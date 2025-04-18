@@ -82,7 +82,7 @@ public class RiftEclipseSnowSystem : ModSystem
     {
         get
         {
-            if (GraphicalUniverseImagerSky.EclipseConfigOption == Graphics.UI.GraphicalUniverseImager.GraphicalUniverseImagerSettings.EclipseSecondaryAmbienceSetting.Blizzard)
+            if (GraphicalUniverseImagerSky.EclipseConfigOption == GraphicalUniverseImagerSettings.EclipseSecondaryAmbienceSetting.Blizzard)
                 return 1f;
             if (!RiftEclipseManagementSystem.RiftEclipseOngoing)
                 return 0f;
@@ -292,7 +292,7 @@ public class RiftEclipseSnowSystem : ModSystem
         bool snowIsRising = RiftEclipseManagementSystem.RiftEclipseOngoing && Main.raining;
         bool snowIsFalling = !RiftEclipseManagementSystem.RiftEclipseOngoing;
         float snowRiseRate = 0.006f;
-        if (GraphicalUniverseImagerSky.EclipseConfigOption == Graphics.UI.GraphicalUniverseImager.GraphicalUniverseImagerSettings.EclipseSecondaryAmbienceSetting.Blizzard)
+        if (GraphicalUniverseImagerSky.EclipseConfigOption == GraphicalUniverseImagerSettings.EclipseSecondaryAmbienceSetting.Blizzard)
         {
             snowIsRising = true;
             snowIsFalling = false;
@@ -309,7 +309,7 @@ public class RiftEclipseSnowSystem : ModSystem
         // Create snow if necessary.
         bool createSnow = (Main.raining && RiftEclipseManagementSystem.RiftEclipseOngoing && EventCanHappen) || NPC.AnyNPCs(ModContent.NPCType<AvatarRift>());
         float intensityInterpolant = IntensityInterpolant;
-        if (GraphicalUniverseImagerSky.EclipseConfigOption == Graphics.UI.GraphicalUniverseImager.GraphicalUniverseImagerSettings.EclipseSecondaryAmbienceSetting.Blizzard)
+        if (GraphicalUniverseImagerSky.EclipseConfigOption == GraphicalUniverseImagerSettings.EclipseSecondaryAmbienceSetting.Blizzard)
         {
             createSnow = true;
             intensityInterpolant = 2f;
@@ -393,6 +393,26 @@ public class RiftEclipseSnowSystem : ModSystem
         }
     }
 
+    private static Point FindGroundVerticalSafe(Point p)
+    {
+        if (WorldGen.SolidTile(p))
+        {
+            while (p.Y >= 5 && WorldGen.SolidTile(p.X, p.Y - 1))
+            {
+                p.Y--;
+            }
+        }
+        else
+        {
+            while (p.Y < Main.maxTilesY - 5 && !WorldGen.SolidTile(p.X, p.Y + 1))
+            {
+                p.Y++;
+            }
+        }
+
+        return p;
+    }
+
     public static void PerformSnowCheck()
     {
         int snowID = ModContent.TileType<RiftEclipseSnow>();
@@ -403,7 +423,7 @@ public class RiftEclipseSnowSystem : ModSystem
 
         for (int i = 5; i < Main.maxTilesX - 5; i++)
         {
-            Point p = FindGroundVertical(new Point(i, (int)Main.worldSurface - 250));
+            Point p = FindGroundVerticalSafe(new Point(i, (int)Main.worldSurface - 250));
             Point above = new Point(p.X, p.Y - 1);
             Point below = new Point(p.X, p.Y + 1);
 

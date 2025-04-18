@@ -32,7 +32,7 @@ public class HeavySmokeParticle : Particle
         Opacity = opacity;
         Spin = rotationSpeed;
         Glowing = glowing;
-        Rotation = Main.rand.NextFloat(MathHelper.TwoPi);
+        Rotation = Main.rand.NextFloat(TwoPi);
         HueShift = hueShift;
     }
 

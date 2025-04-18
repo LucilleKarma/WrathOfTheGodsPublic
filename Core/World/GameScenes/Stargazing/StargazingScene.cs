@@ -12,7 +12,6 @@ using NoxusBoss.Core.DataStructures.ShapeCurves;
 using NoxusBoss.Core.Graphics;
 using NoxusBoss.Core.Graphics.SpecificEffectManagers;
 using NoxusBoss.Core.SolynEvents;
-using NoxusBoss.Core.World.GameScenes.RiftEclipse;
 using NoxusBoss.Core.World.Subworlds;
 using NoxusBoss.Core.World.WorldSaving;
 using Terraria;
@@ -203,7 +202,7 @@ public class StargazingScene : ModSystem
     /// </summary>
     public static readonly StarViewObject Rift = new StarViewObject(Utils.CenteredRectangle(new Vector2(356f, 1123f), Vector2.One * 150f), drawPosition =>
     {
-        if ((RiftEclipseManagementSystem.RiftEclipseOngoing || BossDownedSaveSystem.HasDefeated<AvatarOfEmptiness>()) && !SolynIsPresent)
+        if (BossDownedSaveSystem.HasDefeated<AvatarOfEmptiness>() && !SolynIsPresent)
             return;
 
         if (riftDummy is null)

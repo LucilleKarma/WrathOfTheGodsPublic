@@ -33,7 +33,7 @@ public class RiftEclipseBloodMoonRainSystem : ModSystem
             if (!ModContent.GetInstance<GraphicalUniverseImagerSky>().IsActive)
                 return false;
 
-            return GraphicalUniverseImagerSky.EclipseConfigOption == UI.GraphicalUniverseImager.GraphicalUniverseImagerSettings.EclipseSecondaryAmbienceSetting.BloodRain;
+            return GraphicalUniverseImagerSky.EclipseConfigOption == GraphicalUniverseImagerSettings.EclipseSecondaryAmbienceSetting.BloodRain;
         }
     }
 

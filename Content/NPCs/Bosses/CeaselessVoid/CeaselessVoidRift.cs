@@ -40,7 +40,7 @@ public class CeaselessVoidRift : ModNPC
     /// <summary>
     /// Whether this rift can be entered.
     /// </summary>
-    public static bool CanEnterRift => ModContent.GetInstance<AntiseedEvent>().Finished;
+    public static bool CanEnterRift => ModContent.GetInstance<AntiseedEvent>().Finished && !AnyBosses();
 
     public override string Texture => MiscTexturesRegistry.InvisiblePixelPath;
 

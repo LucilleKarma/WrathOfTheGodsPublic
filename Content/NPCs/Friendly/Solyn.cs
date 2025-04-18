@@ -5,6 +5,7 @@ using NoxusBoss.Assets;
 using NoxusBoss.Content.Emotes;
 using NoxusBoss.Content.Items.MiscOPTools;
 using NoxusBoss.Content.NPCs.Bosses.Avatar;
+using NoxusBoss.Content.NPCs.Bosses.Avatar.SecondPhaseForm;
 using NoxusBoss.Content.NPCs.Bosses.Avatar.SpecificEffectManagers;
 using NoxusBoss.Content.NPCs.Bosses.NamelessDeity;
 using NoxusBoss.Content.Particles;
@@ -19,6 +20,7 @@ using NoxusBoss.Core.World.GameScenes.AvatarUniverseExploration;
 using NoxusBoss.Core.World.GameScenes.EndCredits;
 using NoxusBoss.Core.World.Subworlds;
 using NoxusBoss.Core.World.WorldGeneration;
+using NoxusBoss.Core.World.WorldSaving;
 using Terraria;
 using Terraria.Audio;
 using Terraria.DataStructures;
@@ -273,6 +275,13 @@ public partial class Solyn : ModNPC, IPixelatedPrimitiveRenderer
     #region AI
     public override void AI()
     {
+        // YOU'RE NOT SUPPOSED TO BE HERE!!
+        if (BossDownedSaveSystem.HasDefeated<AvatarOfEmptiness>() && !EternalGardenUpdateSystem.WasInSubworldLastUpdateFrame)
+        {
+            NPC.active = false;
+            return;
+        }
+
         // Reset things every frame.
         NPC.immortal = true;
         NPC.gfxOffY = 0f;
@@ -413,7 +422,7 @@ public partial class Solyn : ModNPC, IPixelatedPrimitiveRenderer
         // Switch to the speak-to-player AI state.
         if (CurrentState != SolynAIType.SpeakToPlayer && CurrentState != SolynAIType.PuppeteeredByQuest)
         {
-            while (Collision.SolidCollision(NPC.BottomLeft, NPC.width, 2))
+            while (Collision.SolidCollision(NPC.BottomLeft - Vector2.UnitY * 2f, NPC.width, 2))
                 NPC.position.Y -= 2f;
 
             AITimer = 0;

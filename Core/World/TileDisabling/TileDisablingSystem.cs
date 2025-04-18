@@ -1,6 +1,7 @@
 ﻿using System.Reflection;
 using CalamityMod;
 using CalamityMod.CalPlayer;
+using CalamityMod.Skies;
 using CalamityMod.Tiles.Astral;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -12,14 +13,17 @@ using NoxusBoss.Content.NPCs.Friendly;
 using NoxusBoss.Core.CrossCompatibility.Inbound;
 using NoxusBoss.Core.CrossCompatibility.Inbound.BaseCalamity;
 using NoxusBoss.Core.GlobalInstances;
+using NoxusBoss.Core.Graphics.UI;
 using NoxusBoss.Core.World.GameScenes.AvatarUniverseExploration;
 using NoxusBoss.Core.World.GameScenes.TerminusStairway;
 using Terraria;
 using Terraria.DataStructures;
 using Terraria.GameContent;
 using Terraria.GameContent.Drawing;
+using Terraria.Graphics.Effects;
 using Terraria.Graphics.Light;
 using Terraria.ID;
+using Terraria.Localization;
 using Terraria.Map;
 using Terraria.ModLoader;
 
@@ -125,6 +129,21 @@ public class TileDisablingSystem : ModSystem
         GlobalNPCEventHandlers.EditSpawnRateEvent += DisableNPCSpawns;
 
         PlayerDataManager.UpdateBadLifeRegenEvent += DisableAbyssBreathMechanic;
+
+        CellPhoneInfoModificationSystem.MoonPhaseReplacementTextEvent += (originalText) =>
+        {
+            if (TilesAreUninteractable && !TerminusStairwaySystem.Enabled)
+                return Language.GetTextValue("Mods.NoxusBoss.CellPhoneInfoOverrides.MoonNotFoundText");
+
+            return null;
+        };
+        CellPhoneInfoModificationSystem.TreasureTilesReplacementTextEvent += (originalText) =>
+        {
+            if (AvatarOfEmptiness.Myself is not null && TilesAreUninteractable)
+                return Language.GetTextValue("GameUI.NoTreasureNearby");
+
+            return null;
+        };
     }
 
     private bool DisableSwitchChecks2(On_Collision.orig_SwitchTilesNew orig, Collision self, Vector2 Position, int Width, int Height, Vector2 oldPosition, int objType)
@@ -718,6 +737,23 @@ public class TileDisablingSystem : ModSystem
     {
         if (TilesAreUninteractable)
             Dust.lavaBubbles = 1000;
+
+        ClearBrimstoneCragCindersWrapper();
+    }
+
+    private static void ClearBrimstoneCragCindersWrapper()
+    {
+        if (TilesAreUninteractable && CalamityCompatibility.Enabled)
+            ClearBrimstoneCragCineders();
+    }
+
+    [JITWhenModsEnabled(CalamityCompatibility.ModName)]
+    private static void ClearBrimstoneCragCineders()
+    {
+        if (SkyManager.Instance["CalamityMod:BrimstoneCrag"] is not BrimstoneCragSky sky)
+            return;
+
+        sky.Cinders.Clear();
     }
 
     public override void PostUpdateEverything()

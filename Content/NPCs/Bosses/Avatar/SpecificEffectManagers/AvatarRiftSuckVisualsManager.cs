@@ -247,7 +247,7 @@ public class AvatarRiftSuckVisualsManager : ModSystem
         }
 
         // Draw and update particles.
-        Texture2D texture = GennedAssets.Textures.GreyscaleTextures.RadialFlare.Value;
+        Texture2D texture = RadialFlare.Value;
         foreach (ImpactParticle particle in ImpactParticles)
         {
             particle.Update();

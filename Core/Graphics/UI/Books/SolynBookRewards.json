@@ -127,6 +127,12 @@
       "MinStack": 2,
       "MaxStack": 2,
       "GiftedDirectlyFromSolyn": false
+    },
+    {
+      "ItemName": "FancyRopeSet",
+      "MinStack": 10,
+      "MaxStack": 10,
+      "GiftedDirectlyFromSolyn": false
     }
   ],
   "BookOfMiracles": [
@@ -356,6 +362,12 @@
       "ItemName": "StaffOfRejuvenation",
       "MinStack": 1,
       "MaxStack": 1,
+      "GiftedDirectlyFromSolyn": false
+    },
+    {
+      "ItemName": "FancyRopeSet",
+      "MinStack": 10,
+      "MaxStack": 10,
       "GiftedDirectlyFromSolyn": false
     }
   ],
@@ -627,6 +639,12 @@
       "MinStack": 4,
       "MaxStack": 4,
       "GiftedDirectlyFromSolyn": false
+    },
+    {
+      "ItemName": "FancyRopeSet",
+      "MinStack": 10,
+      "MaxStack": 10,
+      "GiftedDirectlyFromSolyn": false
     }
   ],
   "UnfinishedColoringBook": [
@@ -634,6 +652,12 @@
       "ItemName": "StarblessedPlatform",
       "MinStack": 12,
       "MaxStack": 12,
+      "GiftedDirectlyFromSolyn": false
+    },
+    {
+      "ItemName": "FancyRopeSet",
+      "MinStack": 10,
+      "MaxStack": 10,
       "GiftedDirectlyFromSolyn": false
     }
   ],

@@ -45,7 +45,7 @@ public partial class Solyn : ModNPC, IPixelatedPrimitiveRenderer
         if (DialogueManager.FindByRelativePrefix("SolynIntroduction").SeenBefore("Question1") || CurrentConversation != DialogueManager.FindByRelativePrefix("SolynIntroduction"))
             NPC.spriteDirection = (Main.LocalPlayer.Center.X - NPC.Center.X).NonZeroSign();
 
-        SolynDialogUI ui = ModContent.GetInstance<SolynDialogSystem>().DialogUI;
+        SolynDialogUIManager ui = ModContent.GetInstance<SolynDialogSystem>().DialogUI;
         if (AITimer % 18 >= 9 && ui.DialogueText != ui.ResponseToSay && ui.NextCharacterDelay <= 10)
             Frame = 19;
 

@@ -1,14 +1,10 @@
 ﻿using Luminance.Core.Hooking;
 using Mono.Cecil.Cil;
 using MonoMod.Cil;
-using NoxusBoss.Content.NPCs.Bosses.Avatar;
-using NoxusBoss.Content.NPCs.Bosses.Avatar.SecondPhaseForm;
-using NoxusBoss.Content.NPCs.Bosses.Avatar.SpecificEffectManagers;
 using NoxusBoss.Core.World.GameScenes.AvatarUniverseExploration;
 using NoxusBoss.Core.World.GameScenes.TerminusStairway;
 using NoxusBoss.Core.World.Subworlds;
 using Terraria;
-using Terraria.Localization;
 using Terraria.ModLoader;
 using static NoxusBoss.Core.World.TileDisabling.TileDisablingSystem;
 
@@ -28,7 +24,21 @@ public class CellPhoneInfoModificationSystem : ModSystem
         PlayerYPosition
     }
 
-    public delegate string TextReplacementFunction(string originalText);
+    public delegate string? TextReplacementFunction(string originalText);
+
+    public static event TextReplacementFunction WeatherReplacementTextEvent;
+
+    public static event TextReplacementFunction MoonPhaseReplacementTextEvent;
+
+    public static event TextReplacementFunction FishingPowerReplacementTextEvent;
+
+    public static event TextReplacementFunction TreasureTilesReplacementTextEvent;
+
+    public static event TextReplacementFunction PlayerSpeedReplacementTextEvent;
+
+    public static event TextReplacementFunction PlayerXPositionReplacementTextEvent;
+
+    public static event TextReplacementFunction PlayerYPositionReplacementTextEvent;
 
     public override void OnModLoad()
     {
@@ -91,126 +101,63 @@ public class CellPhoneInfoModificationSystem : ModSystem
         ApplyReplacementTweak(cursor, edit, InfoType.PlayerYPosition, "GameUI.LayerUnderground", displayTextIndex, ChoosePlayerYPositionText);
     }
 
+    private static string ProcessEvent(string originalText, Delegate[]? eventList)
+    {
+        if (eventList is null)
+            return originalText;
+
+        foreach (Delegate d in eventList)
+        {
+            TextReplacementFunction selectorFunction = (TextReplacementFunction)d;
+            string? result = selectorFunction(originalText);
+            if (result is not null)
+                return result;
+        }
+
+        return originalText;
+    }
+
     /// <summary>
     /// Determines what text should be displayed regarding weather.
     /// </summary>
     /// <param name="originalText">The original text.</param>
-    private static string ChooseWeatherText(string originalText)
-    {
-        if (AvatarOfEmptiness.Myself is not null && AvatarOfEmptiness.Myself.As<AvatarOfEmptiness>().ParadiseReclaimedIsOngoing)
-            return Language.GetTextValue("Mods.NoxusBoss.CellPhoneInfoOverrides.ParadiseReclaimedInfoText");
-        if (AvatarOfEmptinessSky.Dimension == AvatarDimensionVariants.CryonicDimension)
-            return Language.GetTextValue("Mods.NoxusBoss.CellPhoneInfoOverrides.CryogenicMaelstromText");
-        if (AvatarOfEmptinessSky.Dimension == AvatarDimensionVariants.VisceralDimension)
-            return Language.GetTextValue("Mods.NoxusBoss.CellPhoneInfoOverrides.VisceralTyphoonText");
-        if (AvatarOfEmptinessSky.Dimension == AvatarDimensionVariants.FogDimension || AvatarUniverseExplorationSystem.InAvatarUniverse)
-            return Language.GetTextValue("Mods.NoxusBoss.CellPhoneInfoOverrides.DyingWorldFogText");
-        if (AvatarOfEmptinessSky.Dimension == AvatarDimensionVariants.DarkDimension)
-            return Language.GetTextValue("Mods.NoxusBoss.CellPhoneInfoOverrides.EmptinessWeatherText");
-        if (AvatarOfEmptiness.Myself is not null && !AvatarOfEmptiness.Myself.As<AvatarOfEmptiness>().BattleIsDone)
-            return Language.GetTextValue("Mods.NoxusBoss.CellPhoneInfoOverrides.CrimsonDerechoText");
-
-        return originalText;
-    }
+    private static string ChooseWeatherText(string originalText) => ProcessEvent(originalText, WeatherReplacementTextEvent?.GetInvocationList());
 
     /// <summary>
     /// Determines what text should be displayed regarding fishing power.
     /// </summary>
     /// <param name="originalText">The original text.</param>
-    private static string ChooseFishingPowerText(string originalText)
-    {
-        if (AvatarOfEmptiness.Myself is not null && AvatarOfEmptiness.Myself.As<AvatarOfEmptiness>().ParadiseReclaimedIsOngoing)
-            return Language.GetTextValue("Mods.NoxusBoss.CellPhoneInfoOverrides.ParadiseReclaimedInfoText");
-
-        return originalText;
-    }
+    private static string ChooseFishingPowerText(string originalText) => ProcessEvent(originalText, FishingPowerReplacementTextEvent?.GetInvocationList());
 
     /// <summary>
     /// Determines what text should be displayed regarding the moon phase.
     /// </summary>
     /// <param name="originalText">The original text.</param>
-    private static string ChooseMoonPhaseText(string originalText)
-    {
-        if (AvatarOfEmptiness.Myself is not null && AvatarOfEmptiness.Myself.As<AvatarOfEmptiness>().ParadiseReclaimedIsOngoing)
-            return Language.GetTextValue("Mods.NoxusBoss.CellPhoneInfoOverrides.ParadiseReclaimedInfoText");
-        if (TilesAreUninteractable && !TerminusStairwaySystem.Enabled)
-            return Language.GetTextValue("Mods.NoxusBoss.CellPhoneInfoOverrides.MoonNotFoundText");
-
-        return originalText;
-    }
+    private static string ChooseMoonPhaseText(string originalText) => ProcessEvent(originalText, MoonPhaseReplacementTextEvent?.GetInvocationList());
 
     /// <summary>
     /// Determines what text should be displayed regarding treasure tiles, such as chests and ores.
     /// </summary>
     /// <param name="originalText">The original text.</param>
-    private static string ChooseTreasureTilesText(string originalText)
-    {
-        if (AvatarOfEmptiness.Myself is not null && AvatarOfEmptiness.Myself.As<AvatarOfEmptiness>().ParadiseReclaimedIsOngoing)
-            return Language.GetTextValue("Mods.NoxusBoss.CellPhoneInfoOverrides.ParadiseReclaimedInfoText");
-        if (TilesAreUninteractable)
-            return Language.GetTextValue("GameUI.NoTreasureNearby");
-
-        return originalText;
-    }
+    private static string ChooseTreasureTilesText(string originalText) => ProcessEvent(originalText, TreasureTilesReplacementTextEvent?.GetInvocationList());
 
     /// <summary>
     /// Determines what text should be displayed regarding player speed.
     /// </summary>
     /// <param name="originalText">The original text.</param>
-    private static string ChooseSpeedText(string originalText)
-    {
-        if (AvatarOfEmptiness.Myself is not null && AvatarOfEmptiness.Myself.As<AvatarOfEmptiness>().ParadiseReclaimedIsOngoing)
-            return Language.GetTextValue("Mods.NoxusBoss.CellPhoneInfoOverrides.ParadiseReclaimedInfoText");
-        if (TilesAreUninteractable && AvatarOfEmptiness.Myself is not null && AvatarOfEmptiness.Myself.As<AvatarOfEmptiness>().CurrentState == AvatarOfEmptiness.AvatarAIType.TravelThroughVortex)
-        {
-            float shownSpeed = AvatarOfEmptiness.Myself.As<AvatarOfEmptiness>().TravelThroughVortex_ShownPlayerSpeed;
-            return Language.GetTextValue("GameUI.Speed", Math.Round(shownSpeed));
-        }
-
-        return originalText;
-    }
+    private static string ChooseSpeedText(string originalText) => ProcessEvent(originalText, PlayerSpeedReplacementTextEvent?.GetInvocationList());
 
     /// <summary>
     /// Determines what text should be displayed regarding player X position.
     /// </summary>
     /// <param name="originalText">The original text.</param>
-    private static string ChoosePlayerXPositionText(string originalText)
-    {
-        if (EternalGardenUpdateSystem.WasInSubworldLastUpdateFrame)
-            return "???";
-        if (AvatarOfEmptiness.Myself is not null && AvatarOfEmptiness.Myself.As<AvatarOfEmptiness>().ParadiseReclaimedIsOngoing)
-            return Language.GetTextValue("Mods.NoxusBoss.CellPhoneInfoOverrides.ParadiseReclaimedInfoText");
-        if (TilesAreUninteractable && AvatarOfEmptiness.Myself is not null)
-            return AvatarOfEmptiness.CompassTextInMyUniverse;
-        if (AvatarUniverseExplorationSystem.InAvatarUniverse)
-        {
-            ulong parsecs = Utils.RandomNextSeed((ulong)WorldGen._genRandSeed) / 100;
-            return Language.GetText($"Mods.NoxusBoss.CellPhoneInfoOverrides.ParsecText").Format($"{parsecs:n0}");
-        }
-
-        return originalText;
-    }
+    private static string ChoosePlayerXPositionText(string originalText) => ProcessEvent(originalText, PlayerXPositionReplacementTextEvent?.GetInvocationList());
 
     /// <summary>
     /// Determines what text should be displayed regarding player Y position.
     /// </summary>
     /// <param name="originalText">The original text.</param>
-    private static string ChoosePlayerYPositionText(string originalText)
-    {
-        if (EternalGardenUpdateSystem.WasInSubworldLastUpdateFrame)
-            return "???";
-        if (AvatarOfEmptiness.Myself is not null && AvatarOfEmptiness.Myself.As<AvatarOfEmptiness>().ParadiseReclaimedIsOngoing)
-            return Language.GetTextValue("Mods.NoxusBoss.CellPhoneInfoOverrides.ParadiseReclaimedInfoText");
-        if (TilesAreUninteractable && AvatarOfEmptiness.Myself is not null)
-            return AvatarOfEmptiness.DepthTextInMyUniverse;
-        if (AvatarUniverseExplorationSystem.InAvatarUniverse)
-        {
-            ulong parsecs = Utils.RandomNextSeed((ulong)WorldGen._genRandSeed + 472589) / 100;
-            return Language.GetText($"Mods.NoxusBoss.CellPhoneInfoOverrides.ParsecText").Format($"{parsecs:n0}");
-        }
-
-        return originalText;
-    }
+    private static string ChoosePlayerYPositionText(string originalText) => ProcessEvent(originalText, PlayerYPositionReplacementTextEvent?.GetInvocationList());
 
     private static void ApplyReplacementTweak(ILCursor cursor, ManagedILEdit edit, InfoType infoType, string searchString, int displayTextIndex, TextReplacementFunction replacementFunction, int loopCount = 1)
     {

@@ -56,9 +56,21 @@ public class InstancedGlobalItem : GlobalItem
         return clone;
     }
 
-    public override void NetSend(Item item, BinaryWriter writer) => writer.Write((byte)item.Wrath().ToBeGiftedBySolyn.ToInt());
+    public override void NetSend(Item item, BinaryWriter writer)
+    {
+        bool toBeGifted = false;
+        if (item.TryGetGlobalItem(out InstancedGlobalItem g))
+            toBeGifted = g.ToBeGiftedBySolyn;
 
-    public override void NetReceive(Item item, BinaryReader reader) => item.Wrath().ToBeGiftedBySolyn = reader.ReadByte() != 0;
+        writer.Write((byte)toBeGifted.ToInt());
+    }
+
+    public override void NetReceive(Item item, BinaryReader reader)
+    {
+        bool toBeGifted = reader.ReadByte() != 0;
+        if (item.TryGetGlobalItem(out InstancedGlobalItem g))
+            g.ToBeGiftedBySolyn = toBeGifted;
+    }
 
     public override void SaveData(Item item, TagCompound tag) => tag["ToBeGiftedBySolyn"] = ToBeGiftedBySolyn;
 

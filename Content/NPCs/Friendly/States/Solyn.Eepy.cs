@@ -31,6 +31,10 @@ public partial class Solyn : ModNPC, IPixelatedPrimitiveRenderer
                 return Main.rand.NextBool(120) && doneWithIntroDialogue;
             }
 
+            // Solyn stays up during blood moons with the excuse that she can't sleep but really it's just so that she can get some cool flavor dialogue during said blood moon.
+            if (Main.bloodMoon)
+                return false;
+
             return true;
         }
     }
@@ -104,7 +108,9 @@ public partial class Solyn : ModNPC, IPixelatedPrimitiveRenderer
 
         if ((AITimer % 45f == 44f || Main.rand.NextBool(350)) && AITimer >= 300f)
         {
-            Color zzzColor = Color.Lerp(new(255, 193, 40), new(255, 108, 174), EasingCurves.Cubic.Evaluate(EasingType.InOut, Main.rand.NextFloat()));
+            Color zzzColorOptionA = new Color(255, 193, 40);
+            Color zzzColorOptionB = new Color(255, 108, 174);
+            Color zzzColor = Color.Lerp(zzzColorOptionA, zzzColorOptionB, EasingCurves.Cubic.Evaluate(EasingType.InOut, Main.rand.NextFloat()));
 
             Vector2 zzzVelocity = new Vector2(-Main.rand.NextFloat(1.1f, 2.4f), -Main.rand.NextFloat(6f, 8.5f));
             SleepParticle zzz = new SleepParticle(NPC.Top + new Vector2(-30f, -24f), zzzVelocity, zzzColor, 0.5f, Main.rand.Next(90, 150));

@@ -193,7 +193,7 @@ public partial class AvatarOfEmptiness
 
         ManagedScreenFilter antishadowShader = ShaderManager.GetFilter("NoxusBoss.AntishadowSilhouetteShader");
         antishadowShader.TrySetParameter("silhouetteColor", Color.Black);
-        antishadowShader.TrySetParameter("foregroundColor", AvatarOfEmptiness.AntishadowBackgroundColor);
+        antishadowShader.TrySetParameter("foregroundColor", AntishadowBackgroundColor);
         antishadowShader.Activate();
     }
 

@@ -388,7 +388,7 @@ public class DeadStar : ModProjectile, IDrawsWithShader, IProjOwnedByBoss<Avatar
             // Spawn the iron particle.
             Dust iron = Dust.NewDustPerfect(ironSpawnPosition, ModContent.DustType<GenericWindFlyDust>(), ironVelocity);
             iron.scale = 0.75f;
-            iron.color = Color.Lerp(Color.White, new(122, 108, 95), Main.rand.NextFloat(0.7f));
+            iron.color = Color.Lerp(Color.White, new Color(122, 108, 95), Main.rand.NextFloat(0.7f));
             iron.noGravity = true;
         }
     }
@@ -521,7 +521,7 @@ public class DeadStar : ModProjectile, IDrawsWithShader, IProjOwnedByBoss<Avatar
                 particleVelocity *= Main.rand.NextFloat(1f, 2.4f);
 
             Dust particle = Dust.NewDustPerfect(particleSpawnPosition, 264, particleVelocity);
-            particle.color = Color.Lerp(Color.Red, new(255, 8, 48), Main.rand.NextFloat(0.8f));
+            particle.color = Color.Lerp(Color.Red, new Color(255, 8, 48), Main.rand.NextFloat(0.8f));
             particle.noGravity = true;
             particle.noLight = true;
             particle.scale = Main.rand.NextFloat(1f, 1.4f);

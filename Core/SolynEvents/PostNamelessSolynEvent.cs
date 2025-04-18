@@ -1,6 +1,5 @@
 ﻿using Luminance.Core.Cutscenes;
 using Microsoft.Xna.Framework;
-using NoxusBoss.Content.NPCs.Friendly;
 using NoxusBoss.Core.DialogueSystem;
 using NoxusBoss.Core.Graphics.UI.Books;
 using NoxusBoss.Core.World.GameScenes.EndCredits;
@@ -41,18 +40,6 @@ public class PostNamelessSolynEvent : SolynEvent
         conversation.GetByRelativeKey("Tree2").ClickAction = _ => CutsceneManager.QueueCutscene(ModContent.GetInstance<EndCreditsScene>());
 
         ConversationSelector.PriorityConversationSelectionEvent += SelectGardenDialogue;
-    }
-
-    public override void PostUpdateNPCs()
-    {
-        if (Stage >= 1 && !Finished && Solyn is not null)
-        {
-            if (Solyn.CurrentState != SolynAIType.PuppeteeredByQuest)
-                Solyn.SwitchState(SolynAIType.PuppeteeredByQuest);
-            Solyn.PerformStandardFraming();
-            Solyn.NPC.spriteDirection = -1;
-            Solyn.NPC.velocity.X = 0f;
-        }
     }
 
     private Conversation? SelectGardenDialogue()

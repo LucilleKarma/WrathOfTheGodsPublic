@@ -1,9 +1,10 @@
 Adds two interesting new bosses and a story-based character to the game.
 
 The visual effects within this mod may be a bit extreme for some. If photosensitivity is a concern, or if you simply want it toned down a bit, refer to the configuration options.
+This mod is currently not compatible with multiplayer.
 
 Credits to the following individuals for helping (whether directly or indirectly) in the creation of the mod:
-Artwork: Blockaroz, IbanPlay, Iris, theredstonebro, Moonburn, and Vaikyia
+Artwork: Blockaroz, IbanPlay, Iris, Gobiidae, Moonburn, and Vaikyia
 Sound Design: Moonburn and Lucille Karma
 Programming: Lucille Karma
 Music: Ennway, Heart Plus Up, Moonburn, and CDMusic

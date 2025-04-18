@@ -21,9 +21,11 @@ using NoxusBoss.Core.CrossCompatibility.Inbound.BaseCalamity;
 using NoxusBoss.Core.Fixes;
 using NoxusBoss.Core.GlobalInstances;
 using NoxusBoss.Core.Graphics.BackgroundManagement;
+using NoxusBoss.Core.Graphics.UI;
 using NoxusBoss.Core.Graphics.UI.GraphicalUniverseImager;
 using NoxusBoss.Core.SoundSystems;
 using NoxusBoss.Core.SoundSystems.Music;
+using NoxusBoss.Core.World.GameScenes.AvatarUniverseExploration;
 using NoxusBoss.Core.World.GameScenes.EndCredits;
 using NoxusBoss.Core.World.Subworlds;
 using NoxusBoss.Core.World.TileDisabling;
@@ -34,6 +36,7 @@ using Terraria.GameContent.Bestiary;
 using Terraria.GameContent.Events;
 using Terraria.GameContent.UI.BigProgressBar;
 using Terraria.ID;
+using Terraria.Localization;
 using Terraria.ModLoader;
 
 namespace NoxusBoss.Content.NPCs.Bosses.Avatar.SecondPhaseForm;
@@ -677,6 +680,75 @@ public partial class AvatarOfEmptiness : ModNPC
                 AvatarDimensionVariants.CryonicDimension.BackgroundDrawAction();
                 Background.SetSpriteSortMode(SpriteSortMode.Deferred);
             }));
+
+        CellPhoneInfoModificationSystem.WeatherReplacementTextEvent += (string originalText) =>
+        {
+            if (Myself is not null && Myself.As<AvatarOfEmptiness>().ParadiseReclaimedIsOngoing)
+                return Language.GetTextValue("Mods.NoxusBoss.CellPhoneInfoOverrides.ParadiseReclaimedInfoText");
+            if (AvatarOfEmptinessSky.Dimension == AvatarDimensionVariants.CryonicDimension)
+                return Language.GetTextValue("Mods.NoxusBoss.CellPhoneInfoOverrides.CryogenicMaelstromText");
+            if (AvatarOfEmptinessSky.Dimension == AvatarDimensionVariants.VisceralDimension)
+                return Language.GetTextValue("Mods.NoxusBoss.CellPhoneInfoOverrides.VisceralTyphoonText");
+            if (AvatarOfEmptinessSky.Dimension == AvatarDimensionVariants.FogDimension || AvatarUniverseExplorationSystem.InAvatarUniverse)
+                return Language.GetTextValue("Mods.NoxusBoss.CellPhoneInfoOverrides.DyingWorldFogText");
+            if (AvatarOfEmptinessSky.Dimension == AvatarDimensionVariants.DarkDimension)
+                return Language.GetTextValue("Mods.NoxusBoss.CellPhoneInfoOverrides.EmptinessWeatherText");
+            if (Myself is not null && !Myself.As<AvatarOfEmptiness>().BattleIsDone)
+                return Language.GetTextValue("Mods.NoxusBoss.CellPhoneInfoOverrides.CrimsonDerechoText");
+
+            return null;
+        };
+        CellPhoneInfoModificationSystem.FishingPowerReplacementTextEvent += (string originalText) =>
+        {
+            if (Myself is not null && Myself.As<AvatarOfEmptiness>().ParadiseReclaimedIsOngoing)
+                return Language.GetTextValue("Mods.NoxusBoss.CellPhoneInfoOverrides.ParadiseReclaimedInfoText");
+
+            return null;
+        };
+        CellPhoneInfoModificationSystem.MoonPhaseReplacementTextEvent += (string originalText) =>
+        {
+            if (Myself is not null && Myself.As<AvatarOfEmptiness>().ParadiseReclaimedIsOngoing)
+                return Language.GetTextValue("Mods.NoxusBoss.CellPhoneInfoOverrides.ParadiseReclaimedInfoText");
+
+            return null;
+        };
+        CellPhoneInfoModificationSystem.PlayerSpeedReplacementTextEvent += (string originalText) =>
+        {
+            if (Myself is not null && Myself.As<AvatarOfEmptiness>().ParadiseReclaimedIsOngoing)
+                return Language.GetTextValue("Mods.NoxusBoss.CellPhoneInfoOverrides.ParadiseReclaimedInfoText");
+            if (TileDisablingSystem.TilesAreUninteractable && Myself is not null && Myself.As<AvatarOfEmptiness>().CurrentState == AvatarAIType.TravelThroughVortex)
+            {
+                float shownSpeed = Myself.As<AvatarOfEmptiness>().TravelThroughVortex_ShownPlayerSpeed;
+                return Language.GetTextValue("GameUI.Speed", Math.Round(shownSpeed));
+            }
+
+            return null;
+        };
+        CellPhoneInfoModificationSystem.TreasureTilesReplacementTextEvent += (string originalText) =>
+        {
+            if (Myself is not null && Myself.As<AvatarOfEmptiness>().ParadiseReclaimedIsOngoing)
+                return Language.GetTextValue("Mods.NoxusBoss.CellPhoneInfoOverrides.ParadiseReclaimedInfoText");
+
+            return null;
+        };
+        CellPhoneInfoModificationSystem.PlayerXPositionReplacementTextEvent += (string originalText) =>
+        {
+            if (Myself is not null && Myself.As<AvatarOfEmptiness>().ParadiseReclaimedIsOngoing)
+                return Language.GetTextValue("Mods.NoxusBoss.CellPhoneInfoOverrides.ParadiseReclaimedInfoText");
+            if (TileDisablingSystem.TilesAreUninteractable && Myself is not null)
+                return CompassTextInMyUniverse;
+
+            return null;
+        };
+        CellPhoneInfoModificationSystem.PlayerYPositionReplacementTextEvent += (string originalText) =>
+        {
+            if (Myself is not null && Myself.As<AvatarOfEmptiness>().ParadiseReclaimedIsOngoing)
+                return Language.GetTextValue("Mods.NoxusBoss.CellPhoneInfoOverrides.ParadiseReclaimedInfoText");
+            if (TileDisablingSystem.TilesAreUninteractable && Myself is not null)
+                return DepthTextInMyUniverse;
+
+            return null;
+        };
     }
 
     private bool DisableTeleportItems(Item item, Player player)

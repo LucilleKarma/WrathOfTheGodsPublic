@@ -167,6 +167,12 @@ public class RiftEclipseSnow : ModTile
 
         // Draw the main tile texture.
         Texture2D mainTexture = TextureAssets.Tile[type].Value;
+        if (t.TileColor != PaintID.None)
+        {
+            Texture2D paintedTexture = Main.instance.TilePaintSystem.TryGetTileAndRequestIfNotReady(t.TileType, 0, t.TileColor);
+            mainTexture = paintedTexture ?? mainTexture;
+        }
+
         Vector2 drawOffset = Main.drawToScreen ? Vector2.Zero : new Vector2(Main.offScreenRange);
         Color lightColor = Lighting.GetColor(x, y);
 

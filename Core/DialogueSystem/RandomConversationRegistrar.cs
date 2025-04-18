@@ -1,25 +1,55 @@
-﻿using NoxusBoss.Core.CrossCompatibility.Inbound;
+﻿using NoxusBoss.Content.HairStyles;
+using NoxusBoss.Content.NPCs.Enemies.RiftEclipse;
+using NoxusBoss.Core.CrossCompatibility.Inbound;
 using NoxusBoss.Core.Graphics.UI.Books;
 using NoxusBoss.Core.World;
 using NoxusBoss.Core.World.GameScenes.RiftEclipse;
+using NoxusBoss.Core.World.WorldGeneration;
 using Terraria;
+using Terraria.ID;
 using Terraria.ModLoader;
 
 namespace NoxusBoss.Core.DialogueSystem;
 
 public class RandomConversationRegistrar : ModSystem
 {
+    /// <summary>
+    /// Whether it's currently dawn in the world.
+    /// </summary>
+    private static bool IsDawn => Main.dayTime && Main.time <= 10800;
+
+    /// <summary>
+    /// Whether it's currently the middle of the day in the world.
+    /// </summary>
+    private static bool IsMidDay => Main.dayTime && Main.time > 10800 && Main.time <= 47800;
+
+    /// <summary>
+    /// Whether it's currently dusk in the world.
+    /// </summary>
+    private static bool IsDusk => Main.dayTime && Main.time > 47800;
+
     public override void OnModLoad()
     {
         RegisterDawnDialogue();
         RegisterSunnyDayDialogue();
         RegisterRainyDayDialogue();
         RegisterDuskDialogue();
+        RegisterBloodMoonDialogue();
         RegisterSlimeRainDialogue();
         RegisterStorageSailsDialogue();
         RegisterBooksDialogue();
+        RegisterHairDialogue();
+        RegisterPicnicDialogue();
+        RegisterNearbyLunarPillarDialogue();
 
         RegisterBookshelfAcknowledgementDialogue();
+
+        RegisterRiftBlizzardDialogue();
+        RegisterWantingToGoHomeDialogue();
+        RegisterRiftSunsetDialogue();
+        RegisterRiftTownNPCDialogue();
+        RegisterHopefulPastDialogue();
+        RegisterRiftFogDialogue();
 
         RegisterLategameDialogue();
     }
@@ -27,7 +57,7 @@ public class RandomConversationRegistrar : ModSystem
     private static void RegisterDawnDialogue()
     {
         Conversation dawnDialogue = DialogueManager.RegisterNew("SolynDawnDialogue", "Start").
-            WithAppearanceCondition(conversation => Main.dayTime && Main.time <= 10800).
+            WithAppearanceCondition(conversation => IsDawn && !RiftEclipseManagementSystem.RiftEclipseOngoing).
             WithRerollCondition(conversation => !conversation.AppearanceCondition()).
             MakeSpokenByPlayer("Player1", "Player2", "Player3", "Player4").
             MakeFallback();
@@ -50,7 +80,7 @@ public class RandomConversationRegistrar : ModSystem
     private static void RegisterSunnyDayDialogue()
     {
         DialogueManager.RegisterNew("SolynSunnyDayDialogue", "Start").
-            WithAppearanceCondition(conversation => Main.dayTime && Main.time > 10800 && Main.time <= 47800 && !Main.raining).
+            WithAppearanceCondition(conversation => IsMidDay && !Main.raining && !RiftEclipseManagementSystem.RiftEclipseOngoing).
             WithRerollCondition(conversation => !conversation.AppearanceCondition()).
             MakeSpokenByPlayer("Player1", "Player2").
             LinkFromStartToFinish().
@@ -60,7 +90,7 @@ public class RandomConversationRegistrar : ModSystem
     private static void RegisterRainyDayDialogue()
     {
         DialogueManager.RegisterNew("SolynRainyDayDialogue", "Start").
-            WithAppearanceCondition(conversation => Main.dayTime && Main.time > 10800 && Main.time <= 47800 && Main.raining).
+            WithAppearanceCondition(conversation => IsMidDay && Main.raining && !RiftEclipseManagementSystem.RiftEclipseOngoing).
             WithRerollCondition(conversation => !conversation.AppearanceCondition()).
             MakeSpokenByPlayer("Player1", "Player2").
             LinkFromStartToFinish().
@@ -70,10 +100,19 @@ public class RandomConversationRegistrar : ModSystem
     private static void RegisterDuskDialogue()
     {
         DialogueManager.RegisterNew("SolynDuskDialogue", "Start").
-            WithAppearanceCondition(conversation => Main.dayTime && Main.time > 47800).
+            WithAppearanceCondition(conversation => IsDusk && !RiftEclipseManagementSystem.RiftEclipseOngoing).
             WithRerollCondition(conversation => !conversation.AppearanceCondition()).
             LinkFromStartToFinish().
             MakeFallback();
+    }
+
+    private static void RegisterBloodMoonDialogue()
+    {
+        DialogueManager.RegisterNew("SolynBloodMoonDialogue", "Start").
+            WithAppearanceCondition(conversation => Main.bloodMoon).
+            WithRerollCondition(conversation => !conversation.AppearanceCondition()).
+            LinkFromStartToFinish().
+            MakeFallback(priority: 3);
     }
 
     private static void RegisterSlimeRainDialogue()
@@ -83,14 +122,14 @@ public class RandomConversationRegistrar : ModSystem
             WithRerollCondition(conversation => !conversation.AppearanceCondition()).
             MakeSpokenByPlayer("Player1").
             LinkFromStartToFinish().
-            MakeFallback(priority: 1);
+            MakeFallback(priority: 2);
     }
 
     private static void RegisterStorageSailsDialogue()
     {
         DialogueManager.RegisterNew("SolynStorageSailsDialogue", "Start").
-            WithAppearanceCondition(conversation => Main.rand.NextBool(3)).
-            WithRerollCondition(conversation => Main.rand.NextBool(1800)).
+            WithAppearanceCondition(conversation => Main.rand.NextBool(3) && !RiftEclipseManagementSystem.RiftEclipseOngoing).
+            WithRerollCondition(conversation => Main.rand.NextBool(1800) || RiftEclipseManagementSystem.RiftEclipseOngoing).
             MakeSpokenByPlayer("Player1", "Player2").
             LinkFromStartToFinish().
             MakeFallback();
@@ -131,11 +170,65 @@ public class RandomConversationRegistrar : ModSystem
         bookDialogue.GetByRelativeKey("Solyn4_OtherClass").SelectionCondition = () => !PlayerIsProbablyMage();
     }
 
+    private static void RegisterHairDialogue()
+    {
+        DialogueManager.RegisterNew("SolynSameHairDialogue", "Start").
+            WithAppearanceCondition(conversation =>
+            {
+                if (conversation.SeenBefore("Solyn2"))
+                    return false;
+
+                Player p = Main.LocalPlayer;
+                bool hairIsVisible = p.head <= 0;
+                return hairIsVisible && p.hair == ModContent.GetInstance<SolynHairStyle>().Type;
+            }).
+            WithRerollCondition(conversation => Main.rand.NextBool(1800) || !conversation.AppearanceCondition()).
+            LinkFromStartToFinish().
+            MakeFallback(priority: 2);
+    }
+
+    private static void RegisterPicnicDialogue()
+    {
+        DialogueManager.RegisterNew("SolynPicnicDialogue", "Start").
+            WithAppearanceCondition(conversation => Main.rand.NextBool(3) && !RiftEclipseManagementSystem.RiftEclipseOngoing).
+            WithRerollCondition(conversation => Main.rand.NextBool(1800) || RiftEclipseManagementSystem.RiftEclipseOngoing).
+            LinkFromStartToFinish().
+            MakeFallback();
+    }
+
+    private static void RegisterNearbyLunarPillarDialogue()
+    {
+        DialogueManager.RegisterNew("SolynNearbyLunarPillarDialogue", "Start").
+            WithAppearanceCondition(conversation =>
+            {
+                bool pillarNearTent = false;
+                foreach (NPC npc in Main.ActiveNPCs)
+                {
+                    if (npc.aiStyle == NPCAIStyleID.CelestialPillar && npc.WithinRange(SolynCampsiteWorldGen.TentPosition, 3900f))
+                    {
+                        pillarNearTent = true;
+                        break;
+                    }
+                }
+
+                return pillarNearTent;
+            }).
+            WithRerollCondition(conversation => !conversation.AppearanceCondition()).
+            LinkFromStartToFinish().
+            MakeFallback(priority: 6);
+    }
+
     private static void RegisterBookshelfAcknowledgementDialogue()
     {
         DialogueManager.RegisterNew("SolynOneRedeemedBookDialogue", "Start").
             WithAppearanceCondition(conversation => SolynBookExchangeRegistry.TotalRedeemedBooks >= 1).
             WithRerollCondition(conversation => conversation.SeenBefore("Solyn1")).
+            LinkFromStartToFinish().
+            MakeFallback(priority: 5);
+
+        DialogueManager.RegisterNew("SolynInscrutableTextsBookDialogue", "Start").
+            WithAppearanceCondition(conversation => SolynBookExchangeRegistry.RedeemedBooks.Contains("InscrutableTexts")).
+            WithRerollCondition(conversation => conversation.SeenBefore("Solyn3")).
             LinkFromStartToFinish().
             MakeFallback(priority: 1);
 
@@ -154,7 +247,7 @@ public class RandomConversationRegistrar : ModSystem
             }).
             WithRerollCondition(conversation => conversation.SeenBefore("Solyn1")).
             LinkFromStartToFinish().
-            MakeFallback(priority: 1);
+            MakeFallback(priority: 5);
 
         DialogueManager.RegisterNew("SolynCompleteBookshelfDialogue", "Start").
             WithAppearanceCondition(conversation =>
@@ -165,7 +258,80 @@ public class RandomConversationRegistrar : ModSystem
             }).
             WithRerollCondition(conversation => conversation.SeenBefore("Solyn2")).
             LinkFromStartToFinish().
+            MakeFallback(priority: 5);
+    }
+
+    private static void RegisterRiftBlizzardDialogue()
+    {
+        DialogueManager.RegisterNew("SolynRiftBlizzardDialogue", "Start").
+            WithAppearanceCondition(conversation => Main.raining && RiftEclipseManagementSystem.RiftEclipseOngoing).
+            WithRerollCondition(conversation => Main.rand.NextBool(1800) || !conversation.AppearanceCondition()).
+            LinkFromStartToFinish().
+            MakeFallback();
+    }
+
+    private static void RegisterWantingToGoHomeDialogue()
+    {
+        DialogueManager.RegisterNew("SolynWantingToGoHomeDialogue", "Start").
+            WithAppearanceCondition(conversation => !Main.raining && RiftEclipseManagementSystem.RiftEclipseOngoing).
+            WithRerollCondition(conversation => Main.rand.NextBool(1800) || !conversation.AppearanceCondition()).
+            LinkFromStartToFinish().
+            MakeFallback();
+    }
+
+    private static void RegisterRiftSunsetDialogue()
+    {
+        DialogueManager.RegisterNew("SolynRiftSunsetDialogue", "Start").
+            WithAppearanceCondition(conversation => IsDusk && RiftEclipseManagementSystem.RiftEclipseOngoing).
+            WithRerollCondition(conversation => !conversation.AppearanceCondition()).
+            LinkFromStartToFinish().
             MakeFallback(priority: 1);
+    }
+
+    private static void RegisterRiftTownNPCDialogue()
+    {
+        DialogueManager.RegisterNew("SolynRiftTownNPCDialogue", "Start").
+            WithAppearanceCondition(conversation =>
+            {
+                if (conversation.SeenBefore("Solyn2"))
+                    return false;
+
+                if (!RiftEclipseManagementSystem.RiftEclipseOngoing)
+                    return false;
+
+                bool townExistsInWorld = Main.npc.Take(Main.maxNPCs).Count(n => n.townNPC) >= 4;
+                if (!townExistsInWorld)
+                    return false;
+
+                return true;
+            }).
+            WithRerollCondition(conversation => Main.rand.NextBool(1800) || !conversation.AppearanceCondition()).
+            LinkFromStartToFinish().
+            MakeFallback();
+    }
+
+    private static void RegisterHopefulPastDialogue()
+    {
+        DialogueManager.RegisterNew("SolynHopefulPastDialogue", "Start").
+            WithAppearanceCondition(conversation => !Main.raining && RiftEclipseManagementSystem.RiftEclipseOngoing).
+            WithRerollCondition(conversation => Main.rand.NextBool(1800) || !conversation.AppearanceCondition()).
+            LinkFromStartToFinish().
+            MakeFallback();
+    }
+
+    private static void RegisterRiftFogDialogue()
+    {
+        DialogueManager.RegisterNew("SolynRiftFogDialogue", "Start").
+            WithAppearanceCondition(conversation => RiftEclipseFogEventManager.EventOngoing && RiftEclipseManagementSystem.RiftEclipseOngoing).
+            WithRerollCondition(conversation => !conversation.AppearanceCondition()).
+            LinkFromStartToFinish().
+            MakeFallback(priority: 2);
+
+        DialogueManager.RegisterNew("SolynMirrorwalkerDialogue", "Start").
+            WithAppearanceCondition(conversation => NPC.AnyNPCs(ModContent.NPCType<Mirrorwalker>()) && RiftEclipseManagementSystem.RiftEclipseOngoing).
+            WithRerollCondition(conversation => !conversation.AppearanceCondition()).
+            LinkFromStartToFinish().
+            MakeFallback(priority: 3);
     }
 
     private static void RegisterLategameDialogue()

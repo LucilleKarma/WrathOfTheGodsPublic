@@ -7,6 +7,7 @@ using NoxusBoss.Core.Autoloaders;
 using NoxusBoss.Core.CrossCompatibility.Inbound;
 using NoxusBoss.Core.Fixes;
 using NoxusBoss.Core.Graphics;
+using NoxusBoss.Core.Graphics.UI;
 using NoxusBoss.Core.Graphics.UI.Books;
 using NoxusBoss.Core.World.WorldGeneration;
 using NoxusBoss.Core.World.WorldSaving;
@@ -75,6 +76,21 @@ public class EternalGardenNew : Subworld
         MusicBoxAutoloader.Create(Mod, GetAssetPath("Content/Items/Placeable/MusicBoxes", "EternalGardenMusicBox"), musicPath, out _, out _);
 
         On_WorldGen.KillTile += DisallowGrassToDirtConversion;
+
+        CellPhoneInfoModificationSystem.PlayerXPositionReplacementTextEvent += (string originalText) =>
+        {
+            if (EternalGardenUpdateSystem.WasInSubworldLastUpdateFrame)
+                return "???";
+
+            return null;
+        };
+        CellPhoneInfoModificationSystem.PlayerYPositionReplacementTextEvent += (string originalText) =>
+        {
+            if (EternalGardenUpdateSystem.WasInSubworldLastUpdateFrame)
+                return "???";
+
+            return null;
+        };
     }
 
     private void DisallowGrassToDirtConversion(On_WorldGen.orig_KillTile orig, int i, int j, bool fail, bool effectOnly, bool noItem)

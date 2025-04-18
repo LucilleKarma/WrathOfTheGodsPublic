@@ -41,4 +41,15 @@ public class SolynBookRewardsSystem : ModSystem
                 RewardMappings[book] = data[bookName];
         }
     }
+
+    /// <summary>
+    /// Adds a new reward for a given book.
+    /// </summary>
+    public static void AddRewardForBook(AutoloadableSolynBook book, SolynReward reward)
+    {
+        if (!RewardMappings.ContainsKey(book))
+            RewardMappings[book] = new List<SolynReward>();
+
+        RewardMappings[book].Add(reward);
+    }
 }

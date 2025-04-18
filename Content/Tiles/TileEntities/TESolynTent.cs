@@ -45,6 +45,7 @@ public class TESolynTent : ModTileEntity, IClientSideTileEntityUpdater
         set;
     }
 
+    // TODO -- Generalize into placeable tile with the new fancy rope set.
     /// <summary>
     /// The rope this entity holds locally.
     /// </summary>

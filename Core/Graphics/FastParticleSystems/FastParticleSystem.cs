@@ -25,17 +25,17 @@ public class FastParticleSystem : IDisposable
     /// <summary>
     /// The set of all active particles.
     /// </summary>
-    internal FastParticle[] particles;
+    public FastParticle[] particles;
 
     /// <summary>
     /// The buffer responsible for all vertex data on the particles.
     /// </summary>
-    internal DynamicVertexBuffer vertexData;
+    public DynamicVertexBuffer vertexData;
 
     /// <summary>
     /// The buffer responsible for vertex indices relative to the vertex buffer.
     /// </summary>
-    internal DynamicIndexBuffer indexData;
+    public DynamicIndexBuffer indexData;
 
     /// <summary>
     /// The maximum amount of particles that can exist.
@@ -156,7 +156,18 @@ public class FastParticleSystem : IDisposable
     /// <param name="velocity">The particle's initial velocity.</param>
     /// <param name="size">The particle's size.</param>
     /// <param name="color">The particle's color.</param>
-    public void CreateNew(Vector2 spawnPosition, Vector2 velocity, Vector2 size, Color color)
+    public void CreateNew(Vector2 spawnPosition, Vector2 velocity, Vector2 size, Color color) =>
+        CreateNew(spawnPosition, velocity, size, color, 0f);
+
+    /// <summary>
+    /// Tries to create a new particle at a given position with a given velocity.
+    /// </summary>
+    /// <param name="spawnPosition">The particle's spawn position.</param>
+    /// <param name="velocity">The particle's initial velocity.</param>
+    /// <param name="size">The particle's size.</param>
+    /// <param name="color">The particle's color.</param>
+    /// <param name="extraData">Extra data for the particle.</param>
+    public void CreateNew(Vector2 spawnPosition, Vector2 velocity, Vector2 size, Color color, float extraData)
     {
         ref FastParticle particle = ref particles[particleSpawnIndex];
         particle.Active = true;
@@ -166,6 +177,7 @@ public class FastParticleSystem : IDisposable
         particle.Rotation = velocity.ToRotation() + PiOver2;
         particle.Color = color;
         particle.Size = size;
+        particle.ExtraData = extraData;
 
         particleSpawnIndex = (particleSpawnIndex + 1) % MaxParticles;
     }

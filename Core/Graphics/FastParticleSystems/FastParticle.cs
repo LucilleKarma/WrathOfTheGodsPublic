@@ -1,5 +1,4 @@
 ﻿using Microsoft.Xna.Framework;
-using Terraria;
 
 namespace NoxusBoss.Core.Graphics.FastParticleSystems;
 
@@ -40,13 +39,8 @@ public struct FastParticle
     /// </summary>
     public float Rotation;
 
-    public FastParticle(Vector2 spawnPosition, Vector2 velocity, Vector2 size, Color color)
-    {
-        Position = spawnPosition;
-        Velocity = velocity;
-        Size = size;
-        Rotation = velocity.ToRotation() + PiOver2;
-        Color = color;
-        Active = true;
-    }
+    /// <summary>
+    /// Optional extra data for this particle.
+    /// </summary>
+    public float ExtraData;
 }

@@ -67,7 +67,7 @@ public class SpecialModIconSystem : ModSystem
             // Apply the IL edit.
             new ManagedILEdit("Create Animated Icon", Mod, edit =>
             {
-                OnInitializeHook = new(onInitializeMethod, edit.SubscriptionWrapper);
+                OnInitializeHook = new ILHook(onInitializeMethod, edit.SubscriptionWrapper);
             }, edit =>
             {
                 OnInitializeHook?.Undo();
@@ -150,7 +150,7 @@ public class SpecialModIconSystem : ModSystem
     private static UIArbitraryDrawImage GenerateWrathOfTheGodsIcon()
     {
         var iconTexture = LazyAsset<Texture2D>.FromPath("NoxusBoss/Assets/Textures/ModIcons/IconBase", AssetRequestMode.ImmediateLoad);
-        wotgModIcon = new(DrawWrathOfTheGodsIcon, iconTexture);
+        wotgModIcon = new UIArbitraryDrawImage(DrawWrathOfTheGodsIcon, iconTexture);
         wotgModIcon.Left.Percent = 0f;
         wotgModIcon.Top.Percent = 0f;
         wotgModIcon.Width.Pixels = 80f;

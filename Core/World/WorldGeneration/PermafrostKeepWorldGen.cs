@@ -1,5 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
 using NoxusBoss.Content.Tiles;
+using NoxusBoss.Core.CrossCompatibility.Inbound.CalamityRemix;
 using NoxusBoss.Core.GlobalInstances;
 using StructureHelper;
 using Terraria;
@@ -195,7 +196,9 @@ public class PermafrostKeepWorldGen : ModSystem
                     Main.tile[i, j].Get<TileWallWireStateData>().HasTile = false;
             }
         }
+
         GenVars.structures.AddProtectedStructure(KeepArea);
+        FargosCompatibilitySystem.MarkRectangleAsIndestructible(KeepArea, true);
 
         Generator.GenerateStructure(path, new(generationCenter.Value.X, generationCenter.Value.Y), ModContent.GetInstance<NoxusBoss>());
 

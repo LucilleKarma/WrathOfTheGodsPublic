@@ -19,7 +19,7 @@ public class RiftEclipseFogShaderScene : ModSceneEffect
     public override void SpecialVisuals(Player player, bool isActive)
     {
         player.ManageSpecialBiomeVisuals("NoxusBoss:NoxusWorldFog", isActive);
-        if (GraphicalUniverseImagerSky.EclipseConfigOption == Graphics.UI.GraphicalUniverseImager.GraphicalUniverseImagerSettings.EclipseSecondaryAmbienceSetting.Fog)
+        if (GraphicalUniverseImagerSky.EclipseConfigOption == GraphicalUniverseImagerSettings.EclipseSecondaryAmbienceSetting.Fog)
             RiftEclipseFogShaderData.FogDrawIntensityOverride = Lerp(RiftEclipseFogShaderData.FogDrawIntensityOverride, 1f, 0.11f);
     }
 }

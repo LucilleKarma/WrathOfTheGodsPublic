@@ -109,10 +109,6 @@ public class RiftEclipseIce : ModTile
         if ((TileID.Sets.IsAContainer[t.TileType] || TileID.Sets.BasicChest[t.TileType]) && t.HasTile)
             return;
 
-        // Clear water tiles before attempting to place ice.
-        if (t.HasTile && (type == TileID.LilyPad || type == TileID.Cattail || type == TileID.Bamboo || type == ModContent.TileType<RiftEclipseSnow>()))
-            WorldGen.KillTile(x, y);
-
         Tile left = Framing.GetTileSafely(x - 1, y);
         Tile right = Framing.GetTileSafely(x + 1, y);
         bool atSurface = above.LiquidAmount <= 0 && !above.HasTile;
@@ -120,6 +116,10 @@ public class RiftEclipseIce : ModTile
         bool iceToSides = (left.HasUnactuatedTile && left.TileType == Type) || (right.HasUnactuatedTile && right.TileType == Type);
         if ((atSurface && RiftEclipseSnowSystem.IceCanCoverWater) || ((iceAbove || iceToSides) && RiftEclipseSnowSystem.IceCanFreezeAllWater))
         {
+            // Clear water tiles before attempting to place ice.
+            if (t.HasTile && (type == TileID.LilyPad || type == TileID.Cattail || type == TileID.Bamboo || type == ModContent.TileType<RiftEclipseSnow>() || TileID.Sets.BreakableWhenPlacing[type]))
+                WorldGen.KillTile(x, y);
+
             Main.tile[x, y].TileType = Type;
             Main.tile[x, y].Get<TileWallWireStateData>().HasTile = true;
             Main.tile[x - 1, y].Get<TileWallWireStateData>().Slope = SlopeType.Solid;

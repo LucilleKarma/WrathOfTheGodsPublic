@@ -1,6 +1,6 @@
 displayName = Calamity: Wrath of the Gods
 author = Lucille Karma
-version = 1.2.19
+version = 1.2.20
 buildIgnore = .vs\*, Properties\*, *.csproj, *.user, obj\*, bin\*, *.config, .git\*, .github\*, LICENSE, README.md, .editorconfig, .gitignore, .gitattributes, Assets\Effects\Compiler\*, ModReferences\*, *.mp4
 dllReferences = MonoStereo.Dependencies, StructureHelper
 modReferences = SubworldLibrary, Luminance@1.0.9, CalamityMod@2.0.4.1

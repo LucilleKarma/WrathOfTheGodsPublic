@@ -244,7 +244,7 @@ public class ExoelectricDisintegrationRay : ModProjectile, IProjOwnedByBoss<Mars
         float shineIntensity = InverseLerp(0f, 12f, Time) * Lerp(1f, 1.2f, theMagicFactorThatMakesEveryElectricShineEffectSoMuchBetter);
         Vector2 drawPosition = Projectile.Center - Main.screenPosition;
         Texture2D glow = BloomCircleSmall.Value;
-        Texture2D flare = Luminance.Assets.MiscTexturesRegistry.ShineFlareTexture.Value;
+        Texture2D flare = MiscTexturesRegistry.ShineFlareTexture.Value;
 
         for (int i = 0; i < 3; i++)
             Main.spriteBatch.Draw(flare, drawPosition, null, Projectile.GetAlpha(Color.Wheat with { A = 0 }), 0f, flare.Size() * 0.5f, shineIntensity * 2f, 0, 0f);

@@ -150,7 +150,8 @@ public class AntiseedEvent : SolynEvent
 
     public override void PostUpdateEverything()
     {
-        if (Stage == 0 && CommonCalamityVariables.CeaselessVoidDefeated && DialogueManager.FindByRelativePrefix("CeaselessVoidDiscussionBeforeBattle").SeenBefore("Conversation9") && CanStart)
+        bool riftPresent = CommonCalamityVariables.CeaselessVoidDefeated && NPC.AnyNPCs(ModContent.NPCType<CeaselessVoidRift>());
+        if (Stage == 0 && riftPresent && DialogueManager.FindByRelativePrefix("CeaselessVoidDiscussionBeforeBattle").SeenBefore("Conversation9") && CanStart)
             SafeSetStage(1);
 
         // No.

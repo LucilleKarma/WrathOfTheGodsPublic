@@ -251,7 +251,7 @@ public class GenesisInstance
         // Add a touch of wind to the bulb.
         float wind = AperiodicSin(Main.GlobalTimeWrappedHourly * 0.56f + Anchor.X + Anchor.Y) * 0.033f + Main.windSpeedCurrent * 0.17f;
 
-        // Draw the bulb. This is done before the upper stem is rendered to ensure that it draws behind it.
+        // Draw the bulb.
         float bulbSquimsh = Cos(Main.GlobalTimeWrappedHourly * 4.5f + Anchor.X + Anchor.Y) * 0.011f;
         Vector2 bulbScale = new Vector2(1f - bulbSquimsh, 1f + bulbSquimsh);
         Color glowmaskColor = new Color(2, 0, 156);

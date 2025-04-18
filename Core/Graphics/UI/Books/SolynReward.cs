@@ -31,7 +31,7 @@ public struct SolynReward
     public bool GiftedDirectlyFromSolyn;
 
     /// <summary>
-    /// The item ID associated
+    /// The item ID associated with this reward.
     /// </summary>
     [JsonIgnore]
     public readonly int ItemID

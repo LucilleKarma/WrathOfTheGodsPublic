@@ -638,6 +638,7 @@ public class GennedAssets
         public class Placeable
         {
             public static readonly LazyAsset<Texture2D> Cattail = LazyAsset<Texture2D>.FromPath("NoxusBoss/Assets/Textures/Content/Items/Placeable/Cattail");
+            public static readonly LazyAsset<Texture2D> FancyRopeSet = LazyAsset<Texture2D>.FromPath("NoxusBoss/Assets/Textures/Content/Items/Placeable/FancyRopeSet");
             public static readonly LazyAsset<Texture2D> GardenFountain = LazyAsset<Texture2D>.FromPath("NoxusBoss/Assets/Textures/Content/Items/Placeable/GardenFountain");
             public static readonly LazyAsset<Texture2D> GraphicalUniverseImager = LazyAsset<Texture2D>.FromPath("NoxusBoss/Assets/Textures/Content/Items/Placeable/GraphicalUniverseImager");
             public static readonly LazyAsset<Texture2D> LotusOfCreation = LazyAsset<Texture2D>.FromPath("NoxusBoss/Assets/Textures/Content/Items/Placeable/LotusOfCreation");

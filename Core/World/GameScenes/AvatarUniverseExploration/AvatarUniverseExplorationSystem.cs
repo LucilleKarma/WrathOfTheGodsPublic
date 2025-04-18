@@ -6,10 +6,12 @@ using NoxusBoss.Assets;
 using NoxusBoss.Content.NPCs.Bosses.Avatar.SpecificEffectManagers;
 using NoxusBoss.Core.CrossCompatibility.Inbound.BaseCalamity;
 using NoxusBoss.Core.GlobalInstances;
+using NoxusBoss.Core.Graphics.UI;
 using NoxusBoss.Core.World.TileDisabling;
 using Terraria;
 using Terraria.Audio;
 using Terraria.ID;
+using Terraria.Localization;
 using Terraria.ModLoader;
 
 namespace NoxusBoss.Core.World.GameScenes.AvatarUniverseExploration;
@@ -63,6 +65,24 @@ public class AvatarUniverseExplorationSystem : ModSystem
         OnEnter += ClearDungeonEnemies;
         OnEnter += ClearGoreAndDust;
         GlobalItemEventHandlers.CanUseItemEvent += DisableTeleportItems;
+        CellPhoneInfoModificationSystem.PlayerXPositionReplacementTextEvent += (string originalText) =>
+        {
+            if (InAvatarUniverse)
+            {
+                ulong parsecs = Utils.RandomNextSeed((ulong)WorldGen._genRandSeed) / 100;
+                return Language.GetText($"Mods.NoxusBoss.CellPhoneInfoOverrides.ParsecText").Format($"{parsecs:n0}");
+            }
+            return null;
+        };
+        CellPhoneInfoModificationSystem.PlayerYPositionReplacementTextEvent += (string originalText) =>
+        {
+            if (InAvatarUniverse)
+            {
+                ulong parsecs = Utils.RandomNextSeed((ulong)WorldGen._genRandSeed + 472589) / 100;
+                return Language.GetText($"Mods.NoxusBoss.CellPhoneInfoOverrides.ParsecText").Format($"{parsecs:n0}");
+            }
+            return null;
+        };
     }
 
     public override void OnWorldLoad()

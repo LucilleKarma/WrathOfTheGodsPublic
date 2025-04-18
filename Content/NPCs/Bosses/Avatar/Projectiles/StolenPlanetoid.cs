@@ -155,23 +155,35 @@ public class StolenPlanetoid : ModProjectile, IProjOwnedByBoss<AvatarOfEmptiness
             PlanetoidTreeTextureTable[PlanetoidVariant.Ogscule] = LazyAssetTexture.FromPath($"{texturePrefix}/StolenPlanetoid_OgsculeTrees");
 
             // NOTE -- Yes, this means that the effect won't work in multiplayer. This has been deemed acceptable.
-            Main.QueueMainThreadAction(GenerateTopographyMaps);
+            Color[][] colorsByPlanetoid = Main.RunOnMainThread(() =>
+            {
+                Color[][] result = new Color[PlanetoidTextureTable.Count][];
+                for (int i = 0; i < (int)PlanetoidVariant.Count; i++)
+                {
+                    Texture2D texture = PlanetoidTextureTable[(PlanetoidVariant)i].Value;
+                    result[i] = new Color[texture.Width * texture.Height];
+                    texture.GetData(result[i]);
+                }
+
+                return result;
+            }).GetAwaiter().GetResult();
+
+            GenerateTopographyMaps(colorsByPlanetoid);
         }
 
         // Draw the planetoid such that it doesn't randomly get cut off when "offscreen".
         ProjectileID.Sets.DrawScreenCheckFluff[Type] = 2000;
     }
 
-    public static void GenerateTopographyMaps()
+    public static void GenerateTopographyMaps(Color[][] colorsByPlanetoid)
     {
         for (int i = 0; i < (int)PlanetoidVariant.Count; i++)
         {
-            var texture = PlanetoidTextureTable[(PlanetoidVariant)i].Value;
+            Texture2D texture = PlanetoidTextureTable[(PlanetoidVariant)i].Value;
             int totalAngles = texture.Width / 8;
 
             // Calculate texture colors.
-            Color[] colors = new Color[texture.Width * texture.Height];
-            texture.GetData(colors);
+            Color[] colors = colorsByPlanetoid[i];
 
             // Store a collection of height values.
             int[] topography = new int[totalAngles];

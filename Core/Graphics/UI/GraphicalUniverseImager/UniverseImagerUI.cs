@@ -135,7 +135,6 @@ public class UniverseImagerUI : ModSystem
         set;
     } = new InstancedRequestableTarget();
 
-    // TODO -- Implement this later.
     /// <summary>
     /// Whether the music options selector is ready for relase yet.
     /// </summary>

@@ -28,6 +28,17 @@ public class CinnamonRollyn : ModItem
         ItemID.Sets.IsFood[Type] = true;
 
         Main.RegisterItemAnimation(Type, new DrawAnimationVertical(int.MaxValue, 3));
+
+        On_Player.AddBuff += PreventOtherFoodBuffsFromBeingGranted;
+    }
+
+    private static void PreventOtherFoodBuffsFromBeingGranted(On_Player.orig_AddBuff orig, Player player, int type, int timeToAdd, bool quiet, bool foodHack)
+    {
+        bool isFoodBuff = type == BuffID.WellFed || type == BuffID.WellFed2 || type == BuffID.WellFed3;
+        if (isFoodBuff && player.HasBuff<StarstrikinglySatiated>())
+            return;
+
+        orig(player, type, timeToAdd, quiet, foodHack);
     }
 
     public override void SetDefaults()

@@ -8,7 +8,7 @@ namespace NoxusBoss.Core;
 public class VanillaItemNameRegistry : ModSystem
 {
     /// <summary>
-    /// The set of all English vanilla item names mapped to their respective
+    /// The set of all English vanilla item names mapped to their respective item ID.
     /// </summary>
     public static readonly Dictionary<string, int> EnglishVanillaItemNameRelationship = [];
 
