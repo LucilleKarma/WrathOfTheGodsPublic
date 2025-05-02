@@ -72,7 +72,7 @@ public class PlayerPostProcessingShaderSystem : ModSystem
         FinalPlayerTargets.Clear();
 
         renderingToTargets = true;
-        for (int i = 0; i < Main.maxPlayers; i++)
+        for (int i = 0; i < Main.player.Length; i++)
         {
             Player player = Main.player[i];
             if (!player.active)
