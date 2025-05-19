@@ -90,6 +90,7 @@ public class NamelessDeityAuricSoulDistortionSystem : ModSystem
         // This change, which occured when making effectiveWorldPositions a field (Use git blame if you need to figure out when this was done, exactly), seemingly
         // causes the game to crash with an enigmatic access violation exception without this ToArray call. I'm not 100% sure why, but if you start seeing obscure crashes, particularly in contexts
         // pertaining to "I just beat Nameless Deity and entered my world and the game closed!" (meaning the auric soul probably dropped somewhere and this ran), I'd investigate this first, and potentially revert.
+        // for anyone in the future, the "enigmatic" access violation happens because Luminance, the mod used to handle shaders, tries saving parameters to cache and, trying to save effectiveWorldPositions to cache saves a reference to the array, not the array itself, thus because of the parameter being private it cannot access it.
         overlayShader.TrySetParameter("loreItemPositions", effectiveWorldPositions.ToArray());
         overlayShader.TrySetParameter("screenOffset", (Main.screenPosition - Main.screenLastPosition) / Main.ScreenSize.ToVector2());
         overlayShader.TrySetParameter("oldScreenPosition", Main.screenLastPosition);
