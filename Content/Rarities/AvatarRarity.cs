@@ -1,13 +1,15 @@
 ﻿using Luminance.Common.Easings;
 using Microsoft.Xna.Framework;
-using NoxusBoss.Core.GlobalInstances;
+using Microsoft.Xna.Framework.Graphics;
+
+using ReLogic.Graphics;
+
 using Terraria;
-using Terraria.ModLoader;
 using Terraria.UI.Chat;
 
 namespace NoxusBoss.Content.Rarities;
 
-public class AvatarRarity : ModRarity
+public class AvatarRarity : SpeciallyRenderedRarity
 {
     public static Color ColorA => new Color(255, 0, 0);
 
@@ -27,40 +29,31 @@ public class AvatarRarity : ModRarity
 
     public override Color RarityColor => Color.Lerp(ColorA, ColorB, ColorInterpolant);
 
-    public override void Load() => GlobalItemEventHandlers.PreDrawTooltipLineEvent += RenderSplitRarity;
-
-    private bool RenderSplitRarity(Item item, DrawableTooltipLine line, ref int yOffset)
+    protected override void RenderRarityText(SpriteBatch sb, DynamicSpriteFont font, string text, Vector2 position, Color color, float rotation, Vector2 origin, Vector2 scale, SpriteEffects effects, float maxWidth, float spread, bool ui)
     {
-        if (item.rare == Type && line.Name == "ItemName" && line.Mod == "Terraria")
+        int splitLength = text.Length / 2;
+
+        // Prioritize trying to split along natural spaces.
+        int? spaceIndex = null;
+        float minDistance = 9999f;
+        for (int i = 0; i < text.Length; i++)
         {
-            int splitLength = line.Text.Length / 2;
-
-            // Prioritize trying to split along natural spaces.
-            int? spaceIndex = null;
-            float minDistance = 9999f;
-            for (int i = 0; i < line.Text.Length; i++)
+            float distanceFromSplit = Distance(i, splitLength);
+            if (distanceFromSplit < minDistance && text[i] == ' ')
             {
-                float distanceFromSplit = Distance(i, splitLength);
-                if (distanceFromSplit < minDistance && line.Text[i] == ' ')
-                {
-                    spaceIndex = i;
-                    minDistance = distanceFromSplit;
-                }
+                spaceIndex = i;
+                minDistance = distanceFromSplit;
             }
-            if (spaceIndex is not null)
-                splitLength = spaceIndex.Value;
-
-            string partA = new string(line.Text.AsSpan(0, splitLength));
-            string partB = new string(line.Text.AsSpan(splitLength, line.Text.Length - splitLength));
-
-            Vector2 drawPosition = new Vector2(line.X, line.Y);
-            ChatManager.DrawColorCodedStringWithShadow(Main.spriteBatch, line.Font, partA, drawPosition, RarityColor, line.Rotation, line.Origin, line.BaseScale, line.MaxWidth, line.Spread);
-
-            drawPosition.X += line.Font.MeasureString(partA).X * line.BaseScale.X;
-            ChatManager.DrawColorCodedStringWithShadow(Main.spriteBatch, line.Font, partB, drawPosition, InvertedRarityColor, line.Rotation, line.Origin, line.BaseScale, line.MaxWidth, line.Spread);
-            return false;
         }
+        if (spaceIndex is not null)
+            splitLength = spaceIndex.Value;
 
-        return true;
+        string partA = new string(text.AsSpan(0, splitLength));
+        string partB = new string(text.AsSpan(splitLength, text.Length - splitLength));
+
+        ChatManager.DrawColorCodedStringWithShadow(Main.spriteBatch, font, partA, position, RarityColor, rotation, origin, scale, maxWidth, spread);
+
+        position.X += font.MeasureString(partA).X * scale.X;
+        ChatManager.DrawColorCodedStringWithShadow(Main.spriteBatch, font, partB, position, InvertedRarityColor, rotation, origin, scale, maxWidth, spread);
     }
 }

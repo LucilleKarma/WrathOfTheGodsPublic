@@ -1,40 +1,34 @@
 ﻿using Luminance.Core.Graphics;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using NoxusBoss.Core.GlobalInstances;
+
+using ReLogic.Graphics;
+
 using Terraria;
-using Terraria.ModLoader;
 using Terraria.UI.Chat;
 
 namespace NoxusBoss.Content.Rarities;
 
-public class NamelessDeityRarity : ModRarity
+public class NamelessDeityRarity : SpeciallyRenderedRarity
 {
     public override Color RarityColor => Color.White;
 
-    public override void Load() => GlobalItemEventHandlers.PreDrawTooltipLineEvent += RenderRarityWithShader;
-
-    private bool RenderRarityWithShader(Item item, DrawableTooltipLine line, ref int yOffset)
+    protected override void RenderRarityText(SpriteBatch sb, DynamicSpriteFont font, string text, Vector2 position, Color color, float rotation, Vector2 origin, Vector2 scale, SpriteEffects effects, float maxWidth, float spread, bool ui)
     {
-        if (item.rare == Type && line.Name == "ItemName" && line.Mod == "Terraria")
-        {
-            Main.spriteBatch.PrepareForShaders(null, true);
+        Matrix originalMatrix = ui ? Main.UIScaleMatrix : Main.GameViewMatrix.TransformationMatrix;
+        sb.End();
+        sb.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend, SamplerState.LinearClamp, DepthStencilState.None, RasterizerState.CullNone, null, originalMatrix);
 
-            ManagedShader barShader = ShaderManager.GetShader("NoxusBoss.NamelessBossBarShader");
-            barShader.TrySetParameter("textureSize", Vector2.One * 560f);
-            barShader.TrySetParameter("time", Main.GlobalTimeWrappedHourly * 0.4f);
-            barShader.TrySetParameter("chromaticAberrationOffset", Cos01(Main.GlobalTimeWrappedHourly * 0.8f) * 4f);
-            barShader.SetTexture(PerlinNoise, 1, SamplerState.LinearWrap);
-            barShader.Apply();
+        ManagedShader barShader = ShaderManager.GetShader("NoxusBoss.NamelessBossBarShader");
+        barShader.TrySetParameter("textureSize", Vector2.One * 560f);
+        barShader.TrySetParameter("time", Main.GlobalTimeWrappedHourly * 0.4f);
+        barShader.TrySetParameter("chromaticAberrationOffset", Cos01(Main.GlobalTimeWrappedHourly * 0.8f) * 4f);
+        barShader.SetTexture(PerlinNoise, 1, SamplerState.LinearWrap);
+        barShader.Apply();
 
-            Vector2 drawPosition = new Vector2(line.X, line.Y);
-            ChatManager.DrawColorCodedStringWithShadow(Main.spriteBatch, line.Font, line.Text, drawPosition, Color.White, line.Rotation, line.Origin, line.BaseScale, line.MaxWidth, line.Spread);
+        ChatManager.DrawColorCodedStringWithShadow(sb, font, text, position, Color.White, rotation, origin, scale, maxWidth, spread);
 
-            Main.spriteBatch.End();
-            Main.spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.LinearClamp, DepthStencilState.None, RasterizerState.CullNone, null, Main.UIScaleMatrix);
-            return false;
-        }
-
-        return true;
+        sb.End();
+        sb.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.LinearClamp, DepthStencilState.None, RasterizerState.CullNone, null, originalMatrix);
     }
 }

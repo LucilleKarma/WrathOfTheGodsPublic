@@ -1,5 +1,9 @@
-﻿using Luminance.Core.Graphics;
+﻿using Luminance.Common.Utilities;
+using Luminance.Core.Graphics;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
+using NoxusBoss.Assets;
+using NoxusBoss.Content.Tiles;
 using NoxusBoss.Core.Data;
 using NoxusBoss.Core.DataStructures;
 using NoxusBoss.Core.GlobalInstances;
@@ -68,4 +72,24 @@ public class InvincibilityBuff : ModBuff
     private static bool MakeImmune(PlayerDataManager p) => p.Player.HasBuff<InvincibilityBuff>();
 
     private static bool PreventDeath(PlayerDataManager p, ref PlayerDeathReason damageSource) => !p.Player.HasBuff<InvincibilityBuff>();
+
+    public override bool PreDraw(SpriteBatch spriteBatch, int buffIndex, ref BuffDrawParams drawParams)
+    {
+        Main.spriteBatch.Draw(drawParams.Texture, drawParams.Position, null, drawParams.DrawColor, 0f, Vector2.Zero, 1f, 0, 0f);
+
+        Main.spriteBatch.PrepareForShaders(null, true);
+        Texture2D shaderMask = GennedAssets.Textures.Buffs.InvincibilityBuffShaderMask;
+
+        Vector3[] palette = LotusOfCreationTile.ShaderPalette;
+        ManagedShader lotusShader = ShaderManager.GetShader("NoxusBoss.LotusOfCreationShader");
+        lotusShader.TrySetParameter("appearanceInterpolant", 1f);
+        lotusShader.TrySetParameter("gradient", palette);
+        lotusShader.TrySetParameter("gradientCount", palette.Length);
+        lotusShader.Apply();
+
+        Main.spriteBatch.Draw(shaderMask, drawParams.Position, null, drawParams.DrawColor, 0f, Vector2.Zero, 1f, 0, 0f);
+        Main.spriteBatch.ResetToDefaultUI();
+
+        return false;
+    }
 }

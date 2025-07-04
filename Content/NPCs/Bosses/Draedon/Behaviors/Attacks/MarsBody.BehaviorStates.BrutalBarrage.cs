@@ -138,10 +138,7 @@ public partial class MarsBody
     public void DoBehavior_BrutalBarrage()
     {
         SolynAction = solyn => DoBehavior_BrutalBarrage_Solyn(solyn, true);
-
-        // Summon the forcefield on the first frame for Solyn and the player.
-        if (Main.myPlayer == NPC.target && Target.ownedProjectileCounts[ModContent.ProjectileType<DirectionalSolynForcefield>()] <= 0)
-            NewProjectileBetter(NPC.GetSource_FromAI(), Target.Center, Target.SafeDirectionTo(Main.MouseWorld), ModContent.ProjectileType<DirectionalSolynForcefield>(), 0, 0f, NPC.target);
+        ProvideForcefieldsToPlayers();
 
         int silhouetteAppearTime = BrutalBarrage_DashCounter <= 1f ? 56 : 29;
         int dashTime = BrutalBarrage_DashTime;
@@ -164,7 +161,7 @@ public partial class MarsBody
                     Vector2 teleportOffset = Main.rand.NextVector2Unit();
                     foreach (Projectile projectile in Main.ActiveProjectiles)
                     {
-                        if (projectile.type == forcefieldID)
+                        if (projectile.type == forcefieldID && projectile.owner == NPC.target)
                         {
                             teleportOffset = -projectile.velocity.RotatedByRandom(PiOver2);
                             break;
@@ -275,12 +272,17 @@ public partial class MarsBody
     {
         int forcefieldID = ModContent.ProjectileType<DirectionalSolynForcefield>();
         int forcefieldIndex = -1;
+        float minDistance = float.MaxValue;
         foreach (Projectile projectile in Main.ActiveProjectiles)
         {
-            if (projectile.type == forcefieldID)
+            if (projectile.type != forcefieldID)
+                continue;
+
+            float distanceToHand = projectile.Distance(RightHandPosition);
+            if (distanceToHand < minDistance)
             {
                 forcefieldIndex = projectile.whoAmI;
-                break;
+                minDistance = distanceToHand;
             }
         }
 
@@ -325,10 +327,13 @@ public partial class MarsBody
         CameraPanSystem.PanTowards(forcefield.Center, panInterpolant);
         CameraPanSystem.ZoomIn(zoom);
 
-        ManagedScreenFilter focusShader = ShaderManager.GetFilter("NoxusBoss.AnimeFocusLinesShader");
-        focusShader.TrySetParameter("intensity", panInterpolant * 1.6f);
-        focusShader.SetTexture(PerlinNoise, 1, SamplerState.LinearWrap);
-        focusShader.Activate();
+        if (Main.netMode != NetmodeID.Server)
+        {
+            ManagedScreenFilter focusShader = ShaderManager.GetFilter("NoxusBoss.AnimeFocusLinesShader");
+            focusShader.TrySetParameter("intensity", panInterpolant * 1.6f);
+            focusShader.SetTexture(PerlinNoise, 1, SamplerState.LinearWrap);
+            focusShader.Activate();
+        }
 
         AITimer += 2;
     }
@@ -369,6 +374,24 @@ public partial class MarsBody
     }
 
     /// <summary>
+    /// Determines whether a given forcefield projectile is being collided with by Mars' chainsaw.
+    /// </summary>
+    public bool DoBehavior_BrutalBarrage_ForcefieldIsCollidingWithChainsaw(Projectile projectile, float checkArea)
+    {
+        bool chainsawHitboxCollision = projectile.Colliding(projectile.Hitbox, Utils.CenteredRectangle(RightHandPosition, Vector2.One * NPC.scale * checkArea));
+        bool hitboxCollision = chainsawHitboxCollision;
+
+        bool reasonableIncomingAngle = projectile.velocity.AngleBetween(-NPC.velocity) <= 0.54f;
+        bool flyingTowardsPlayer = Vector2.Dot(NPC.velocity, NPC.SafeDirectionTo(Target.Center)) >= 0f;
+
+        // Don't let the player beat the attack by just spinning the shield rapidly.
+        float spinMovingAverage = projectile.As<DirectionalSolynForcefield>().SpinSpeedMovingAverage;
+        bool tryingToCheese = spinMovingAverage >= ToRadians(13f);
+
+        return hitboxCollision && reasonableIncomingAngle && flyingTowardsPlayer && !tryingToCheese;
+    }
+
+    /// <summary>
     /// Returns whether Mars should be stopped by a forcefield during his brutal barrage attack.
     /// </summary>
     /// <returns></returns>
@@ -379,21 +402,10 @@ public partial class MarsBody
         int forcefieldID = ModContent.ProjectileType<DirectionalSolynForcefield>();
         foreach (Projectile projectile in Main.ActiveProjectiles)
         {
-            if (projectile.type == forcefieldID)
+            if (projectile.type == forcefieldID && DoBehavior_BrutalBarrage_ForcefieldIsCollidingWithChainsaw(projectile, 96f))
             {
-                bool chainsawHitboxCollision = projectile.Colliding(projectile.Hitbox, Utils.CenteredRectangle(RightHandPosition, Vector2.One * NPC.scale * 96f));
-                bool hitboxCollision = chainsawHitboxCollision;
-
-                bool reasonableIncomingAngle = projectile.velocity.AngleBetween(-NPC.velocity) <= 0.54f;
-                bool flyingTowardsPlayer = Vector2.Dot(NPC.velocity, NPC.SafeDirectionTo(Target.Center)) >= 0f;
-
-                // Don't let the player beat the attack by just spinning the shield rapidly.
-                float spinMovingAverage = projectile.As<DirectionalSolynForcefield>().SpinSpeedMovingAverage;
-                bool tryingToCheese = spinMovingAverage >= ToRadians(13f);
-
                 reflectingForcefield = projectile;
-
-                return hitboxCollision && reasonableIncomingAngle && flyingTowardsPlayer && !tryingToCheese;
+                return true;
             }
         }
 

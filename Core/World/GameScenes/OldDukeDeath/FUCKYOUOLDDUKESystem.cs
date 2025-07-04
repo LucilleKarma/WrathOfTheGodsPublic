@@ -54,7 +54,7 @@ public class FUCKYOUOLDDUKESystem : ModSystem
     public override void PostSetupContent()
     {
         // Store Old Duke's ID.
-        if (ModContent.TryFind("CalamityMod", "OldDuke", out ModNPC oldDuke))
+        if (ModContent.TryFind(CalamityCompatibility.ModName, "OldDuke", out ModNPC oldDuke))
             OldDukeID = oldDuke.Type;
     }
 

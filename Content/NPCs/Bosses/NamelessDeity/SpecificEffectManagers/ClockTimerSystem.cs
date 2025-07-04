@@ -1,4 +1,5 @@
-﻿using NoxusBoss.Content.NPCs.Bosses.NamelessDeity.Projectiles;
+﻿using NoxusBoss.Content.NPCs.Bosses.Draedon.SpecificEffectManagers;
+using NoxusBoss.Content.NPCs.Bosses.NamelessDeity.Projectiles;
 using Terraria;
 using Terraria.ModLoader;
 
@@ -41,6 +42,6 @@ public class ClockTimerSystem : ModSystem
 
         effectiveTimeDirection = Lerp(effectiveTimeDirection, timeDirection, 0.3f);
 
-        Time = (Time + effectiveTimeDirection / 60f) % 24000f;
+        Time = (Time + effectiveTimeDirection * (1f - GameSceneSlowdownSystem.SlowdownInterpolant) / 60f) % 24000f;
     }
 }

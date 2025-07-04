@@ -31,7 +31,8 @@ public partial class MarsBody
             StateMachine.StateStack.Push(StateMachine.StateRegistry[attackPattern[i]]);
 
         PreviousState = attackPattern.Last();
-        SolynPlayerTeamAttackTimer = 0;
+
+        ResetSolynPlayerTeamAttackTimers();
 
         NPC.netUpdate = true;
     }

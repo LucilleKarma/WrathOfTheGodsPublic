@@ -97,7 +97,7 @@ public class CalamityCompatibility : ModSystem
     public static void GrantInfiniteCalFlight(Player player)
     {
         player.GrantInfiniteFlight();
-        if (ModLoader.TryGetMod("CalamityMod", out Mod cal))
+        if (ModLoader.TryGetMod(ModName, out Mod cal))
             cal.Call("EnableInfiniteFlight", player, true);
     }
 

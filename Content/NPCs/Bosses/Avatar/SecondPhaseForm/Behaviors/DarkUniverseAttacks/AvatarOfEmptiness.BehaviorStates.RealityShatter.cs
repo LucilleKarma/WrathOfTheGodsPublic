@@ -131,14 +131,17 @@ public partial class AvatarOfEmptiness
             TotalScreenOverlaySystem.OverlayColor = Color.Black;
             TotalScreenOverlaySystem.OverlayInterpolant = 2f;
 
-            // Ensure that the player isn't shoved inside of tiles due to the teleport.
-            while (Collision.SolidCollision(Main.LocalPlayer.TopLeft - Vector2.One * 500f, Main.LocalPlayer.width + 1000, Main.LocalPlayer.height + 1000))
+            // Ensure that players aren't shoved inside of tiles due to the teleport.
+            foreach (Player player in Main.ActivePlayers)
             {
-                Main.LocalPlayer.position.Y -= 16f;
-                if (Main.LocalPlayer.position.Y <= 1000f)
+                while (Collision.SolidCollision(player.TopLeft - Vector2.One * 500f, player.width + 1000, player.height + 1000))
                 {
-                    Main.LocalPlayer.position.Y = 1000f;
-                    Main.LocalPlayer.position.X += (Main.maxTilesX * 8f - Main.LocalPlayer.position.X).NonZeroSign() * 16f;
+                    player.position.Y -= 16f;
+                    if (player.position.Y <= 1000f)
+                    {
+                        player.position.Y = 1000f;
+                        player.position.X += (Main.maxTilesX * 8f - player.position.X).NonZeroSign() * 16f;
+                    }
                 }
             }
         });
@@ -335,7 +338,7 @@ public partial class AvatarOfEmptiness
                 }
                 else
                 {
-                    string killText = Language.GetText("Mods.NoxusBoss.PlayerDeathMessages.ScreenSplitDeathZone").Format(playerTarget.name);
+                    NetworkText killText = NetworkText.FromKey("Mods.NoxusBoss.PlayerDeathMessages.ScreenSplitDeathZone", playerTarget.name);
                     playerTarget.KillMe(PlayerDeathReason.ByCustomReason(killText), 1000000D, 0);
                 }
             }

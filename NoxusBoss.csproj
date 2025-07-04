@@ -1,54 +1,36 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
-	<!-- Import tModLoader mod properties -->
-	<Import Project="..\tModLoader.targets" />
+  <!-- Import tModLoader mod properties -->
+  <Import Project="..\tModLoader.targets"/>
 
-	<!-- General -->
-	<PropertyGroup>
-	  <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-	  <Nullable>enable</Nullable>
-	</PropertyGroup>
-	<PropertyGroup>
-    	  <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
-    	  <GenerateTargetFrameworkAttribute>false</GenerateTargetFrameworkAttribute>    
-	</PropertyGroup>
+  <!-- General -->
+  <PropertyGroup>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
 
-	<!-- Warning suppression -->
-	<PropertyGroup>
-	  <NoWarn>MSB3270</NoWarn>
-	</PropertyGroup>
+    <!-- Warning suppression -->
+    <NoWarn>MSB3270</NoWarn>
+  </PropertyGroup>
 
-	<Target Name="PreBuild" BeforeTargets="PreBuildEvent">
-	  <Exec Command="dotnet build ./WoTGAssetRebuilder/&#xD;&#xA;dotnet ./WoTGAssetRebuilder/bin/Debug/net8.0/WoTGAssetRebuilder.dll &quot;../NoxusBoss/Assets/&quot; &quot;../NoxusBoss/Assets/GennedAssets.cs&quot; &quot;NoxusBoss&quot;" />
-	</Target>
+  <!-- References -->
+  <ItemGroup>
+    <!-- Include all DLLs in lib/ -->
+    <Reference Include="lib/**/*.dll"/>
+  </ItemGroup>
 
-	<ItemGroup>
-	  <Reference Include="BossChecklist">
-	    <HintPath>ModReferences\BossChecklist.dll</HintPath>
-	  </Reference>
-	  <Reference Include="CalamityMod">
-	    <HintPath>ModReferences\CalamityMod.dll</HintPath>
-	  </Reference>
-	  <Reference Include="CalRemix">
-	    <HintPath>ModReferences\CalRemix.dll</HintPath>
-	  </Reference>
-	  <Reference Include="Luminance">
-	    <HintPath>ModReferences\Luminance.dll</HintPath>
-	  </Reference>
-	  <Reference Include="MonoStereo.Dependencies">
-	    <HintPath>ModReferences\MonoStereo.Dependencies.dll</HintPath>
-	  </Reference>
-	  <Reference Include="MonoStereoMod">
-	    <HintPath>ModReferences\MonoStereoMod.dll</HintPath>
-	  </Reference>
-	  <Reference Include="StructureHelper">
-	    <HintPath>ModReferences\StructureHelper.dll</HintPath>
-	  </Reference>
-	  <Reference Include="SubworldLibrary">
-	    <HintPath>ModReferences\SubworldLibrary.dll</HintPath>
-	  </Reference>
-	</ItemGroup>
+  <!-- Remove files from local projects not meant to be in the mod -->
+  <ItemGroup>
+    <None Remove="WoTGAssetRebuilder\**"/>
+    <Content Remove="WoTGAssetRebuilder\**"/>
+    <Compile Remove="WoTGAssetRebuilder\**"/>
+    <EmbeddedResource Remove="WoTGAssetRebuilder\**"/>
+    <AdditionalFiles Remove="WoTGAssetRebuilder\**"/>
+  </ItemGroup>
 
-	<!-- References -->
+  <!-- Rebuild relevant assets before build -->
+  <Target Name="PreBuild" BeforeTargets="PreBuildEvent">
+    <Exec Command="dotnet run --project &quot;$(MSBuildProjectDirectory)\WoTGAssetRebuilder\WoTGAssetRebuilder.csproj&quot; -- &quot;$(MSBuildProjectDirectory)\Assets&quot; &quot;$(MSBuildProjectDirectory)\Assets\GennedAssets.cs&quot; &quot;NoxusBoss&quot;"/>
+  </Target>
 
 </Project>

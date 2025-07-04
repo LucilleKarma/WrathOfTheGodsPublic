@@ -30,6 +30,8 @@ public partial class BattleSolyn : ModNPC
 
     #region Fields and Properties
 
+    internal static readonly Dictionary<int, NPC> solynMappingsCacheByIndex = new Dictionary<int, NPC>(Main.maxNPCs);
+
     internal static InstancedRequestableTarget BaseSolynTarget;
 
     /// <summary>
@@ -42,18 +44,18 @@ public partial class BattleSolyn : ModNPC
     }
 
     /// <summary>
-    /// How long Solyn should use her shocked expression.
+    /// Whether Solyn should be rendered as a fake ghost for her given battle due to being dead.
     /// </summary>
-    public int ShockedExpressionCountdown
+    public bool FakeGhostForm
     {
         get;
         set;
     }
 
     /// <summary>
-    /// Whether Solyn should be rendered as a fake ghost for her given battle due to being dead.
+    /// Whether this Solyn instance is invisible or not.
     /// </summary>
-    public bool FakeGhostForm
+    public bool Invisible
     {
         get;
         set;
@@ -159,6 +161,49 @@ public partial class BattleSolyn : ModNPC
     }
 
     /// <summary>
+    /// The index of this Solyn instance in multiplayer.
+    /// </summary>
+    public int MultiplayerIndex
+    {
+        get => (int)NPC.ai[2];
+        set => NPC.ai[2] = value;
+    }
+
+    /// <summary>
+    /// Whether the client associated with this Solyn instance is invalid in some way. This only applies to multiplayer clones.
+    /// </summary>
+    public bool AssociatedClientIsInvalid
+    {
+        get
+        {
+            if (!IsMultiplayerClone)
+                return false;
+
+            bool mappedToInvalidIndex = MultiplayerIndex <= -1 || MultiplayerIndex >= Main.maxPlayers;
+            if (mappedToInvalidIndex)
+            {
+                NPC.active = false;
+                return true;
+            }
+
+            Player player = Main.player[MultiplayerIndex];
+            bool associatedClientIsGone = !player.active || player.dead;
+            if (associatedClientIsGone)
+            {
+                NPC.active = false;
+                return true;
+            }
+
+            return false;
+        }
+    }
+
+    /// <summary>
+    /// Whether this Solyn instance is a clone created for multiplayer purposes.
+    /// </summary>
+    public bool IsMultiplayerClone => MultiplayerIndex >= 1;
+
+    /// <summary>
     /// The currently frame Solyn should use on her sprite sheet.
     /// </summary>
     public ref float Frame => ref NPC.localAI[0];
@@ -249,6 +294,7 @@ public partial class BattleSolyn : ModNPC
         NPC.townNPC = true;
         NPC.hide = true;
         NPC.ShowNameOnHover = NPC.Opacity >= 0.35f;
+        Invisible = false;
         BackglowScale = Lerp(BackglowScale, 1f, 0.02f);
         WorldMapIconScale = Lerp(WorldMapIconScale, 1f, 0.03f);
         OptionalPreDrawRenderAction = null;
@@ -259,10 +305,19 @@ public partial class BattleSolyn : ModNPC
         // If it is not -1 or 1, it'll become the the sign of the original value.
         NPC.spriteDirection = (NPC.spriteDirection >= 0).ToDirectionInt();
 
-        // Make Solyn fake if her real form is dead or if the world was generated before the Avatar update.
-        FakeGhostForm = BossDownedSaveSystem.HasDefeated<AvatarOfEmptiness>() || WorldVersionSystem.PreAvatarUpdateWorld;
+        // Make Solyn fake if her real form is dead, the world was generated before the Avatar update, or if this is a clone created for multiplayer compatibility reasons.
+        FakeGhostForm = BossDownedSaveSystem.HasDefeated<AvatarOfEmptiness>() || WorldVersionSystem.PreAvatarUpdateWorld || IsMultiplayerClone;
 
         ExecuteCurrentBehavior();
+
+        if (AssociatedClientIsInvalid)
+        {
+            NPC.active = false;
+            return;
+        }
+
+        if (Invisible)
+            NPC.ShowNameOnHover = false;
 
         // Emit a tiny bit of light.
         DelegateMethods.v3_1 = new Vector3(0.3f, 0.367f, 0.45f) * 0.8f;
@@ -276,8 +331,6 @@ public partial class BattleSolyn : ModNPC
 
         // Update timers.
         AITimer++;
-        if (ShockedExpressionCountdown > 0)
-            ShockedExpressionCountdown--;
     }
 
     public void UseStarFlyEffects()
@@ -300,6 +353,9 @@ public partial class BattleSolyn : ModNPC
         Frame = 25f;
     }
 
+    /// <summary>
+    /// Executes Solyn's current behavior state.
+    /// </summary>
     public void ExecuteCurrentBehavior()
     {
         switch (CurrentState)
@@ -343,6 +399,30 @@ public partial class BattleSolyn : ModNPC
 
         if (!combatSolynExists)
             NPC.NewNPC(spawnSource, (int)spawnPosition.X, (int)spawnPosition.Y, ModContent.NPCType<BattleSolyn>(), 1, (int)state);
+
+        SummonSolynForBattle_CreateMPClones(spawnSource, spawnPosition, state);
+    }
+
+    private static void SummonSolynForBattle_CreateMPClones(IEntitySource spawnSource, Vector2 spawnPosition, SolynAIType state)
+    {
+        solynMappingsCacheByIndex.Clear();
+
+        foreach (NPC npc in Main.ActiveNPCs)
+        {
+            if (npc.ModNPC is not BattleSolyn solyn)
+                continue;
+
+            solynMappingsCacheByIndex[solyn.MultiplayerIndex] = npc;
+        }
+
+        foreach (Player player in Main.ActivePlayers)
+        {
+            if (player.dead)
+                continue;
+
+            if (!solynMappingsCacheByIndex.ContainsKey(player.whoAmI))
+                NPC.NewNPC(spawnSource, (int)spawnPosition.X, (int)spawnPosition.Y, ModContent.NPCType<BattleSolyn>(), 1, (int)state, 0f, player.whoAmI);
+        }
     }
 
     #endregion AI
@@ -375,12 +455,6 @@ public partial class BattleSolyn : ModNPC
         {
             int defaultFrame = 0;
             int blinkFrame = 20;
-            if (ShockedExpressionCountdown > 0)
-            {
-                ShockedExpressionCountdown--;
-                defaultFrame = 42;
-            }
-
             Frame = AITimer % 150 >= 147 ? blinkFrame : defaultFrame;
         }
         else
@@ -529,6 +603,9 @@ public partial class BattleSolyn : ModNPC
 
     public override bool PreDraw(SpriteBatch spriteBatch, Vector2 screenPos, Color drawColor)
     {
+        if (Invisible)
+            return false;
+
         if (Main.instance.currentNPCShowingChatBubble == NPC.whoAmI)
             Main.instance.currentNPCShowingChatBubble = -1;
 

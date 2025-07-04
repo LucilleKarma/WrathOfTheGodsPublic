@@ -15,6 +15,7 @@ float4 PixelShaderFunction(float4 sampleColor : COLOR0, float2 coords : TEXCOORD
         tex2D(rainbowTexture, uv * 2.1 + time * float2(0.2, 0)).rg * 0.02 + uv.y + time * float2(-0.05, 0);
     float4 rainbow = tex2D(rainbowTexture, uv + warp) * (1 + greyscale * 8);
     
+    rainbow *= tex2D(baseTexture, coords).a;
     return rainbow;
 }
 

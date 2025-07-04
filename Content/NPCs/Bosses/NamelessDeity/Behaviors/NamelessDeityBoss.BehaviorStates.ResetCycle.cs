@@ -28,10 +28,7 @@ public partial class NamelessDeityBoss : ModNPC
                 {
                     phaseCycle.AddRange(Phase1Cycle);
                     if (DifficultyFactor >= 1.24f)
-                    {
                         phaseCycle.AddRange(Phase2Cycle);
-                        phaseCycle.Add(NamelessAIType.PsychedelicFeatherStrikes);
-                    }
                     if (DifficultyFactor >= 1.4f)
                         phaseCycle.AddRange(Phase3Cycle);
                     if (DifficultyFactor >= 2f)

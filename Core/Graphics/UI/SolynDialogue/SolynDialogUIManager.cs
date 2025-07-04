@@ -328,15 +328,6 @@ public class SolynDialogUIManager
             Rectangle textArea = new Rectangle((int)position.X, (int)position.Y, (int)textSize.X, (int)textSize.Y);
             textArea.Inflate(4, 2);
 
-            bool hoveringOverText = new Rectangle((int)Main.MouseScreen.X, (int)Main.MouseScreen.Y, 2, 2).Intersects(textArea);
-            if (hoveringOverText)
-            {
-                Main.LocalPlayer.mouseInterface = true;
-
-                if (Main.mouseLeft && Main.mouseLeftRelease)
-                    SelectPlayerResponse(line);
-            }
-
             List<TextPart> splitLine = [new TextPart(line, 0, false, textScale, font, textColor)];
             TextPart.SplitByRegex(splitLine, TextPart.ColorHexSpecifier, textScale, font, false, (match, line) =>
             {
@@ -350,6 +341,16 @@ public class SolynDialogUIManager
 
             textColor = splitLine[0].TextColor;
             line = splitLine[0].Text;
+
+            bool hoveringOverText = new Rectangle((int)Main.MouseScreen.X, (int)Main.MouseScreen.Y, 2, 2).Intersects(textArea);
+            if (hoveringOverText)
+            {
+                Main.LocalPlayer.mouseInterface = true;
+
+                if (Main.mouseLeft && Main.mouseLeftRelease)
+                    SelectPlayerResponse(line);
+            }
+
             if (hoveringOverText)
                 textColor = Color.Yellow;
 

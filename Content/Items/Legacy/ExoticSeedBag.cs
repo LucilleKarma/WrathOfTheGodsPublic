@@ -1,5 +1,6 @@
 ﻿using NoxusBoss.Content.Items.GenesisComponents;
 using NoxusBoss.Content.Rarities;
+using NoxusBoss.Core.CrossCompatibility.Inbound.BaseCalamity;
 using NoxusBoss.Core.DataStructures.Conditions;
 using Terraria;
 using Terraria.GameContent.ItemDropRules;
@@ -37,7 +38,7 @@ namespace NoxusBoss.Content.Items.Legacy
         {
             ModTile? forge = null;
             ModItem? bar = null;
-            bool calExists = ModLoader.TryGetMod("CalamityMod", out Mod cal);
+            bool calExists = ModLoader.TryGetMod(CalamityCompatibility.ModName, out Mod cal);
             bool draedonForgeExists = cal?.TryFind("DraedonsForge", out forge) ?? false;
             bool shadowspecBarExists = cal?.TryFind("ShadowspecBar", out bar) ?? false;
 

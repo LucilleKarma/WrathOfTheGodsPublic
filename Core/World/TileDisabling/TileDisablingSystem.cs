@@ -1,6 +1,7 @@
 ﻿using System.Reflection;
 using CalamityMod;
 using CalamityMod.CalPlayer;
+using CalamityMod.Physics;
 using CalamityMod.Skies;
 using CalamityMod.Tiles.Astral;
 using Microsoft.Xna.Framework;
@@ -462,6 +463,8 @@ public class TileDisablingSystem : ModSystem
     {
         if (!TilesAreUninteractable)
             orig();
+        else
+            ModContent.GetInstance<RopeManagerSystem>().PostUpdateWorld();
     }
 
     private void DisableItemDrops(On_WorldGen.orig_KillTile_DropItems orig, int x, int y, Tile tileCache, bool includeLargeObjectDrops, bool includeAllModdedLargeObjectDrops)

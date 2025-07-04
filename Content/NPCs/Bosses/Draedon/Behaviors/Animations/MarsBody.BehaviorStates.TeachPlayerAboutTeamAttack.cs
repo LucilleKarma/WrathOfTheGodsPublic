@@ -172,18 +172,26 @@ public partial class MarsBody
     }
 
     /// <summary>
+    /// Whether Solyn and a given player are charging up energy.
+    /// </summary>
+    public static bool SolynEnergyBeamIsCharging(Player player)
+    {
+        return player.ownedProjectileCounts[ModContent.ProjectileType<SolynTagTeamBeam>()] >= 1 || player.ownedProjectileCounts[ModContent.ProjectileType<SolynTagTeamChargeUp>()] >= 1;
+    }
+
+    /// <summary>
     /// Handles team attack interactions with the player and Solyn.
     /// </summary>
     public void HandleSolynPlayerTeamAttack(BattleSolyn solyn)
     {
         if (!SolynAndPlayerCanDoTeamAttack)
         {
-            SolynPlayerTeamAttackTimer = 0;
+            ResetSolynPlayerTeamAttackTimers();
             return;
         }
 
         int beamID = ModContent.ProjectileType<SolynTagTeamBeam>();
-        if (SolynEnergyBeamIsCharging)
+        if (SolynEnergyBeamIsCharging(Main.player[solyn.MultiplayerIndex]))
         {
             Vector2 hoverDestination = Target.Center + (TagTeamBeamDirection + PiOver2).ToRotationVector2() * 67f;
             solyn.NPC.spriteDirection = Cos(TagTeamBeamDirection).NonZeroSign();
@@ -208,7 +216,8 @@ public partial class MarsBody
 
             solyn.NPC.rotation = idealRotation.AngleLerp(0f, 0.45f);
 
-            if (SolynPlayerTeamAttackTimer <= 0 || SolynPlayerTeamAttackTimer >= 19)
+            int attackTimer = GetSolynPlayerTeamAttackTimer(Main.player[solyn.MultiplayerIndex]);
+            if (attackTimer <= 0 || attackTimer >= 19)
             {
                 Target.eyeHelper.BlinkBecausePlayerGotHurt();
                 solyn.Frame = 45f;
@@ -221,28 +230,28 @@ public partial class MarsBody
         // Let the beam simply exist until it dies if one is present, rather than having another one be charged up
         if (Target.ownedProjectileCounts[beamID] >= 1)
         {
-            SolynPlayerTeamAttackTimer = 0;
+            ResetSolynPlayerTeamAttackTimers();
             return;
         }
 
         // Handle beam charge up effects.
         if (Main.mouseRight && Main.mouseLeft)
         {
-            SolynPlayerTeamAttackTimer++;
+            SolynPlayerTeamAttackTimers[Main.myPlayer] = GetSolynPlayerTeamAttackTimer(Main.LocalPlayer) + 1;
 
             // Charge up the beam with a custom visual.
-            if (SolynPlayerTeamAttackTimer == 2)
+            if (SolynPlayerTeamAttackTimers[Main.myPlayer] == 2)
             {
                 TagTeamBeamDirection = Target.AngleTo(Main.MouseWorld);
                 NPC.netUpdate = true;
 
-                NewProjectileBetter(Target.GetSource_FromThis(), Target.Center, TagTeamBeamDirection.ToRotationVector2(), ModContent.ProjectileType<SolynTagTeamChargeUp>(), 0, 0f, Target.whoAmI, solyn.NPC.whoAmI);
+                NewProjectileBetter(Target.GetSource_FromThis(), Target.Center, TagTeamBeamDirection.ToRotationVector2(), ModContent.ProjectileType<SolynTagTeamChargeUp>(), 0, 0f, solyn.MultiplayerIndex, solyn.NPC.whoAmI);
             }
 
             // Fire the laser when ready.
-            if (SolynPlayerTeamAttackTimer >= SolynTagTeamChargeUp.Lifetime)
+            if (SolynPlayerTeamAttackTimers[Main.myPlayer] >= SolynTagTeamChargeUp.Lifetime)
             {
-                SolynPlayerTeamAttackTimer = 0;
+                SolynPlayerTeamAttackTimers[Main.myPlayer] = 0;
                 NPC.netUpdate = true;
 
                 // This looks stupid. And I gotta say, it is.
@@ -252,17 +261,16 @@ public partial class MarsBody
                 // It doesn't really affect things otherwise it seems, so all is good.
                 EntitySource_ItemUse source = new EntitySource_ItemUse(Target, new Item());
 
-                Projectile.NewProjectile(source, Target.Center, TagTeamBeamDirection.ToRotationVector2(), beamID, TagTeamBeamBaseDamage, 0f, Target.whoAmI, solyn.NPC.whoAmI);
+                Projectile.NewProjectile(source, Target.Center, TagTeamBeamDirection.ToRotationVector2(), beamID, TagTeamBeamBaseDamage, 0f, solyn.MultiplayerIndex, solyn.NPC.whoAmI);
             }
 
             Target.channel = true;
             Target.itemAnimation = 0;
             Target.itemTime = 0;
         }
-        else if (SolynPlayerTeamAttackTimer != 0)
+        else
         {
-            SolynPlayerTeamAttackTimer = 0;
-            NPC.netUpdate = true;
+            ResetSolynPlayerTeamAttackTimers();
         }
     }
 }

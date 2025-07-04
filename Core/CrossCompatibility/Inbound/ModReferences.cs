@@ -1,4 +1,5 @@
-﻿using Terraria.ModLoader;
+﻿using NoxusBoss.Core.CrossCompatibility.Inbound.BaseCalamity;
+using Terraria.ModLoader;
 
 namespace NoxusBoss.Core.CrossCompatibility.Inbound;
 
@@ -60,12 +61,18 @@ public class ModReferences : ModSystem
         private set;
     }
 
+    public static Mod ClickerClass
+    {
+        get;
+        private set;
+    }
+
     public override void Load()
     {
         // Check for relevant mods.
         if (ModLoader.TryGetMod("BossChecklist", out Mod bcl))
             BossChecklistMod = bcl;
-        if (ModLoader.TryGetMod("CalamityMod", out Mod cal))
+        if (ModLoader.TryGetMod(CalamityCompatibility.ModName, out Mod cal))
             Calamity = cal;
         if (ModLoader.TryGetMod("CalamityHunt", out Mod calHunt))
             CalamityHuntMod = calHunt;
@@ -81,5 +88,7 @@ public class ModReferences : ModSystem
             RealisticSky = sky;
         if (ModLoader.TryGetMod("Wikithis", out Mod wikithis))
             Wikithis = wikithis;
+        if (ModLoader.TryGetMod("ClickerClass", out Mod clickerClass))
+            ClickerClass = clickerClass;
     }
 }

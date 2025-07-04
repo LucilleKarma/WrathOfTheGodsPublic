@@ -1,6 +1,9 @@
-﻿using Luminance.Core.Graphics;
+﻿using CalamityMod;
+using CalamityMod.CalPlayer;
+using Luminance.Core.Graphics;
 using Luminance.Core.Hooking;
 using MonoMod.Cil;
+using NoxusBoss.Core.CrossCompatibility.Inbound.BaseCalamity;
 using NoxusBoss.Core.GlobalInstances;
 using NoxusBoss.Core.Graphics.GeneralScreenEffects;
 using NoxusBoss.Core.Netcode;
@@ -129,8 +132,8 @@ public class TestOfResolveSystem : ModSystem
         if (IsActive && NamelessDeityBoss.Myself is not null)
         {
             int seconds = NamelessDeityBoss.Myself.As<NamelessDeityBoss>().FightTimer / 60;
-            string deathText = Language.GetText("Mods.NoxusBoss.Death.TestOfResolveDeath").Format(p.Player.name, seconds / 60, seconds % 60);
-            damageSource = PlayerDeathReason.ByCustomReason(deathText);
+            NetworkText killText = NetworkText.FromKey("Mods.NoxusBoss.Death.TestOfResolveDeath", p.Player.name, seconds / 60, seconds % 60);
+            damageSource = PlayerDeathReason.ByCustomReason(killText);
 
             return Main.LocalPlayer.GetValueRef<int>(RemainingHitsVariableName).Value <= 0;
         }
@@ -161,6 +164,24 @@ public class TestOfResolveSystem : ModSystem
         }
     }
 
+    [JITWhenModsEnabled(CalamityCompatibility.ModName)]
+    private static void ClearCalamityShields(Player player)
+    {
+        CalamityPlayer calPlayer = player.Calamity();
+
+        // The Sponge.
+        calPlayer.SpongeShieldDurability = 0;
+
+        // Profaned Soul Crystal.
+        calPlayer.pSoulShieldDurability = 0;
+
+        // Lunic Corps armor.
+        calPlayer.LunicCorpsShieldDurability = 0;
+
+        // Rover drive.
+        calPlayer.RoverDriveShieldDurability = 0;
+    }
+
     public override void PostUpdateNPCs()
     {
         if (!IsActive)
@@ -172,6 +193,9 @@ public class TestOfResolveSystem : ModSystem
         bool allPlayersAreDead = true;
         foreach (Player player in Main.ActivePlayers)
         {
+            if (CalamityCompatibility.Enabled)
+                ClearCalamityShields(player);
+
             float healthRatio = Saturate(player.GetValueRef<int>(RemainingHitsVariableName) / 20f);
             player.statLife = (int)Round(player.statLifeMax2 * healthRatio);
 

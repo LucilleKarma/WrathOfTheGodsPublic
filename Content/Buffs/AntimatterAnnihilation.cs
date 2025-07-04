@@ -51,8 +51,8 @@ public class AntimatterAnnihilation : ModBuff
         {
             if (player.HasBuff<AntimatterAnnihilation>())
             {
-                LocalizedText deathText = Language.GetText($"Mods.NoxusBoss.Death.AntimatterAnnihilation{Main.rand.Next(5) + 1}");
-                return PlayerDeathReason.ByCustomReason(deathText.Format(player.name)).GetDeathText(player.name);
+                NetworkText killText = NetworkText.FromKey($"Mods.NoxusBoss.Death.AntimatterAnnihilation{Main.rand.Next(5) + 1}", player.name);
+                return PlayerDeathReason.ByCustomReason(killText).GetDeathText(player.name);
             }
 
             return text;

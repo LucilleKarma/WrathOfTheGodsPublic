@@ -192,7 +192,7 @@ public partial class NamelessDeityBoss : ModNPC
         {
             HotbarUICensorSystem.CensorOpacity = InverseLerp(0.09f, 0.81f, ripperDestructionAnimationCompletion);
 
-            if (AITimer == cooldownTime + 1f)
+            if (AITimer == cooldownTime - 1f)
             {
                 // Check if the rod of harmony is is the target's inventory and they have no legitimate cheat permission slip. If it is, do a special rant.
                 if (NPC.HasPlayerTarget && RoHDestructionSystem.PerformRodOfHarmonyCheck(Main.player[NPC.target]))

@@ -6,6 +6,7 @@ using NoxusBoss.Content.Items.Pets;
 using NoxusBoss.Content.Items.Placeable;
 using NoxusBoss.Content.Items.Placeable.Trophies;
 using NoxusBoss.Core.CrossCompatibility.Inbound.BossChecklist;
+using NoxusBoss.Core.CrossCompatibility.Inbound.ClickerClass;
 using NoxusBoss.Core.CrossCompatibility.Inbound.Infernum;
 using NoxusBoss.Core.DataStructures;
 using NoxusBoss.Core.World.WorldSaving;
@@ -16,7 +17,7 @@ using Terraria.ModLoader;
 
 namespace NoxusBoss.Content.NPCs.Bosses.Avatar.SecondPhaseForm;
 
-public partial class AvatarOfEmptiness : IBossChecklistSupport, IInfernumBossIntroCardSupport
+public partial class AvatarOfEmptiness : IBossChecklistSupport, IInfernumBossIntroCardSupport, IClickerClassPhaseReach
 {
     public static IEnumerable<float> PhaseThresholdLifeRatios
     {

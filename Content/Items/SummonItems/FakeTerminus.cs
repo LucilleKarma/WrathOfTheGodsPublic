@@ -3,6 +3,7 @@ using Microsoft.Xna.Framework.Graphics;
 using NoxusBoss.Assets;
 using NoxusBoss.Content.NPCs.Bosses.Avatar.SecondPhaseForm;
 using NoxusBoss.Content.Projectiles;
+using NoxusBoss.Core.CrossCompatibility.Inbound.BaseCalamity;
 using NoxusBoss.Core.GlobalInstances;
 using NoxusBoss.Core.World.GameScenes.TerminusStairway;
 using NoxusBoss.Core.World.WorldSaving;
@@ -45,7 +46,7 @@ public class FakeTerminus : ModItem
     {
         // Determine if the fake Terminus should exist.
         // It does not exist if Calamity is loaded and contains the Terminus, but serves as a backup otherwise.
-        Exists = !ModLoader.TryGetMod("CalamityMod", out Mod cal);
+        Exists = !ModLoader.TryGetMod(CalamityCompatibility.ModName, out Mod cal);
         if (cal?.TryFind("Terminus", out ModItem terminus) ?? false)
             realTerminusID = terminus.Type;
         else

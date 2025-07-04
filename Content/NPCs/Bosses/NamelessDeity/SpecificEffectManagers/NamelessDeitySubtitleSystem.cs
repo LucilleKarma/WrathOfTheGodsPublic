@@ -1,7 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
 using NoxusBoss.Assets.Fonts;
 using NoxusBoss.Core.Graphics;
-using NoxusBoss.Core.Graphics.SpecificEffectManagers;
 using Terraria;
 using Terraria.Localization;
 using Terraria.ModLoader;
@@ -27,12 +26,9 @@ public abstract class NamelessDeitySubtitleSystem : ModSystem
         protected set;
     }
 
-    public override void OnModLoad()
-    {
-        TotalScreenOverlaySystem.DrawAfterWhiteEvent += DrawSubtitles;
-    }
+    public override void OnModLoad() => Main.OnPostDraw += DrawSubtitles;
 
-    private void DrawSubtitles()
+    private void DrawSubtitles(GameTime time)
     {
         // Make the animation stop if on the game menu.
         if (Main.gameMenu)
@@ -41,6 +37,8 @@ public abstract class NamelessDeitySubtitleSystem : ModSystem
         if (DialogueTimer <= 0 || DialogueTimer >= SubtitleDisappearTime)
             return;
 
+        Main.spriteBatch.Begin();
+
         var font = FontRegistry.Instance.NamelessDeityText;
         var currentlyUsedSentence = Sentences.Last(s => DialogueTimer >= SecondsToFrames(s.DialogDelay)) ?? Sentences.Last();
         string subtitleText = Language.GetTextValue($"Mods.NoxusBoss.Subtitles.{currentlyUsedSentence.TextKey}");
@@ -48,5 +46,7 @@ public abstract class NamelessDeitySubtitleSystem : ModSystem
         Vector2 scale = Vector2.One * Main.instance.GraphicsDevice.Viewport.Width / 2560f * 0.64f;
         Vector2 drawPosition = new Vector2(Main.instance.GraphicsDevice.Viewport.Width * 0.5f, Main.instance.GraphicsDevice.Viewport.Height * 0.75f);
         ChatManager.DrawColorCodedString(Main.spriteBatch, font, subtitleText, drawPosition, textColor, 0f, font.MeasureString(subtitleText) * 0.5f, scale);
+
+        Main.spriteBatch.End();
     }
 }

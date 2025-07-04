@@ -76,10 +76,7 @@ public partial class MarsBody
     public void DoBehavior_UpgradedMissileRailgunCombo()
     {
         SolynAction = DoBehavior_UpgradedMissileRailgunCombo_Solyn;
-
-        // Summon the forcefield on the first frame for Solyn and the player.
-        if (Main.myPlayer == NPC.target && Target.ownedProjectileCounts[ModContent.ProjectileType<DirectionalSolynForcefield>()] <= 0)
-            NewProjectileBetter(NPC.GetSource_FromAI(), Target.Center, Target.SafeDirectionTo(Main.MouseWorld), ModContent.ProjectileType<DirectionalSolynForcefield>(), 0, 0f, NPC.target);
+        ProvideForcefieldsToPlayers();
 
         // Circle around the player.
         // This is super important in ensuring that Mars' positioning (and consequently, the missile positioning), is dynamic.

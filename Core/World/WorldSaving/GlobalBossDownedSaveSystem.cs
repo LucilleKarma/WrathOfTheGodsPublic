@@ -21,7 +21,7 @@ public class GlobalBossDownedSaveSystem : ModSystem
     /// <summary>
     /// The path to the file that contains global defeats.
     /// </summary>
-    public static string GlobalDefeatConfirmationFilePath => Main.SavePath + "\\GlobalWotGDefeatList.txt";
+    public static string GlobalDefeatConfirmationFilePath => Path.Combine(Main.SavePath, "GlobalWotGDefeatList.txt");
 
     public override void OnModLoad()
     {

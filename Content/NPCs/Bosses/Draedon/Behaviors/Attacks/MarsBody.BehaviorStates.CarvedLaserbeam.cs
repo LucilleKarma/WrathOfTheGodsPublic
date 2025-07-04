@@ -263,6 +263,12 @@ public partial class MarsBody
     /// </summary>
     public void DoBehavior_CarvedLaserbeams_Solyn(BattleSolyn solyn)
     {
+        if (solyn.IsMultiplayerClone)
+        {
+            solyn.Invisible = true;
+            return;
+        }
+
         NPC solynNPC = solyn.NPC;
         solyn.UseStarFlyEffects();
 

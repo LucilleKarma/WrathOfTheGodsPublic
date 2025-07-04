@@ -551,9 +551,16 @@ public class AvatarRift : ModNPC, IBossDowned
                 NPC.active = false;
         }
 
-        // Grant the target infinite flight.
-        Target.wingTime = Target.wingTimeMax;
-        CalamityCompatibility.GrantInfiniteCalFlight(Target);
+        // Grant players infinite flight and the boss effects buff.
+        foreach (Player player in Main.ActivePlayers)
+        {
+            if (player.dead)
+                continue;
+
+            player.wingTime = player.wingTimeMax;
+            CalamityCompatibility.GrantInfiniteCalFlight(player);
+            CalamityCompatibility.GrantBossEffectsBuff(player);
+        }
 
         // Force rain.
         Main.raining = true;
@@ -579,9 +586,6 @@ public class AvatarRift : ModNPC, IBossDowned
         NPC.dontTakeDamage = false;
         NPC.ShowNameOnHover = true;
         ModReferences.Calamity?.Call("SetDRSpecific", NPC, DefaultDR);
-
-        // Ensure that the player receives the boss effects buff.
-        CalamityCompatibility.GrantBossEffectsBuff(Target);
 
         // Do not despawn.
         NPC.timeLeft = 7200;
@@ -1392,14 +1396,17 @@ public class AvatarRift : ModNPC, IBossDowned
         }
 
         // Ensure that the suction effect immediately vanishes, in case he was doing that attack when transitioning.
-        ManagedScreenFilter spaghettificationShader = ShaderManager.GetFilter("NoxusBoss.AvatarRiftSpaghettificationShader");
-        ManagedScreenFilter suctionShader = ShaderManager.GetFilter("NoxusBoss.SuctionSpiralShader");
-        spaghettificationShader.Deactivate();
-        suctionShader.Deactivate();
-        for (int i = 0; i < 50; i++)
+        if (Main.netMode != NetmodeID.Server)
         {
-            spaghettificationShader.Update();
-            suctionShader.Update();
+            ManagedScreenFilter spaghettificationShader = ShaderManager.GetFilter("NoxusBoss.AvatarRiftSpaghettificationShader");
+            ManagedScreenFilter suctionShader = ShaderManager.GetFilter("NoxusBoss.SuctionSpiralShader");
+            spaghettificationShader.Deactivate();
+            suctionShader.Deactivate();
+            for (int i = 0; i < 50; i++)
+            {
+                spaghettificationShader.Update();
+                suctionShader.Update();
+            }
         }
 
         NPC.life = 0;

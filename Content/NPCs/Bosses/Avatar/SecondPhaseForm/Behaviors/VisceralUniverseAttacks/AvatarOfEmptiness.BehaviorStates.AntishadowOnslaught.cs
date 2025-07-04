@@ -191,10 +191,13 @@ public partial class AvatarOfEmptiness
         float verticalOffset = Cos01(TwoPi * FightTimer / 90f) * 12f + AntishadowOnslaught_HeadOffset + 415f;
         HeadPosition = Vector2.Lerp(HeadPosition, NPC.Center + new Vector2(3f, verticalOffset) * HeadScale * NeckAppearInterpolant, 0.9f);
 
-        ManagedScreenFilter antishadowShader = ShaderManager.GetFilter("NoxusBoss.AntishadowSilhouetteShader");
-        antishadowShader.TrySetParameter("silhouetteColor", Color.Black);
-        antishadowShader.TrySetParameter("foregroundColor", AntishadowBackgroundColor);
-        antishadowShader.Activate();
+        if (Main.netMode != NetmodeID.Server)
+        {
+            ManagedScreenFilter antishadowShader = ShaderManager.GetFilter("NoxusBoss.AntishadowSilhouetteShader");
+            antishadowShader.TrySetParameter("silhouetteColor", Color.Black);
+            antishadowShader.TrySetParameter("foregroundColor", AntishadowBackgroundColor);
+            antishadowShader.Activate();
+        }
     }
 
     public void DoBehavior_AntishadowOnslaught_GetHitByWeapons()

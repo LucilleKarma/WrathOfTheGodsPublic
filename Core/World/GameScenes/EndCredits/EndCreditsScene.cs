@@ -933,7 +933,7 @@ public class EndCreditsScene : Cutscene
     /// </summary>
     public void RecordingSoftwareRant()
     {
-        int relativeTime = Timer - (CameraPanTime + InitialSitWaitTime + AppleDislodgeTime + AppleTelekinesisTime + AppleBiteDelayTimePlayer + AppleBiteTransitionDelay + AppleBiteTransitionDelay + SecondSitWaitTime + HeadpatTime + NamelessAppearanceTime + NamelessFlyAwayTime + ThirdSitWaitTime + ShyAvatarAnimationTime + ScreenFadesToBlackTime);
+        int relativeTime = Timer - (CameraPanTime + InitialSitWaitTime + AppleDislodgeTime + AppleTelekinesisTime + AppleBiteDelayTimePlayer + AppleBiteTransitionDelay + AppleBiteTransitionDelay + SecondSitWaitTime + HeadpatTime + NamelessAppearanceTime + NamelessFlyAwayTime + ThirdSitWaitTime + ShyAvatarAnimationTime + MarsBowAnimationDelay + MarsBowAnimationTime + ScreenFadesToBlackTime);
         TotalScreenOverlaySystem.OverlayColor = Color.Black;
         TotalScreenOverlaySystem.OverlayInterpolant = 1.4f;
 
@@ -1012,7 +1012,7 @@ public class EndCreditsScene : Cutscene
             return;
 
         NamelessDeityBoss.Myself.Opacity = InverseLerp(0f, 60f, RantTimer).Squared();
-        NamelessDeityBoss.Myself.Center = Main.LocalPlayer.Center - Vector2.UnitY * 480f;
+        NamelessDeityBoss.Myself.Center = Main.screenPosition + ViewportSize * 0.5f - Vector2.UnitY * 80f;
         NamelessDeityBoss.Myself.As<NamelessDeityBoss>().PreDraw(Main.spriteBatch, Main.screenPosition, Color.White);
         NamelessDeityBoss.Myself.As<NamelessDeityBoss>().UpdateWings(RantTimer / 60f);
         NamelessDeityBoss.Myself.As<NamelessDeityBoss>().DefaultUniversalHandMotion();
@@ -1047,9 +1047,11 @@ public class EndCreditsScene : Cutscene
             currentY += title ? 126f : 72f;
         }
 
-        // Programmers (Literally just me lmao).
+        // Programmers.
         drawLine(ref currentY, ProgrammerTitleColor, "ProgrammerTitle", true);
+        drawLine(ref currentY, ProgrammerNameColor, "DylanDoe");
         drawLine(ref currentY, ProgrammerNameColor, "TheIndividualMakingThisLocalizationFile");
+        drawLine(ref currentY, ProgrammerNameColor, "Tomat");
         currentY += spacingBetweenSets;
 
         // Artists.

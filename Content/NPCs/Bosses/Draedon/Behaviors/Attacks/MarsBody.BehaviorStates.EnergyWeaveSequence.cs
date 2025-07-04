@@ -152,6 +152,12 @@ public partial class MarsBody
     /// </summary>
     public void DoBehavior_EnergyWeaveSequence_SolynDash_Solyn(BattleSolyn solyn)
     {
+        if (solyn.IsMultiplayerClone)
+        {
+            solyn.Invisible = true;
+            return;
+        }
+
         NPC solynNPC = solyn.NPC;
         solyn.WorldMapIconScale = Lerp(solyn.WorldMapIconScale, 1.6f, 0.12f);
         solynNPC.velocity += solynNPC.SafeDirectionTo(NPC.Center) * 3f;

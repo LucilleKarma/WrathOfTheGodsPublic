@@ -5,13 +5,13 @@ using Microsoft.Xna.Framework.Graphics;
 using MonoMod.Cil;
 using NoxusBoss.Content.Tiles;
 using NoxusBoss.Core.DataStructures;
+using NoxusBoss.Core.Graphics.ItemPreRender;
 using Terraria;
-using Terraria.GameContent;
 using Terraria.ModLoader;
 
 namespace NoxusBoss.Content.Items.Placeable;
 
-public class LotusOfCreation : ModItem
+public class LotusOfCreation : ModItem, IPreRenderedItem
 {
     public class LotusOfCreationRarity : ModRarity
     {
@@ -85,10 +85,8 @@ public class LotusOfCreation : ModItem
         Item.consumable = true;
     }
 
-    private static void DrawLotusWithShader(Vector2 drawPosition, float scale)
+    public void PreRender(Texture2D sourceTexture)
     {
-        Texture2D lotusTexture = TextureAssets.Item[ModContent.ItemType<LotusOfCreation>()].Value;
-
         Vector3[] palette = LotusOfCreationTile.ShaderPalette;
         ManagedShader lotusShader = ShaderManager.GetShader("NoxusBoss.LotusOfCreationShader");
         lotusShader.TrySetParameter("appearanceInterpolant", 1f);
@@ -96,27 +94,7 @@ public class LotusOfCreation : ModItem
         lotusShader.TrySetParameter("gradientCount", palette.Length);
         lotusShader.Apply();
 
-        Main.spriteBatch.Draw(lotusTexture, drawPosition, null, Color.White, 0f, lotusTexture.Size() * 0.5f, scale, 0, 0f);
-    }
-
-    public override bool PreDrawInInventory(SpriteBatch spriteBatch, Vector2 position, Rectangle frame, Color drawColor, Color itemColor, Vector2 origin, float scale)
-    {
-        Main.spriteBatch.End();
-        Main.spriteBatch.Begin(SpriteSortMode.Immediate, null, null, null, null, null, Main.UIScaleMatrix);
-        DrawLotusWithShader(position, scale);
-        Main.spriteBatch.End();
-        Main.spriteBatch.Begin(SpriteSortMode.Deferred, null, null, null, null, null, Main.UIScaleMatrix);
-
-        return false;
-    }
-
-    public override bool PreDrawInWorld(SpriteBatch spriteBatch, Color lightColor, Color alphaColor, ref float rotation, ref float scale, int whoAmI)
-    {
-        Main.spriteBatch.PrepareForShaders();
-        DrawLotusWithShader(Item.position - Main.screenPosition, scale);
-        Main.spriteBatch.ResetToDefault();
-
-        return false;
+        Main.spriteBatch.Draw(sourceTexture, Vector2.Zero, Color.White);
     }
 }
 

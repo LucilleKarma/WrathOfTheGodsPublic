@@ -509,13 +509,15 @@ public partial class NamelessDeityBoss : ModNPC, IInfernumBossBarSupport, IBossD
             NPC.active = false;
         }
 
-        // Grant the target infinite flight and ensure that they receive the boss effects buff.
-        if (NPC.HasPlayerTarget)
+        // Grant players infinite flight and the boss effects buff.
+        foreach (Player player in Main.ActivePlayers)
         {
-            Player playerTarget = Main.player[NPC.target];
-            playerTarget.wingTime = playerTarget.wingTimeMax;
-            CalamityCompatibility.GrantInfiniteCalFlight(playerTarget);
-            CalamityCompatibility.GrantBossEffectsBuff(playerTarget);
+            if (player.dead)
+                continue;
+
+            player.wingTime = player.wingTimeMax;
+            CalamityCompatibility.GrantInfiniteCalFlight(player);
+            CalamityCompatibility.GrantBossEffectsBuff(player);
         }
 
         NPCID.Sets.TakesDamageFromHostilesWithoutBeingFriendly[Type] = NPC.HasNPCTarget;

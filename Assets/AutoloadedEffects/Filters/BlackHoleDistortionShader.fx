@@ -3,6 +3,7 @@
 float distortionStrength;
 float maxLensingAngle;
 float sourceRadii[5];
+float2 zoom;
 float2 sourcePositions[5];
 float2 aspectRatioCorrectionFactor;
 
@@ -22,7 +23,9 @@ float CalculateGravitationalLensingAngle(float sourceRadius, float2 coords, floa
 {
     // Calculate how far the given pixels is from the source of the distortion. This autocorrects for the aspect ratio resulting in
     // non-square calculations.
-    float distanceToSource = max(distance((coords - 0.5) * aspectRatioCorrectionFactor + 0.5, sourcePosition), 0);
+    float2 zoomedCoords = (coords - 0.5) * aspectRatioCorrectionFactor / zoom + 0.5;
+    float2 correctedSource = (sourcePosition - 0.5) * aspectRatioCorrectionFactor + 0.5;
+    float distanceToSource = distance(zoomedCoords, correctedSource);
     
     // Calculate the lensing angle based on the aforementioned distance. This uses distance-based exponential decay to ensure that the effect
     // does not extend far past the source itself.

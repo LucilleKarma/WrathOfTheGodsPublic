@@ -1,4 +1,5 @@
 ﻿using System.Reflection;
+using NoxusBoss.Core.CrossCompatibility.Inbound.BaseCalamity;
 using NoxusBoss.Core.World.Subworlds;
 using SubworldLibrary;
 using Terraria;
@@ -22,7 +23,7 @@ public class CalamitySubworldIncompatibilityFixSystem : ModSystem
 
     public override void OnModLoad()
     {
-        if (!ModLoader.TryGetMod("CalamityMod", out Mod cal))
+        if (!ModLoader.TryGetMod(CalamityCompatibility.ModName, out Mod cal))
             return;
 
         MethodInfo? tileGrowMethod = cal.Code.GetType("CalamityMod.Systems.WorldMiscUpdateSystem")?.GetMethod("HandleTileGrowth", BindingFlags.Public | BindingFlags.Static) ?? null;

@@ -69,13 +69,30 @@ public class DirectionalSolynForcefield : ModProjectile, IProjOwnedByBoss<Battle
         Projectile.Opacity = 0f;
     }
 
-    public override void SendExtraAI(BinaryWriter writer) => writer.Write(DisappearTime);
+    public override void SendExtraAI(BinaryWriter writer)
+    {
+        writer.Write(DisappearTime);
+        writer.Write(Projectile.rotation);
+    }
 
-    public override void ReceiveExtraAI(BinaryReader reader) => DisappearTime = reader.ReadInt32();
+    public override void ReceiveExtraAI(BinaryReader reader)
+    {
+        DisappearTime = reader.ReadInt32();
+        Projectile.rotation = reader.ReadSingle();
+    }
 
     public override void AI()
     {
-        int ownerIndex = NPC.FindFirstNPC(ModContent.NPCType<BattleSolyn>());
+        int ownerIndex = -1;
+        foreach (NPC npc in Main.ActiveNPCs)
+        {
+            if (npc.ModNPC is BattleSolyn solyn && solyn.MultiplayerIndex == Owner.whoAmI)
+            {
+                ownerIndex = npc.whoAmI;
+                break;
+            }
+        }
+
         if (ownerIndex == -1)
         {
             Projectile.Kill();
@@ -89,7 +106,7 @@ public class DirectionalSolynForcefield : ModProjectile, IProjOwnedByBoss<Battle
             DisappearTime++;
 
         // Fade in and out.
-        if (MarsBody.SolynEnergyBeamIsCharging)
+        if (MarsBody.SolynEnergyBeamIsCharging(Owner))
             Projectile.Opacity = Projectile.Opacity.StepTowards(0f, 0.06f);
         else
             Projectile.Opacity = Projectile.Opacity.StepTowards(InverseLerp(0f, 16f, Time) * (1f - DisappearanceInterpolant), 0.05f);
@@ -115,7 +132,7 @@ public class DirectionalSolynForcefield : ModProjectile, IProjOwnedByBoss<Battle
 
         float oldDirection = Projectile.velocity.ToRotation();
         float idealDirection = Owner.AngleTo(Main.MouseWorld);
-        if (MarsBody.SolynEnergyBeamIsCharging)
+        if (MarsBody.SolynEnergyBeamIsCharging(Owner))
             idealDirection = oldDirection;
 
         float reorientInterpolant = (1f - DisappearanceInterpolant) * (1f - GameSceneSlowdownSystem.SlowdownInterpolant);

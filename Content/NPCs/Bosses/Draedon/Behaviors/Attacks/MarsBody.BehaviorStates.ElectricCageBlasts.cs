@@ -113,6 +113,12 @@ public partial class MarsBody
     /// </summary>
     public void DoBehavior_ElectricCageBlasts_Solyn(BattleSolyn solyn)
     {
+        if (solyn.IsMultiplayerClone)
+        {
+            solyn.Invisible = true;
+            return;
+        }
+
         NPC solynNPC = solyn.NPC;
         int forcefieldIndex = NPC.FindFirstNPC(ModContent.NPCType<TrappingHolographicForcefield>());
         NPC? forcefield = forcefieldIndex >= 0 ? Main.npc[forcefieldIndex] : null;

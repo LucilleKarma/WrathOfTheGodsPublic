@@ -235,7 +235,8 @@ public partial class AvatarOfEmptiness
             }
         };
 
-        Main.LocalPlayer.velocity.Y = 0f;
+        foreach (Player player in Main.ActivePlayers)
+            player.velocity.Y = 0f;
 
         DoBehavior_ParadiseReclaimed_GeneralUpdates();
     }

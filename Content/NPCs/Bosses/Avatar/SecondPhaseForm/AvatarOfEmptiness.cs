@@ -1009,13 +1009,18 @@ public partial class AvatarOfEmptiness : ModNPC
         // Perform a state safety check before anything else.
         PerformStateSafetyCheck();
 
-        // Grant the target infinite flight and ensure that they receive the boss effects buff.
+        // Grant all players infinite flight and ensure that they receive the boss effects buff.
         if (NPC.HasPlayerTarget)
         {
-            Player playerTarget = Main.player[NPC.target];
-            playerTarget.wingTime = playerTarget.wingTimeMax;
-            CalamityCompatibility.GrantInfiniteCalFlight(playerTarget);
-            CalamityCompatibility.GrantBossEffectsBuff(playerTarget);
+            foreach (Player player in Main.ActivePlayers)
+            {
+                if (player.dead)
+                    continue;
+
+                player.wingTime = player.wingTimeMax;
+                CalamityCompatibility.GrantInfiniteCalFlight(player);
+                CalamityCompatibility.GrantBossEffectsBuff(player);
+            }
         }
 
         // Disable rain and sandstorms.
@@ -1066,7 +1071,7 @@ public partial class AvatarOfEmptiness : ModNPC
 
         if (AttackDimensionRelationship.TryGetValue(CurrentState, out AvatarDimensionVariant? dimension))
             AvatarOfEmptinessSky.Dimension = dimension;
-        else if (CurrentState != AvatarAIType.Teleport && CurrentState != AvatarAIType.SendPlayerToMyUniverse && CurrentState != AvatarAIType.LeaveAfterPlayersAreDead && AITimer >= 5)
+        else if (CurrentState != AvatarAIType.Teleport && CurrentState != AvatarAIType.TeleportAbovePlayer && CurrentState != AvatarAIType.SendPlayerToMyUniverse && CurrentState != AvatarAIType.LeaveAfterPlayersAreDead && AITimer >= 5)
             AvatarOfEmptinessSky.Dimension = null;
 
         // Get rid of all falling stars. Their noises completely ruin the ambience.

@@ -105,12 +105,23 @@ public class SolynOverlaySystem : ModSystem
         // Check for and save all offscreen Solyn instances in a centralized list, as long as the Avatar isn't doing his phase 2 animation.
         if (!dontDrawIcon)
         {
+            BattleSolyn.solynMappingsCacheByIndex.TryGetValue(Main.myPlayer, out NPC? clientsSolynIndex);
+            bool clientHasSolynInstance = clientsSolynIndex is not null && clientsSolynIndex.ModNPC is BattleSolyn s && !s.Invisible;
+
             int solynID = ModContent.NPCType<BattleSolyn>();
             DynamicSpriteFont font = FontAssets.MouseText.Value;
             for (int i = 0; i < Main.maxNPCs; i++)
             {
                 NPC n = Main.npc[i];
-                if (!n.active || n.type != solynID)
+                if (!n.active || n.type != solynID || n.ModNPC is not BattleSolyn solyn)
+                    continue;
+
+                // If the player client has their own Solyn instance, only show a head icon for that one.
+                if (clientHasSolynInstance && n.whoAmI != clientsSolynIndex!.whoAmI)
+                    continue;
+
+                // If the player client does not have their own Solyn instance, only show a head for the "real" Solyn instance.
+                if (!clientHasSolynInstance && solyn.IsMultiplayerClone)
                     continue;
 
                 string name = n.TypeName;

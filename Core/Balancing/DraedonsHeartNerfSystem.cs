@@ -32,7 +32,7 @@ public sealed class DraedonsHeartNerfSystem : ModSystem
 
     public override void OnModLoad()
     {
-        if (!ModLoader.TryGetMod("CalamityMod", out Mod cal))
+        if (!ModLoader.TryGetMod(CalamityCompatibility.ModName, out Mod cal))
             return;
 
         // As of writing this (8/26/2024) Ozzatron has informed me that Calamity will nerf the Draedon's Heart on its own in the upcoming update.

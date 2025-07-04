@@ -3,6 +3,7 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using NoxusBoss.Assets;
 using NoxusBoss.Content.NPCs.Bosses.Avatar.SecondPhaseForm;
+using NoxusBoss.Content.NPCs.Bosses.NamelessDeity.SpecificEffectManagers;
 using NoxusBoss.Core.World.GameScenes.AvatarAppearances;
 using NoxusBoss.Core.World.GameScenes.RiftEclipse;
 using Terraria;
@@ -35,7 +36,7 @@ public static class AvatarRiftTargetContent
         {
             time = npc.As<AvatarRift>().RiftRotationTimer;
             if (npc.As<AvatarRift>().DrawnFromTelescope)
-                time = Main.GlobalTimeWrappedHourly * 0.038f;
+                time = ClockTimerSystem.Time * 0.038f;
         }
         if (npc.type == ModContent.NPCType<AvatarOfEmptiness>())
             time = npc.As<AvatarOfEmptiness>().RiftRotationTimer;
@@ -45,7 +46,7 @@ public static class AvatarRiftTargetContent
             vanishInterpolant = npc.As<AvatarOfEmptiness>().RiftVanishInterpolant;
         if (backgroundProp)
         {
-            time = Main.GlobalTimeWrappedHourly * 0.008f;
+            time = ClockTimerSystem.Time * 0.008f;
             baseCutoffRadius = 0.16f;
             riftScale *= RiftEclipseSky.ProgressionScaleFactor;
             vanishInterpolant = Pow(vanishInterpolant, 1.25f);
@@ -117,7 +118,7 @@ public static class AvatarRiftTargetContent
         float time = 0f;
         if (backgroundProp)
         {
-            time = Main.GlobalTimeWrappedHourly * 0.2f;
+            time = ClockTimerSystem.Time * 0.2f;
             what *= 1.3f;
         }
         if (npc.type == ModContent.NPCType<AvatarRift>())
@@ -137,7 +138,7 @@ public static class AvatarRiftTargetContent
             what *= scaleFactor;
             blurOffset = InverseLerp(0.5f, 0.25f, scaleFactor) * 0.006f;
 
-            time = Main.GlobalTimeWrappedHourly * 0.2f;
+            time = ClockTimerSystem.Time * 0.2f;
             opacity *= 0.66f;
         }
         if (npc.type == ModContent.NPCType<AvatarOfEmptiness>())

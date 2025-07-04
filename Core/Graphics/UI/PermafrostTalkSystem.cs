@@ -1,6 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using NoxusBoss.Assets;
+using NoxusBoss.Core.CrossCompatibility.Inbound.BaseCalamity;
 using NoxusBoss.Core.GlobalInstances;
 using NoxusBoss.Core.World.WorldGeneration;
 using Terraria;
@@ -41,7 +42,7 @@ public class PermafrostTalkSystem : ModSystem
 
     public override void OnModLoad()
     {
-        EffectCanApply = ModLoader.TryGetMod("CalamityMod", out Mod cal);
+        EffectCanApply = ModLoader.TryGetMod(CalamityCompatibility.ModName, out Mod cal);
         if (!EffectCanApply)
             return;
 

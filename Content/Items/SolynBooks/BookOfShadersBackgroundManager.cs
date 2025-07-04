@@ -13,6 +13,15 @@ namespace NoxusBoss.Content.Items;
 
 public partial class SolynBooksSystem : ModSystem
 {
+    /// <summary>
+    /// The 0-1 interpolant which dictates how many frames in a second of time are a consequence of deliberate lag when hovering over the book of shaders.
+    /// </summary>
+    /// 
+    /// <remarks>
+    /// As an example, a value of 0.6 indicates that 60% of frames in a second are consumed by deliberate lag.
+    /// </remarks>
+    public static float BookOfShadersSlowdownRatio => 0.56f;
+
     private static void LoadBookOfShaders()
     {
         new ManagedILEdit("Use shader on Book of Shaders tooltip background", ModContent.GetInstance<NoxusBoss>(), edit =>
@@ -48,6 +57,10 @@ public partial class SolynBooksSystem : ModSystem
                 bookOfShadersShader.SetTexture(GennedAssets.Textures.Extra.Psychedelic, 1, SamplerState.LinearWrap);
                 bookOfShadersShader.SetTexture(GennedAssets.Textures.Extra.PsychedelicWingTextureOffsetMap, 2, SamplerState.LinearWrap);
                 bookOfShadersShader.Apply();
+
+                // Obligatory making the shader book deliberately laggy.
+                int millisecondsToThrowAway = (int)(BookOfShadersSlowdownRatio / (1f - BookOfShadersSlowdownRatio) * 60f);
+                Thread.Sleep(millisecondsToThrowAway);
             }
         });
 

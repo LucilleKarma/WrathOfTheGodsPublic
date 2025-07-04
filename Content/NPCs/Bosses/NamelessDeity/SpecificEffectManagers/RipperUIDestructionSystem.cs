@@ -93,7 +93,7 @@ public class RipperUIDestructionSystem : ModSystem
 
     public override void Load()
     {
-        if (!ModLoader.TryGetMod("CalamityMod", out Mod cal))
+        if (!ModLoader.TryGetMod(CalamityCompatibility.ModName, out Mod cal))
             return;
 
         Type? ripperUIType = cal.Code.GetType("CalamityMod.UI.Rippers.RipperUI");

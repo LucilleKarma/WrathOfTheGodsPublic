@@ -66,10 +66,13 @@ public class FreezingWave : ModProjectile, IProjOwnedByBoss<AvatarOfEmptiness>, 
         }
 
         float squish = Vector2.Transform(Vector2.UnitY, Rotation).Y;
-        Vector2 playerOffset = Main.LocalPlayer.Center - Projectile.Center;
-        float distanceToPlayer = Sqrt(playerOffset.X.Squared() + (playerOffset.Y * squish).Squared());
-        if (Projectile.Opacity >= 0.7f && distanceToPlayer <= Radius * 0.78f && !Main.LocalPlayer.HasBuff<Glaciated>() && Radius <= 2800f)
-            Main.LocalPlayer.AddBuff(ModContent.BuffType<Glaciated>(), SecondsToFrames(8f));
+        foreach (Player player in Main.ActivePlayers)
+        {
+            Vector2 playerOffset = player.Center - Projectile.Center;
+            float distanceToPlayer = Sqrt(playerOffset.X.Squared() + (playerOffset.Y * squish).Squared());
+            if (Projectile.Opacity >= 0.7f && distanceToPlayer <= Radius * 0.78f && !player.HasBuff<Glaciated>() && Radius <= 2800f)
+                player.AddBuff(ModContent.BuffType<Glaciated>(), SecondsToFrames(8f));
+        }
     }
 
     public void DrawWithShader(SpriteBatch spriteBatch)

@@ -17,6 +17,21 @@ namespace NoxusBoss.Content.NPCs.Bosses.Draedon.SpecificEffectManagers;
 
 public class GameSceneSlowdownSystem : ModSystem
 {
+    // Needs to be separate to not attempt to load when the parent ModSystem is
+    // loaded.
+    [JITWhenModsEnabled(MonoStereoSystem.ModName)]
+    private static class MonoStereoSupport
+    {
+        /// <summary>
+        /// The filter responsible for pitching down music based on slowdown.
+        /// </summary>
+        public static PitchShiftFilter PitchFilter
+        {
+            get;
+            internal set;
+        }
+    }
+    
     private static bool musicBeingAffected;
 
     private static readonly List<SlowdownEffectCondition> slowdownEffects = [];
@@ -43,16 +58,6 @@ public class GameSceneSlowdownSystem : ModSystem
     /// The render target that dictates what shouldn't be greyscaled.
     /// </summary>
     public static ManagedRenderTarget GreyscaleExclusionTarget
-    {
-        get;
-        private set;
-    }
-
-    /// <summary>
-    /// The filter responsible for pitching down music based on slowdown.
-    /// </summary>
-    [JITWhenModsEnabled(MonoStereoSystem.ModName)]
-    public static PitchShiftFilter PitchFilter
     {
         get;
         private set;
@@ -96,8 +101,8 @@ public class GameSceneSlowdownSystem : ModSystem
     [JITWhenModsEnabled(MonoStereoSystem.ModName)]
     private static void MonoStereoInitialize()
     {
-        PitchFilter = new(1f);
-        AudioManager.MusicMixer?.AddFilter(PitchFilter);
+        MonoStereoSupport.PitchFilter = new(1f);
+        AudioManager.MusicMixer?.AddFilter(MonoStereoSupport.PitchFilter);
     }
 
     private bool FreezeMusicDuringGreyscale() => GreyscaleInterpolant >= 0.8f;
@@ -247,6 +252,6 @@ public class GameSceneSlowdownSystem : ModSystem
     private static void UpdatePitchFilter()
     {
         if (musicBeingAffected)
-            PitchFilter.PitchFactor = Lerp(1f, 0.6f, GreyscaleInterpolant);
+            MonoStereoSupport.PitchFilter.PitchFactor = Lerp(1f, 0.6f, GreyscaleInterpolant);
     }
 }

@@ -38,6 +38,7 @@ public class GennedAssets
             public static readonly LazyAsset<Texture2D> Glaciated = LazyAsset<Texture2D>.FromPath("NoxusBoss/Assets/Textures/Content/Buffs/Glaciated");
             public static readonly LazyAsset<Texture2D> GlaciatedIceBlock = LazyAsset<Texture2D>.FromPath("NoxusBoss/Assets/Textures/Content/Buffs/GlaciatedIceBlock");
             public static readonly LazyAsset<Texture2D> InvincibilityBuff = LazyAsset<Texture2D>.FromPath("NoxusBoss/Assets/Textures/Content/Buffs/InvincibilityBuff");
+            public static readonly LazyAsset<Texture2D> InvincibilityBuffShaderMask = LazyAsset<Texture2D>.FromPath("NoxusBoss/Assets/Textures/Content/Buffs/InvincibilityBuffShaderMask");
             public static readonly LazyAsset<Texture2D> NilkDebuff = LazyAsset<Texture2D>.FromPath("NoxusBoss/Assets/Textures/Content/Buffs/NilkDebuff");
             public static readonly LazyAsset<Texture2D> StarPetBuff = LazyAsset<Texture2D>.FromPath("NoxusBoss/Assets/Textures/Content/Buffs/StarPetBuff");
             public static readonly LazyAsset<Texture2D> StarstrikinglySatiated = LazyAsset<Texture2D>.FromPath("NoxusBoss/Assets/Textures/Content/Buffs/StarstrikinglySatiated");

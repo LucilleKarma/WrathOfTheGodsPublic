@@ -2,6 +2,7 @@
 using Microsoft.Xna.Framework.Graphics;
 using NoxusBoss.Content.Items.SummonItems;
 using NoxusBoss.Core.Autoloaders.SolynBooks;
+using NoxusBoss.Core.CrossCompatibility.Inbound.BaseCalamity;
 using NoxusBoss.Core.DataStructures;
 using NoxusBoss.Core.DataStructures.DropRules;
 using Terraria;
@@ -59,7 +60,7 @@ public partial class GlobalNPCEventHandlers : GlobalNPC
     public override void Load()
     {
         // Load custom NPC IDs.
-        if (ModLoader.TryGetMod("CalamityMod", out Mod cal) && cal.TryFind("PrimordialWyrmHead", out ModNPC wyrm))
+        if (ModLoader.TryGetMod(CalamityCompatibility.ModName, out Mod cal) && cal.TryFind("PrimordialWyrmHead", out ModNPC wyrm))
             wyrmID = wyrm.Type;
     }
 

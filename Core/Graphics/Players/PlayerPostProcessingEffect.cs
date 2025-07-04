@@ -10,5 +10,5 @@ namespace NoxusBoss.Core.Graphics.Players;
 /// Instances of these should be cached where possible.
 /// </remarks>
 /// <param name="Effect">The action that handles post-processing.</param>
-/// <param name="ClearOnWorldUpdateCycle">Whether this effect should be automatically cleared on the world update, instead of render update, cycle.</param>
+/// <param name="ClearOnWorldUpdateCycle">Whether this effect should be automatically cleared on the world update, instead of render update cycle.</param>
 public record PlayerPostProcessingEffect(Action<Player> Effect, bool ClearOnWorldUpdateCycle);

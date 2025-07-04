@@ -215,6 +215,9 @@ public class MarsMissile : ModProjectile, IProjOwnedByBoss<MarsBody>, IPixelated
 
     public override void OnKill(int timeLeft)
     {
+        if (Main.netMode == NetmodeID.Server)
+            return;
+
         ScreenShakeSystem.StartShakeAtPoint(Projectile.Center, 5f);
         SoundEngine.PlaySound(GennedAssets.Sounds.Mars.MissileExplode with { MaxInstances = 4 }, Projectile.Center).WithVolumeBoost(1.5f);
 

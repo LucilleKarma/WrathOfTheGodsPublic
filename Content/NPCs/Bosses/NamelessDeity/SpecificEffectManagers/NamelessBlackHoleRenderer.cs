@@ -57,20 +57,22 @@ public class NamelessBlackHoleRenderer : ModSystem
 
         Projectile blackHole = blackHoles.First();
 
-        Vector2 blackHoleProjectilePosition = blackHole.Center - Main.screenPosition;
         Vector2 screenSize = ViewportSize;
         Vector2 actualScreenSize = new Vector2(Main.screenWidth, Main.screenHeight);
-        Vector3 blackHolePositionUV = new Vector3(InverseLerp(0f, actualScreenSize.X, blackHoleProjectilePosition.X), InverseLerp(0f, actualScreenSize.Y, blackHoleProjectilePosition.Y), 0f);
-        blackHolePositionUV = blackHolePositionUV * 2f - new Vector3(1f, 1f, 0f);
-
+        Vector3 blackHolePositionUV = new Vector3((blackHole.Center - Main.screenPosition) / actualScreenSize, 0f);
+        float aspectRatioCorrectionFactor = screenSize.X / screenSize.Y;
         float blackHoleResizingScale = blackHole.width / actualScreenSize.X * blackHole.scale * 2f;
         Vector2 zoom = Main.GameViewMatrix.Zoom * blackHoleResizingScale;
-        blackHolePositionUV /= new Vector3(blackHoleResizingScale, blackHoleResizingScale, 1f) * new Vector3(screenSize / actualScreenSize, 1f) * new Vector3(1f, 1.67f, 1f);
+
+        // Apply the same transformations to the UV coordinates of the black hole as those performed in the shader on coordinates so that they naturally align.
+        blackHolePositionUV = (blackHolePositionUV - new Vector3(0.5f, 0.5f, 0f)) * new Vector3(aspectRatioCorrectionFactor, 1f, 1f) + new Vector3(0.5f, 0.5f, 0f);
+        blackHolePositionUV = blackHolePositionUV * 2f - new Vector3(1f, 1f, 0f);
+        blackHolePositionUV /= new Vector3(zoom / Main.GameViewMatrix.Zoom, 1f);
 
         ManagedShader blackHoleShader = ShaderManager.GetShader("NoxusBoss.RealBlackHoleShader");
         blackHoleShader.TrySetParameter("blackHoleRadius", 0.3f);
         blackHoleShader.TrySetParameter("blackHoleCenter", blackHolePositionUV);
-        blackHoleShader.TrySetParameter("aspectRatioCorrectionFactor", screenSize.X / screenSize.Y);
+        blackHoleShader.TrySetParameter("aspectRatioCorrectionFactor", aspectRatioCorrectionFactor);
         blackHoleShader.TrySetParameter("accretionDiskColor", new Color(245, 105, 61).ToVector3()); // Blue: new Color(90, 126, 210).ToVector3()
         blackHoleShader.TrySetParameter("cameraAngle", 0.32f);
         blackHoleShader.TrySetParameter("cameraRotationAxis", new Vector3(1f, 0f, blackHole.rotation));

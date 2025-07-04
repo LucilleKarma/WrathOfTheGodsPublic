@@ -18,7 +18,10 @@ public class AvatarDeathMessagesPlayer : ModPlayer
                 terribleMessageChance = 1;
 
             if (Main.rand.NextBool(terribleMessageChance))
-                damageSource = PlayerDeathReason.ByCustomReason(Language.GetText($"Mods.NoxusBoss.PlayerDeathMessages.ThisModReallyIsJustShitpostsMaskedByBossesHuh").Format(Player.name));
+            {
+                NetworkText killText = NetworkText.FromKey("Mods.NoxusBoss.PlayerDeathMessages.ThisModReallyIsJustShitpostsMaskedByBossesHuh", Player.name);
+                damageSource = PlayerDeathReason.ByCustomReason(killText);
+            }
         }
 
         return true;

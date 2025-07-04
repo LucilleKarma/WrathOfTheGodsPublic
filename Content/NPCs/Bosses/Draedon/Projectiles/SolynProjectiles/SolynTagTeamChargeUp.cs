@@ -67,7 +67,7 @@ public class SolynTagTeamChargeUp : ModProjectile, IProjOwnedByBoss<BattleSolyn>
             return;
         }
 
-        if (MarsBody.Myself.As<MarsBody>().SolynPlayerTeamAttackTimer <= 0 && Main.myPlayer == MarsBody.Myself.target)
+        if (MarsBody.Myself.As<MarsBody>().GetSolynPlayerTeamAttackTimer(Owner) <= 0)
         {
             Projectile.Kill();
             return;

@@ -287,9 +287,9 @@ public class StolenPlanetoid : ModProjectile, IProjOwnedByBoss<AvatarOfEmptiness
 
         Time++;
 
-        bool pushBackPlayer = Myself is not null && Myself.As<AvatarOfEmptiness>().ParadiseReclaimedIsOngoing;
+        bool pushBackPlayers = Myself is not null && Myself.As<AvatarOfEmptiness>().ParadiseReclaimedIsOngoing;
         var planetoids = AllProjectilesByID(Type).Where(p => p.whoAmI != Projectile.whoAmI).OrderBy(p => p.DistanceSQ(Projectile.Center));
-        if (ZPosition <= 0f && !pushBackPlayer && planetoids.Any())
+        if (ZPosition <= 0f && !pushBackPlayers && planetoids.Any())
             HandlePlanetoidCollision(planetoids);
         else
             CollisionIntensity = 0f;
@@ -297,8 +297,14 @@ public class StolenPlanetoid : ModProjectile, IProjOwnedByBoss<AvatarOfEmptiness
         // Scale in accordance with the Z position.
         Projectile.scale = 1f / (ZPosition + 1f);
 
-        if (pushBackPlayer && Projectile.Colliding(Projectile.Hitbox, Main.LocalPlayer.Hitbox) && Main.LocalPlayer.velocity.Length() <= 40f)
-            Main.LocalPlayer.velocity += Projectile.SafeDirectionTo(Main.LocalPlayer.Center) * Projectile.velocity.Length();
+        if (pushBackPlayers)
+        {
+            foreach (Player player in Main.ActivePlayers)
+            {
+                if (Projectile.Colliding(Projectile.Hitbox, player.Hitbox) && player.velocity.Length() <= 40f)
+                    player.velocity += Projectile.SafeDirectionTo(player.Center) * Projectile.velocity.Length();
+            }
+        }
 
         // Spin in place.
         Projectile.rotation += TwoPi / 560f * (1f - CollisionIntensity);

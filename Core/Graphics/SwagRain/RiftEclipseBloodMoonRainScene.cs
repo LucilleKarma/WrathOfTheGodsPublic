@@ -5,7 +5,6 @@ using Terraria.ModLoader;
 
 namespace NoxusBoss.Core.Graphics.SwagRain;
 
-[Autoload(Side = ModSide.Client)]
 public class RiftEclipseBloodMoonRainScene : ModSceneEffect
 {
     public override int Music => MusicLoader.GetMusicSlot(Mod, "Assets/Sounds/Music/Hemolacria");

@@ -53,6 +53,9 @@ public class EndCreditsRecordingRantLowPlaytime : NamelessDeitySubtitleSystem
         Main.gamePaused = false;
         DialogueTimer = ModContent.GetInstance<EndCreditsScene>().RantTimer;
 
+        if (Main.musicVolume < 0.2f)
+            Main.musicVolume = 0.2f;
+
         if (DialogueTimer >= SubtitleDisappearTime - 5 && NamelessDeityBoss.Myself is not null)
             NamelessDeityBoss.Myself.active = false;
     }

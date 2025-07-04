@@ -217,7 +217,8 @@ public class NamelessDeityPlayerDeathVisualsPlayer : ModPlayer
             if (!BossDownedSaveSystem.HasDefeated<NamelessDeityBoss>() && ModLoader.TryGetMod("DragonLens", out _) && !NamelessDeityFormPresetRegistry.UsingLucillePreset)
                 deathKey = "NamelessDeityCheatEasterEgg";
 
-            damageSource = PlayerDeathReason.ByCustomReason(Language.GetText($"Mods.NoxusBoss.PlayerDeathMessages.{deathKey}").Format(Player.name));
+            NetworkText killText = NetworkText.FromKey($"Mods.NoxusBoss.PlayerDeathMessages.{deathKey}", Player.name);
+            damageSource = PlayerDeathReason.ByCustomReason(killText);
             playSound = false;
             genGore = false;
 
