@@ -66,7 +66,7 @@ MarsBody: {
 
 	BossChecklistIntegration: {
 		SpawnInfo: Свяжитесь с Дрэйдоном в компании Солин и начните специальный квест
-		DespawnMessage: "[c/9BFFFF:Всё точно в пределах моих рассчётов.]"
+		DespawnMessage: "[c/9BFFFF:Всё точно в пределах моих расчётов.]"
 	}
 
 	InfernumCompatibility.Title:

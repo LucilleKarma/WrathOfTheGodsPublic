@@ -89,6 +89,12 @@ SolynDuskDialogue: {
 	Solyn3: Either way, it's good to experience something new... I suppose.
 }
 
+SolynBloodMoonDialogue: {
+	Start: I can't sleep tonight. ^Something about the eerie glow is making me restless.
+	Solyn1: Furthermore, I never experienced a night like this before back at home. ^It'd be a lie to say things are safe, but I can hold my own against the swarm of monsters if necessary, and I must admit I'm rather curious about all this.
+	Solyn2: Perhaps I'll try to stargaze again tonight? ^I imagine the crimson-tinted sky would be a special sight to behold up close.
+}
+
 SolynSlimeRainDialogue: {
 	Start: How odd!^ Slime, dropping out of the sky like rain!^ It's so weird, yet so fascinating!
 	Solyn1: How does it work?^ I've gotta know!^
@@ -108,6 +114,18 @@ SolynStorageSailsDialogue: {
 	Solyn4: I dunno!
 }
 
+SolynSameHairDialogue: {
+	Start: Is that...^ my hair on your head?^ Wow!
+	Solyn1: Maybe this means we could be hair twins?
+	Solyn2: Just...^ make sure to take care of it.^ It's not an easy style to maintain!
+}
+
+SolynPicnicDialogue: {
+	Start: One of these days I want to set up and enjoy a picnic.
+	Solyn1: Back at home I'd occasionally enjoy them with a close friend of mine.^ It was always really fun.^ The lush scenery, the scrumptious food, the warm sunlight...
+	Solyn2: It'd be wonderful to experience something like it again.
+}
+
 SolynBooksDialogue: {
 	Start: You know, it would've been nice if I could've at least brought along a few old possessions of mine before getting sent here.
 	Solyn1: Back at home I had a sizeable collection of books.^ A few scrolls and old tomes too.
@@ -124,6 +142,13 @@ SolynOneRedeemedBookDialogue: {
 	Solyn1: The scenery here really is beautiful, but I don't think I could keep staring at it all day.
 }
 
+SolynInscrutableTextsBookDialogue: {
+	Start: A certain book you added to my shelf caught my attention.^ 'Inscrutiable Texts', I think it was called?
+	Solyn1: I must say, it's a rather apt title.^ Extremely dense and formal.^ Not willing in the slightest to hold the reader's hand on trivialities.
+	Solyn2: Still, I managed to get some useful knowledge from it.^ Quite a few spells I hadn't even heard of before.
+	Solyn3: ... First the seedling, now this tome. ^It all makes me extremely curious about Permafrost's story.
+}
+
 SolynUnreadableBookDialogue: {
 	Start: Like I said earlier, I really appreciate the books... but are you sure some of these actually count as such?
 	Solyn1: ... At least they look pretty nice on the shelf.
@@ -136,11 +161,55 @@ SolynManyRedeemedBooksDialogue: {
 
 SolynCompleteBookshelfDialogue: {
 	Start: This is amazing!^ I don't have any room left on the shelf.
-	Solyn1: We've really done so much since I got here. I hope I can fell this excited when we finish the Genesis, haha!
+	Solyn1: We've really done so much since I got here. I hope I can feel this excited when we finish the Genesis, haha!
 	Solyn2: Ah, speaking of the Genesis, I've been thinking... ^once it's done, I'd like to make a proper library here. With your help, of course.
 }
 
+SolynNearbyLunarPillarDialogue.Start: &M-my camp is being swarmed by aliens!!!
 SolynLategameDialogue.Start: We've made great progress towards the Genesis, but we can't slow down now.^ There's still work to be done.
+
+SolynRiftBlizzardDialogue: {
+	Start: I haven't been here long, but I must admit I already miss the occasional pleasant drizzle.
+	Solyn1: And yet...^ there's an unnatural, quiet beauty to the snowfall that has taken its place.
+	Solyn2: ...
+	Solyn3: Sorry, I'm just... ^thinking to myself.
+}
+
+SolynWantingToGoHomeDialogue: {
+	Start: Sometimes I wish I could just...^ go back home.
+	Solyn1: Unfamiliarity, dreariness, stark uncertainty, increasing cold...
+	Solyn2: ... It would be so much easier if I'd have just left well enough alone.
+	Solyn3: Ah, what am I saying?^ We can't change the past, and there's much to be done still.
+}
+
+SolynHopefulPastDialogue: {
+	Start: I've been thinking to myself a lot lately.
+	Solyn1: To be honest... I envy my past self a little bit.^ So hopeful, looking up to the stars with the belief that they'd look down and keep us all safe. ^Wishing to thank our maker for all the beauty that surrounds us.
+	Solyn2: It's difficult to maintain that optimism as that beauty wilts and freezes arounds us.
+	Solyn3: Sorry, I just... ^need a short moment to myself.
+}
+
+SolynRiftSunsetDialogue: {
+	Start: Is it even accurate to call this a sunset anymore?
+	Solyn1: Well, either way, it's getting late.^ I'll be getting some rest soon.
+}
+
+SolynRiftTownNPCDialogue: {
+	Start: Have you talked to your town's inhabitants lately?
+	Solyn1: While you were away I got lonely and decided to stop by for some company.
+	Solyn2: It was nice, but I could tell everyone felt uneasy. ^The current circumstances are quite clearly weighing down on them.
+}
+
+SolynRiftFogDialogue: {
+	Start: I'm quite surprised you managed to find me in this dense fog.
+	Solyn1: Something about it feels... wrong. ^This haze is not a natural occurrence.
+	Solyn2: Keep your guard up.^ Who knows what might be lurking out there.
+}
+
+SolynMirrorwalkerDialogue: {
+	Start: &...!
+	Solyn1: &There's... something out there.
+}
 
 SolynWindyDayTalk: {
 	# If its a Windy Day, Solyn is seen holding a kite.

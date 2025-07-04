@@ -314,7 +314,7 @@ Erilucyxwyn: {
 	Tooltip:
 		'''
 		So, how did you obtain this?
-		Was it through from comical drop chance, or the silly test of resolve challenge?
+		Was it from the comical drop chance, or the silly test of resolve challenge?
 		... Or did you just use the cheat permission slip and get it through DragonLens?
 
 		'Carried from the shining river, personally cultivated across countless eons. Such is the reward of the Deity's divine favor'
@@ -1112,6 +1112,7 @@ TheBookOfShaders: {
 		'''
 		An informational read on the creation of shaders and programmatically generated artwork
 		Seven pages are dedicated to ranting about the sanctity of pixelation
+		The last page stresses the importance of ensuring these effects are optimized and maximally performant
 		'''
 }
 
@@ -1199,4 +1200,9 @@ StrangeFlagpole: {
 		'''
 	NotFlatEnoughText: This space is either not flat or open enough!
 	FlatEnoughText: This space is suitable.
+}
+
+FancyRopeSet: {
+	DisplayName: Fancy Rope Set
+	Tooltip: ""
 }

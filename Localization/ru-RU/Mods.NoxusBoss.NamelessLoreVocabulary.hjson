@@ -9,7 +9,7 @@ Vocabulary: {
 	Verb6: пылает
 	Verb7: сливается
 	Verb8: восходит
-	Verb9: прослеживет
+	Verb9: прослеживает
 	Verb10: топчется
 	Verb11: блещет
 	Verb12: поддаётся
@@ -154,13 +154,13 @@ Vocabulary: {
 	Adjective1: с невыразимостью
 	Adjective2: сияния
 	Adjective3: на время
-	Adjective4: в раздумиях
+	Adjective4: в раздумьях
 	Adjective5: блаженства
 	Adjective6: вечности
 	Adjective7: искривлений
 	Adjective8: всеведения
 	Adjective9: всесилия
-	Adjective10: добродеятеля
+	Adjective10: добродетеля
 	Adjective11: надежды
 	Adjective12: величия
 	Adjective13: энергии
@@ -249,12 +249,12 @@ Vocabulary: {
 	Adjective96: меди
 	Adjective97: перегруза
 	Adjective98: затворничества
-	Adjective99: искуссности
+	Adjective99: искусности
 	Adjective100: полноты
 	Adjective101: эльфов
 	Adjective102: с глубинки
 	Adjective103: старости
-	Adjective104: с благословнением Ксерока
+	Adjective104: с благословением Ксерока
 	Adjective105: эффективности
 	Adjective106: чёрствости
 	Adjective107: жизни
@@ -283,7 +283,7 @@ Vocabulary: {
 	Adjective130: переписания
 	Adjective131: неточности
 	Adjective132: совпадений
-	Adjective133: дальновидости
+	Adjective133: дальновидности
 	Adjective134: Плутона
 	Adjective135: фиолетового цвета
 	Adjective136: окраса
@@ -356,7 +356,7 @@ Vocabulary: {
 	Adjective203: щёлочи
 	Adjective204: прозрачности
 	Adjective205: волнообразия
-	Adjective206: малтии
+	Adjective206: мальтии
 	Adjective207: авиации
 	Adjective208: бесстрастия
 	Adjective209: покоя
@@ -398,7 +398,7 @@ Vocabulary: {
 	Adjective245: ранения
 	Adjective246: скандала
 	Adjective247: диегетики
-	Adjective248: аппеляции
+	Adjective248: апелляции
 	Adjective249: почтения
 	Adjective250: верховности
 	Adjective251: звезды
@@ -441,7 +441,7 @@ Vocabulary: {
 	Noun13: крепостной
 	Noun14: дом
 	Noun15: единица
-	Noun16: логаритм
+	Noun16: логарифм
 	Noun17: сезон
 	Noun18: яблоко
 	Noun19: грешник
@@ -532,7 +532,7 @@ Vocabulary: {
 	Noun104: ветер
 	Noun105: глаз
 	Noun106: ключ
-	Noun107: корал
+	Noun107: коралл
 	Noun108: звёздная пыл
 	Noun109: терменвокс
 	Noun110: ручка
@@ -554,7 +554,7 @@ Vocabulary: {
 	Noun126: студент
 	Noun127: кошмар
 	Noun128: клей
-	Noun129: алфавет
+	Noun129: алфавит
 	Noun130: целочисленное
 	Noun131: ферма
 	Noun132: инопланетянин
@@ -619,8 +619,8 @@ Vocabulary: {
 	Noun191: берег
 	Noun192: флейта
 	Noun193: императрица
-	Noun194: мошеннничество
-	Noun195: гонщин
+	Noun194: мошенничество
+	Noun195: гонщик
 	Noun196: бродяга
 	Noun197: опекун
 	Noun198: деспот
@@ -703,7 +703,7 @@ Vocabulary: {
 	Noun275: арпеджио
 	Noun276: синт
 	Noun277: месть
-	Noun278: брайлль
+	Noun278: брайль
 	Noun279: тритон
 	Noun280: гранат
 	Noun281: рай
@@ -714,13 +714,13 @@ Vocabulary: {
 	Noun286: нефрит
 	Noun287: родственник
 	Noun288: дума
-	Noun289: ксистер
+	Noun289: кзистер
 	Noun290: сарказм
 	Noun291: притча
 	Noun292: владение
 	Noun293: арка
 	Noun294: гегемония
-	Noun295: шоссу
+	Noun295: шоссе
 	Noun296: песня
 	Noun297: костёр
 	Noun298: кладезь
@@ -730,7 +730,7 @@ Vocabulary: {
 	Preposition2: над
 	Preposition3: чрез
 	Preposition4: после
-	Preposition5: сопротив
+	Preposition5: супротив
 	Preposition6: вдоль
 	Preposition7: среди
 	Preposition8: вокруг

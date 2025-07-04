@@ -62,7 +62,7 @@ Solyn: {
 }
 
 MarsBody: {
-	DisplayName: XG-07 “玛尔斯”
+	DisplayName: XG-07 玛尔斯
 
 	BossChecklistIntegration: {
 		SpawnInfo: 从索琳那里接受一项特殊的任务，并使用密码破译器联系嘉登。

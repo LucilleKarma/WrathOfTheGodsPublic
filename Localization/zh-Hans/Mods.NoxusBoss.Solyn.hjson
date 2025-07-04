@@ -89,6 +89,12 @@ SolynDuskDialogue: {
 	Solyn3: 不过不管是哪种，体验新事物总是好事……应该吧。
 }
 
+SolynBloodMoonDialogue: {
+	Start: 今晚我睡不着。^ 那诡异的光芒里有什么东西让我感到无法入眠。
+	Solyn1: 而且，我在家的时候从来没有经历过这种夜晚。^ 我不敢说有多安全，但是如果有必要，我可以自己应付那些成群的怪物，而且我必须承认，我对这些很好奇。
+	Solyn2: 也许今晚应该再去观测一次星象？^我觉得染成红色的天空近距离看起来应该很特别。
+}
+
 SolynSlimeRainDialogue: {
 	Start: 好怪啊！^史莱姆就这么像雨一样从天上掉下来了！很奇异，很有意思！
 	Solyn1: 这到底是怎么发生的？^我得搞清楚！^
@@ -108,6 +114,18 @@ SolynStorageSailsDialogue: {
 	Solyn4: 全都不知道！
 }
 
+SolynSameHairDialogue: {
+	Start: 那是……^你头上顶着我的头发？^哇！
+	Solyn1: 也许这意味着我们是头发双胞胎？
+	Solyn2: 那……^你要好好打理啊。^这可不是什么容易维持的造型！
+}
+
+SolynPicnicDialogue: {
+	Start: 这几天我有时候会想来一次野餐。
+	Solyn1: 我在家的时候，时不时会跟一个好朋友去野餐。^ 很好玩的。^ 郁郁葱葱的风景，美味的食物，温暖的阳光...
+	Solyn2: 真想再有一次那样的经历啊。
+}
+
 SolynBooksDialogue: {
 	Start: 话说，要是我来这里的时候能多少带一点我自己的东西，那就太好了。
 	Solyn1: 我在自己家里有一大堆藏书呢。^ 还有一些是卷轴和大部头。
@@ -122,6 +140,13 @@ SolynBooksDialogue: {
 SolynOneRedeemedBookDialogue: {
 	Start: 我发现你好像在我的书架上放了点东西！^我很感谢。
 	Solyn1: 这里的风景确实很美，不过我也确实不能总是盯着它看。
+}
+
+SolynInscrutableTextsBookDialogue: {
+	Start: 你在我的书架上放的书里，有一本我很在意。^《玄晦篇》，大概是叫这个名字？
+	Solyn1: 我得说，这个标题恰如其分。^ 内容深奥，行文古雅。^ 一点也没想过要去照顾跟丢了思路的读者。
+	Solyn2: 不过，我还是从中读到了不少有用的知识。^ 里面的很多魔法，我以前根本就没听说过。
+	Solyn3: ……首先是那株萌芽，然后是这本书。^ 这些都让我很好奇永冻身上到底发生了什么故事。
 }
 
 SolynUnreadableBookDialogue: {
@@ -140,7 +165,51 @@ SolynCompleteBookshelfDialogue: {
 	Solyn2: 啊，说起起源花，我在想……^当它完成的时候，我想真在这里建成一座图书馆。 当然，还是需要你的帮助啦。
 }
 
+SolynNearbyLunarPillarDialogue.Start: &我——我的营帐周围全是外星人！！！
 SolynLategameDialogue.Start: 我们为完成起源花做了很多工作，不过不能停下脚步。^ 还有很多工作要做呢。
+
+SolynRiftBlizzardDialogue: {
+	Start: 虽然我来这还不久，但我确实已经在想念那些不时降临、令人愉悦的毛毛雨了。
+	Solyn1: 然而……^取而代之的这场雪，也有一种非自然的，寂静的美感。
+	Solyn2: ……
+	Solyn3: 抱歉，我只是……^自己在想这些。
+}
+
+SolynWantingToGoHomeDialogue: {
+	Start: 有时候我真想……^回家。
+	Solyn1: 陌生的环境，沉寂，无法掩饰的不确定性，还有越来越刺骨的寒冷……
+	Solyn2: ……如果我什么都不去管，事情该有多简单啊。
+	Solyn3: 啊，我在说什么？^我们不能改变过去，现在也还有很多事情要做。
+}
+
+SolynHopefulPastDialogue: {
+	Start: 我最近一直在想……
+	Solyn1: 说实话，我有点羡慕那个过去的自己。^ 那时我还充满希望，怀着信念仰望星空，相信它们也会俯视着我们，保佑我们的安全。^ 感谢造物主赐予我们周围的一切美好。
+	Solyn2: 但当这些周围的美好纷纷枯萎和冻结，就很难再维持这种乐观情绪了。
+	Solyn3: 对不起，我只是……^给我一小段时间独处吧。
+}
+
+SolynRiftSunsetDialogue: {
+	Start: 管这个叫日落真的还合适吗？
+	Solyn1: 好吧，反正，天色晚了。^ 很快我也该休息了。
+}
+
+SolynRiftTownNPCDialogue: {
+	Start: 你跟你城镇的住户，最近说过话吗？
+	Solyn1: 你不在的时候，我觉得有点孤单，所以想找些人待在一起。
+	Solyn2: 挺愉快的，不过大家看起来都不太自在。^ 最近的情况显然是给他们带来了不少压力。
+}
+
+SolynRiftFogDialogue: {
+	Start: 这么浓的雾，你居然能找到我，我很惊讶。
+	Solyn1: 这里面肯定有些什么……不对劲。^ 这些迷雾并不是自然产生的。
+	Solyn2: 保持警惕。^ 谁知道里面会潜伏着什么。
+}
+
+SolynMirrorwalkerDialogue: {
+	Start: &……！
+	Solyn1: &外面好像……有什么东西。
+}
 
 SolynWindyDayTalk: {
 	# If its a Windy Day, Solyn is seen holding a kite.
