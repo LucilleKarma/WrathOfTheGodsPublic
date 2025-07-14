@@ -1,5 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+
 using NoxusBoss.Assets;
 using NoxusBoss.Content.Tiles.TileEntities;
 using NoxusBoss.Core.DialogueSystem;
@@ -8,6 +9,7 @@ using NoxusBoss.Core.Netcode;
 using NoxusBoss.Core.Netcode.Packets;
 using NoxusBoss.Core.SolynEvents;
 using NoxusBoss.Core.World.GameScenes.Stargazing;
+
 using Terraria;
 using Terraria.Audio;
 using Terraria.DataStructures;

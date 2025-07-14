@@ -1,8 +1,12 @@
 ﻿using Luminance.Core.Graphics;
+
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+
 using NoxusBoss.Core.Graphics.FastParticleSystems;
+
 using Terraria;
+using Terraria.ID;
 
 namespace NoxusBoss.Content.NPCs.Bosses.Avatar.SpecificEffectManagers.ParadiseReclaimed;
 
@@ -30,7 +34,10 @@ public class ParadiseStaticLayer
 
     public ParadiseStaticLayer()
     {
-        ParticleSystem = FastParticleSystemManager.CreateNew(1024, PrepareParticleRendering, ExtraParticleUpdates);
+        if (Main.netMode != NetmodeID.Server)
+        {
+            ParticleSystem = FastParticleSystemManager.CreateNew(1024, PrepareParticleRendering, ExtraParticleUpdates);
+        }
     }
 
     private void PrepareParticleRendering()

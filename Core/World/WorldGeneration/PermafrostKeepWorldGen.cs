@@ -130,6 +130,7 @@ public class PermafrostKeepWorldGen : ModSystem
 
     public override void NetSend(BinaryWriter writer)
     {
+        writer.Write(PlayerGivenKey);
         writer.Write((byte)DoorHasBeenUnlocked.ToInt());
         writer.Write(KeepArea.X);
         writer.Write(KeepArea.Y);
@@ -139,6 +140,7 @@ public class PermafrostKeepWorldGen : ModSystem
 
     public override void NetReceive(BinaryReader reader)
     {
+        PlayerGivenKey = reader.ReadBoolean();
         DoorHasBeenUnlocked = reader.ReadByte() >= 1;
         int keepX = reader.ReadInt32();
         int keepY = reader.ReadInt32();

@@ -1,13 +1,16 @@
 ﻿using Luminance.Assets;
 using Luminance.Common.DataStructures;
 using Luminance.Core.Graphics;
+
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+
 using NoxusBoss.Assets;
 using NoxusBoss.Content.NPCs.Bosses.Avatar.SecondPhaseForm;
 using NoxusBoss.Content.NPCs.Friendly;
 using NoxusBoss.Content.Particles;
 using NoxusBoss.Core.Graphics.Automators;
+
 using Terraria;
 using Terraria.Audio;
 using Terraria.ModLoader;
@@ -26,6 +29,11 @@ public class SolynProtectiveForcefield : ModProjectile, IProjOwnedByBoss<BattleS
     /// </summary>
     public ref float FlashInterpolant => ref Projectile.localAI[0];
 
+    /// <summary>
+    /// Solyn who created this forcefield
+    /// </summary>
+    public int SolynIndex => (int)Projectile.ai[1];
+
     public override string Texture => MiscTexturesRegistry.InvisiblePixelPath;
 
     public override void SetDefaults()
@@ -42,8 +50,8 @@ public class SolynProtectiveForcefield : ModProjectile, IProjOwnedByBoss<BattleS
 
     public override void AI()
     {
-        int ownerIndex = NPC.FindFirstNPC(ModContent.NPCType<BattleSolyn>());
-        if (ownerIndex == -1)
+        var solyn = Main.npc[SolynIndex];
+        if (!solyn.active)
         {
             Projectile.Kill();
             return;

@@ -161,8 +161,8 @@ public partial class MarsBody
     public void DoBehavior_SpawnAnimation_Solyn(BattleSolyn solyn)
     {
         NPC solynNPC = solyn.NPC;
-        Vector2 lookDestination = Target.Center;
-        Vector2 hoverDestination = Target.Center - Vector2.UnitX * Target.direction * 56f;
+        Vector2 lookDestination = solyn.Player.Center;
+        Vector2 hoverDestination = solyn.Player.Center - Vector2.UnitX * solyn.Player.direction * 56f;
 
         solynNPC.SmoothFlyNear(hoverDestination, 0.2f, 0.8f);
 

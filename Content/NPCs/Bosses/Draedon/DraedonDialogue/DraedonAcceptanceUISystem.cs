@@ -1,7 +1,12 @@
 ﻿using Microsoft.Xna.Framework;
+
 using NoxusBoss.Content.NPCs.Bosses.Draedon.Draedon;
+using NoxusBoss.Core.Netcode;
+using NoxusBoss.Core.Netcode.Packets;
 using NoxusBoss.Core.SolynEvents;
+
 using ReLogic.Graphics;
+
 using Terraria;
 using Terraria.Audio;
 using Terraria.GameContent;
@@ -93,7 +98,13 @@ public class DraedonAcceptanceUISystem : ModSystem
             Main.blockMouse = true;
 
             if (Main.mouseLeft && Main.mouseLeftRelease)
+            {
                 draedon.As<QuestDraedon>().ChangeAIState(QuestDraedon.DraedonAIType.WaitForMarsToArrive);
+                if (Main.netMode == NetmodeID.MultiplayerClient)
+                {
+                    PacketManager.SendPacket<SummonMarsPacket>();
+                }
+            }
         }
 
         if (WasHoveringOverText != hoveringOverText)

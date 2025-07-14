@@ -1,9 +1,13 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+
 using NoxusBoss.Assets;
 using NoxusBoss.Core.Graphics.SpecificEffectManagers;
+using NoxusBoss.Core.Netcode;
+using NoxusBoss.Core.Netcode.Packets;
 using NoxusBoss.Core.SolynEvents;
 using NoxusBoss.Core.World.WorldGeneration;
+
 using Terraria;
 using Terraria.DataStructures;
 using Terraria.Enums;
@@ -74,7 +78,13 @@ public class PermafrostDoor : ModTile
     {
         if (CanTryToUnlock)
         {
+            if (Main.netMode == NetmodeID.MultiplayerClient)
+            {
+                PacketManager.SendPacket<UnlockPermafrostKeepDoorPacket>(i, j);
+            }
+
             PermafrostDoorUnlockSystem.Start(new(i, j));
+
             return true;
         }
 

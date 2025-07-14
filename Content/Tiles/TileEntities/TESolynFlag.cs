@@ -1,7 +1,9 @@
 ﻿using System.Numerics;
+
 using NoxusBoss.Content.Tiles.SolynCampsite;
 using NoxusBoss.Core.Graphics.ClothSimulations;
 using NoxusBoss.Core.World.TileDisabling;
+
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
@@ -39,7 +41,6 @@ public class TESolynFlag : ModTileEntity, IClientSideTileEntityUpdater
         // If in multiplayer, tell the server to place the tile entity and DO NOT place it yourself. That would mismatch IDs.
         if (Main.netMode == NetmodeID.MultiplayerClient)
         {
-            NetMessage.SendTileSquare(Main.myPlayer, i, j, SolynStatueTile.Width, SolynStatueTile.Height);
             NetMessage.SendData(MessageID.TileEntityPlacement, -1, -1, null, i, j, Type);
             return -1;
         }

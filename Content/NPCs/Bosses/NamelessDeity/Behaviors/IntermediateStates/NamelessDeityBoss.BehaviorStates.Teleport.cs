@@ -92,7 +92,7 @@ public partial class NamelessDeityBoss : ModNPC
             SoundEngine.PlaySound(GennedAssets.Sounds.Common.TeleportIn with { Volume = 0.65f, MaxInstances = 5, PitchVariance = 0.16f });
 
         // Update the position and create teleport visuals once the teleport is at the midpoint of the animation.
-        if (AITimer == TeleportInTime)
+        if (AITimer == TeleportInTime && TeleportDestination != null) //For some reason TeleportDestination is sometimes null here
             ImmediateTeleportTo(TeleportDestination());
 
         // Disable damage.

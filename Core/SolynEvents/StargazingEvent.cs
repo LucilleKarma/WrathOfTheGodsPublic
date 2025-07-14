@@ -1,12 +1,15 @@
 ﻿using Luminance.Core.Cutscenes;
 using Luminance.Core.Graphics;
+
 using NoxusBoss.Content.Items;
 using NoxusBoss.Content.NPCs.Friendly;
 using NoxusBoss.Content.Tiles.TileEntities;
 using NoxusBoss.Core.DialogueSystem;
 using NoxusBoss.Core.World.GameScenes.Stargazing;
 using NoxusBoss.Core.World.Subworlds;
+
 using SubworldLibrary;
+
 using Terraria;
 using Terraria.DataStructures;
 using Terraria.ModLoader;
@@ -39,6 +42,8 @@ public class StargazingEvent : SolynEvent
             WithRerollCondition(_ => Stage >= 2);
         DialogueManager.FindByRelativePrefix("StargazeQuestCompletion").GetByRelativeKey("Response1").EndAction += seenBefore =>
         {
+            if (Solyn?.TalkingTo != Main.myPlayer) return;
+
             BlockerSystem.Start(true, false, () => !Finished);
             Main.LocalPlayer.SetTalkNPC(-1);
 
@@ -57,8 +62,8 @@ public class StargazingEvent : SolynEvent
             WithRerollCondition(_ => Finished);
         DialogueManager.FindByRelativePrefix("StargazeQuestSawRift").GetByRelativeKey("Talk8").ClickAction += seenBefore =>
         {
-            if (!seenBefore)
-                DialogueSaveSystem.GiveItemToPlayer<StarCharm>(Main.LocalPlayer);
+            if (!DialogueSaveSystem.ItemHasBeenGiven<StarCharm>())
+                DialogueSaveSystem.GiveItemToPlayer<StarCharm>(Main.LocalPlayer, Solyn?.TalkingTo == Main.myPlayer);
         };
         DialogueManager.FindByRelativePrefix("StargazeQuestSawRift").GetByRelativeKey("Talk10").EndAction += seenBefore =>
         {

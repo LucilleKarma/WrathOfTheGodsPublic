@@ -27,6 +27,8 @@ public class CeaselessVoidRenderOverrideSystem : GlobalNPC
 
     public override void OnKill(NPC npc)
     {
+        if (Main.netMode == NetmodeID.MultiplayerClient) return;
+
         int riftID = ModContent.NPCType<CeaselessVoidRift>();
         if (npc.type == ModContent.NPCType<CeaselessVoidNPC>() && !NPC.AnyNPCs(riftID))
         {

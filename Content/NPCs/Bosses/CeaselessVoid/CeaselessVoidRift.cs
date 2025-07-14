@@ -1,9 +1,12 @@
 ﻿using CalamityMod;
+
 using Luminance.Assets;
 using Luminance.Common.Easings;
 using Luminance.Core.Graphics;
+
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+
 using NoxusBoss.Assets;
 using NoxusBoss.Content.Items.MiscOPTools;
 using NoxusBoss.Content.NPCs.Bosses.Avatar.FirstPhaseForm;
@@ -12,6 +15,7 @@ using NoxusBoss.Content.NPCs.Bosses.Avatar.SpecificEffectManagers;
 using NoxusBoss.Core.CrossCompatibility.Inbound.BaseCalamity;
 using NoxusBoss.Core.SolynEvents;
 using NoxusBoss.Core.World.GameScenes.AvatarUniverseExploration;
+
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
@@ -30,7 +34,7 @@ public class CeaselessVoidRift : ModNPC
     /// <summary>
     /// Whether the mouse is hovering over this rift.
     /// </summary>
-    public bool MouseOverSelf => Vector2.Transform(Main.MouseScreen, Matrix.Invert(Main.GameViewMatrix.TransformationMatrix)).WithinRange(NPC.Center - Main.screenPosition, NPC.Size.Length() * NPC.scale * 0.24f);
+    public bool MouseOverSelf => Main.netMode != NetmodeID.Server && Vector2.Transform(Main.MouseScreen, Matrix.Invert(Main.GameViewMatrix.TransformationMatrix)).WithinRange(NPC.Center - Main.screenPosition, NPC.Size.Length() * NPC.scale * 0.24f);
 
     /// <summary>
     /// Whether the player is currently interacting with the rift with their mouse.
@@ -106,7 +110,7 @@ public class CeaselessVoidRift : ModNPC
                 AvatarUniverseExplorationSystem.Enter();
         }
 
-        if (AvatarUniverseExplorationSystem.EnteringRift)
+        if (Main.netMode != NetmodeID.Server && AvatarUniverseExplorationSystem.EnteringRift)
         {
             float suckIntensity = AvatarRiftSuckVisualsManager.ZoomInInterpolant * InverseLerp(1720f, 300f, Main.LocalPlayer.Distance(NPC.Center));
             Main.LocalPlayer.Center = Vector2.Lerp(Main.LocalPlayer.Center, NPC.Center, suckIntensity * 0.4f);

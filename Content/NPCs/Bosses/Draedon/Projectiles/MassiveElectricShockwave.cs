@@ -109,6 +109,18 @@ public class MassiveElectricShockwave : ModProjectile, IProjOwnedByBoss<MarsBody
         Time++;
     }
 
+    public override void OnKill(int timeLeft)
+    {
+        //Solyn's positions are getting desynced after shockwave for some reason
+        foreach (var npc in Main.ActiveNPCs)
+        {
+            if (npc.ModNPC is BattleSolyn)
+            {
+                npc.netUpdate = true;
+            }
+        }
+    }
+
     public void RenderGlow()
     {
         float glow = Convert01To010(InverseLerp(13f, 36f, Time).Squared()) + 0.001f;

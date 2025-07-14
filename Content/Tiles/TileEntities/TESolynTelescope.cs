@@ -1,7 +1,10 @@
 ﻿using Luminance.Common.Easings;
 using Luminance.Core.Graphics;
+
 using Microsoft.Xna.Framework;
+
 using NoxusBoss.Content.Tiles.SolynCampsite;
+
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
@@ -142,7 +145,6 @@ public class TESolynTelescope : ModTileEntity, IClientSideTileEntityUpdater
         // If in multiplayer, tell the server to place the tile entity and DO NOT place it yourself. That would mismatch IDs.
         if (Main.netMode == NetmodeID.MultiplayerClient)
         {
-            NetMessage.SendTileSquare(Main.myPlayer, i, j, SolynStatueTile.Width, SolynStatueTile.Height);
             NetMessage.SendData(MessageID.TileEntityPlacement, -1, -1, null, i, j, Type);
             return -1;
         }
@@ -152,4 +154,14 @@ public class TESolynTelescope : ModTileEntity, IClientSideTileEntityUpdater
     // Sync the tile entity the moment it is place on the server.
     // This is done to cause it to register among all clients.
     public override void OnNetPlace() => NetMessage.SendData(MessageID.TileEntitySharing, -1, -1, null, ID, Position.X, Position.Y);
+
+    public override void NetSend(BinaryWriter writer)
+    {
+        writer.Write(IsRepaired);
+    }
+
+    public override void NetReceive(BinaryReader reader)
+    {
+        IsRepaired = reader.ReadBoolean();
+    }
 }

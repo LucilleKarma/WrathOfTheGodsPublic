@@ -1,16 +1,22 @@
 ﻿using System.Reflection;
+
 using Luminance.Core.Graphics;
 using Luminance.Core.Hooking;
+
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+
 using Mono.Cecil.Cil;
+
 using MonoMod.Cil;
+
 using NoxusBoss.Content.Dusts;
 using NoxusBoss.Content.NPCs.Bosses.Avatar.FirstPhaseForm;
 using NoxusBoss.Content.Tiles;
 using NoxusBoss.Core.CrossCompatibility.Inbound;
 using NoxusBoss.Core.Graphics.SwagRain;
 using NoxusBoss.Core.Graphics.UI.GraphicalUniverseImager;
+
 using Terraria;
 using Terraria.GameContent.Drawing;
 using Terraria.GameContent.Shaders;
@@ -492,5 +498,25 @@ public class RiftEclipseSnowSystem : ModSystem
     {
         if (tag.TryGet(nameof(SnowHeight), out float snowHeight))
             SnowHeight = snowHeight;
+    }
+
+    public override void OnWorldLoad()
+    {
+        SnowHeight = 0;
+    }
+
+    public override void OnWorldUnload()
+    {
+        SnowHeight = 0;
+    }
+
+    public override void NetReceive(BinaryReader reader)
+    {
+        SnowHeight = reader.ReadSingle();
+    }
+
+    public override void NetSend(BinaryWriter writer)
+    {
+        writer.Write(SnowHeight);
     }
 }

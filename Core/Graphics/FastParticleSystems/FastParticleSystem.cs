@@ -1,10 +1,15 @@
 ﻿using System.Buffers;
 using System.Runtime.CompilerServices;
+
 using Luminance.Core.Graphics;
+
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+
 using ReLogic.Threading;
+
 using Terraria;
+
 using MatrixSIMD = System.Numerics.Matrix3x2;
 using Vector2SIMD = System.Numerics.Vector2;
 

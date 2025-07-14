@@ -144,20 +144,23 @@ public partial class NamelessDeityBoss : ModNPC
         float darkeningIncrement = InverseLerp(0f, 60f, AITimer - redirectTime - starPressureBuildTime - supernovaDelay).Squared() * 0.08f;
         RelativeDarkening = Clamp(RelativeDarkening + darkeningIncrement, 0.5f, 0.81f);
 
-        float vignetteCompletion = InverseLerp(-37f, 5f, AITimer - redirectTime - starPressureBuildTime - supernovaDelay);
-        float vignetteIntensity = InverseLerpBump(0f, 0.35f, 0.9f, 1f, vignetteCompletion);
-        float distortionIntensity = InverseLerp(-65f, 0f, AITimer - redirectTime - starPressureBuildTime - supernovaDelay);
-        if (AITimer <= redirectTime + starPressureBuildTime + supernovaDelay + 30f)
+        if (Main.netMode != NetmodeID.Server)
         {
-            if (AITimer >= redirectTime + starPressureBuildTime + supernovaDelay)
-                distortionIntensity = 0f;
+            float vignetteCompletion = InverseLerp(-37f, 5f, AITimer - redirectTime - starPressureBuildTime - supernovaDelay);
+            float vignetteIntensity = InverseLerpBump(0f, 0.35f, 0.9f, 1f, vignetteCompletion);
+            float distortionIntensity = InverseLerp(-65f, 0f, AITimer - redirectTime - starPressureBuildTime - supernovaDelay);
+            if (AITimer <= redirectTime + starPressureBuildTime + supernovaDelay + 30f)
+            {
+                if (AITimer >= redirectTime + starPressureBuildTime + supernovaDelay)
+                    distortionIntensity = 0f;
 
-            ManagedScreenFilter vignetteShader = ShaderManager.GetFilter("NoxusBoss.CollapsingStarVignetteShader");
-            vignetteShader.TrySetParameter("intensity", vignetteIntensity);
-            vignetteShader.TrySetParameter("distortionIntensity", distortionIntensity);
-            if (star is not null)
-                vignetteShader.TrySetParameter("vignetteSource", Vector2.Transform(star.Center - Main.screenPosition, Main.GameViewMatrix.TransformationMatrix));
-            vignetteShader.Activate();
+                ManagedScreenFilter vignetteShader = ShaderManager.GetFilter("NoxusBoss.CollapsingStarVignetteShader");
+                vignetteShader.TrySetParameter("intensity", vignetteIntensity);
+                vignetteShader.TrySetParameter("distortionIntensity", distortionIntensity);
+                if (star is not null)
+                    vignetteShader.TrySetParameter("vignetteSource", Vector2.Transform(star.Center - Main.screenPosition, Main.GameViewMatrix.TransformationMatrix));
+                vignetteShader.Activate();
+            }
         }
 
         // Destroy leftover starbursts on the first frame.

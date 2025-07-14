@@ -1,10 +1,14 @@
 ﻿using System.Runtime.CompilerServices;
+
 using CalamityMod.NPCs.ExoMechs.Thanatos;
 using CalamityMod.Sounds;
+
 using Luminance.Common.StateMachines;
 using Luminance.Core.Graphics;
 using Luminance.Core.Sounds;
+
 using Microsoft.Xna.Framework;
+
 using NoxusBoss.Assets;
 using NoxusBoss.Content.NPCs.Bosses.Draedon.Projectiles;
 using NoxusBoss.Content.NPCs.Bosses.Draedon.Projectiles.SolynProjectiles;
@@ -17,8 +21,11 @@ using NoxusBoss.Core.DataStructures;
 using NoxusBoss.Core.GlobalInstances;
 using NoxusBoss.Core.Graphics.GeneralScreenEffects;
 using NoxusBoss.Core.Graphics.SpecificEffectManagers;
+using NoxusBoss.Core.Netcode;
+using NoxusBoss.Core.Netcode.Packets;
 using NoxusBoss.Core.World.GameScenes.EndCredits;
 using NoxusBoss.Core.World.WorldSaving;
+
 using Terraria;
 using Terraria.Audio;
 using Terraria.GameContent.Bestiary;
@@ -73,13 +80,13 @@ public partial class MarsBody : ModNPC, IBossDowned
     }
 
     /// <summary>
-    /// The timer for Solyn and the player's team attack, keyed by player.
+    /// The timer for Solyn and the player's team attack
     /// </summary>
-    public Dictionary<int, int> SolynPlayerTeamAttackTimers
-    {
-        get;
-        private set;
-    } = new Dictionary<int, int>(Main.maxPlayers);
+    public int SolynPlayerTeamAttackTimer 
+    { 
+        get; 
+        set; 
+    }
 
     /// <summary>
     /// The identifier of Mars for the purposes of render targets.
@@ -421,7 +428,10 @@ public partial class MarsBody : ModNPC, IBossDowned
         if (!mars.SolynAndPlayerCanDoTeamAttack)
             return true;
 
-        return mars.GetSolynPlayerTeamAttackTimer(p.Player) <= 0 && p.Player.ownedProjectileCounts[ModContent.ProjectileType<SolynTagTeamBeam>()] <= 0;
+        if (p.Player != mars.Target) 
+            return true;
+
+        return mars.SolynPlayerTeamAttackTimer <= 0 && p.Player.ownedProjectileCounts[ModContent.ProjectileType<SolynTagTeamBeam>()] <= 0;
     }
 
     public override void SetDefaults()
@@ -486,7 +496,6 @@ public partial class MarsBody : ModNPC, IBossDowned
     {
         writer.Write((int)PreviousState);
         writer.Write(RailgunCannonAngle);
-        writer.Write(TagTeamBeamDirection);
         writer.Write(SolynAndPlayerCanDoTeamAttack);
         writer.Write(EnergyCannonChainsawActive);
         writer.Write(DespawnTimer);
@@ -494,6 +503,7 @@ public partial class MarsBody : ModNPC, IBossDowned
         writer.WriteVector2(IdealRightHandPosition);
         writer.WriteVector2(LeftHandVelocity);
         writer.WriteVector2(RightHandVelocity);
+        writer.Write(EnergyWeaveSequence_SolynDashPlayer);
 
         // Write state data.
         var stateStack = (StateMachine?.StateStack ?? new Stack<EntityAIState<MarsAIType>>()).ToList();
@@ -503,20 +513,12 @@ public partial class MarsBody : ModNPC, IBossDowned
             writer.Write(stateStack[i].Time);
             writer.Write((byte)stateStack[i].Identifier);
         }
-
-        writer.Write(SolynPlayerTeamAttackTimers.Count);
-        foreach (var kv in SolynPlayerTeamAttackTimers)
-        {
-            writer.Write(kv.Key);
-            writer.Write(kv.Value);
-        }
     }
 
     public override void ReceiveExtraAI(BinaryReader reader)
     {
         PreviousState = (MarsAIType)reader.ReadInt32();
         RailgunCannonAngle = reader.ReadSingle();
-        TagTeamBeamDirection = reader.ReadSingle();
         SolynAndPlayerCanDoTeamAttack = reader.ReadBoolean();
         EnergyCannonChainsawActive = reader.ReadBoolean();
         DespawnTimer = reader.ReadInt32();
@@ -524,6 +526,7 @@ public partial class MarsBody : ModNPC, IBossDowned
         IdealRightHandPosition = reader.ReadVector2();
         LeftHandVelocity = reader.ReadVector2();
         RightHandVelocity = reader.ReadVector2();
+        EnergyWeaveSequence_SolynDashPlayer = reader.ReadInt32();
 
         // Read state data.
         int stateStackCount = reader.ReadInt32();
@@ -533,15 +536,6 @@ public partial class MarsBody : ModNPC, IBossDowned
             byte stateType = reader.ReadByte();
             StateMachine.StateStack.Push(StateMachine.StateRegistry[(MarsAIType)stateType]);
             StateMachine.StateRegistry[(MarsAIType)stateType].Time = time;
-        }
-
-        int timerCount = reader.ReadInt32();
-        SolynPlayerTeamAttackTimers.Clear();
-        for (int i = 0; i < timerCount; i++)
-        {
-            int key = reader.ReadInt32();
-            int value = reader.ReadInt32();
-            SolynPlayerTeamAttackTimers[key] = value;
         }
     }
 
@@ -647,23 +641,15 @@ public partial class MarsBody : ModNPC, IBossDowned
     }
 
     /// <summary>
-    /// Gets a given tag team beam attack timer for a given player.
-    /// </summary>
-    public int GetSolynPlayerTeamAttackTimer(Player player)
-    {
-        if (SolynPlayerTeamAttackTimers.TryGetValue(player.whoAmI, out int timer))
-            return timer;
-
-        return SolynPlayerTeamAttackTimers[player.whoAmI] = 0;
-    }
-
-    /// <summary>
     /// Resets all Solyn/player tag team timers to 0.
     /// </summary>
     public void ResetSolynPlayerTeamAttackTimers()
     {
-        foreach (int key in SolynPlayerTeamAttackTimers.Keys)
-            SolynPlayerTeamAttackTimers[key] = 0;
+        if (SolynPlayerTeamAttackTimer != 0)
+        {
+            SolynPlayerTeamAttackTimer = 0;
+            PacketManager.SendPacket<MarsBeamChargePacket>();
+        }
     }
 
     /// <summary>

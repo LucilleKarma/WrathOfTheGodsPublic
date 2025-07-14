@@ -20,7 +20,7 @@ public partial class MarsBody : ModNPC
     public static void StandardSolynBehavior_FlyNearPlayer(BattleSolyn solyn)
     {
         NPC solynNPC = solyn.NPC;
-        Player playerToFollow = Main.player[Player.FindClosest(solynNPC.Center, 1, 1)];
+        Player playerToFollow = solyn.Player;
         Vector2 lookDestination = playerToFollow.Center;
         Vector2 hoverDestination = playerToFollow.Center + new Vector2(solynNPC.HorizontalDirectionTo(playerToFollow.Center) * -66f, -10f);
 

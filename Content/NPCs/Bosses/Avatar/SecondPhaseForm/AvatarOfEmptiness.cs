@@ -1249,8 +1249,11 @@ public partial class AvatarOfEmptiness : ModNPC
             CreateEnrageParticles();
 
         // Scuffed thing. Used to ensure that the antishadow background immediately (dis)appears as needed, rather than having a several frame buffer.
-        for (int i = 0; i < 32; i++)
-            ShaderManager.GetFilter("NoxusBoss.AntishadowSilhouetteShader")?.Update();
+        if (Main.netMode != NetmodeID.Server)
+        {
+            for (int i = 0; i < 32; i++)
+                ShaderManager.GetFilter("NoxusBoss.AntishadowSilhouetteShader")?.Update();
+        }
 
         // Disable the sulph sea background, since it has a tendency to overlay the boss background.
         SulphSeaSkyDisabler.DisableSulphSeaSky = true;

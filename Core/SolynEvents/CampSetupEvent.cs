@@ -1,10 +1,11 @@
 ﻿using Microsoft.Xna.Framework;
+
 using NoxusBoss.Content.Items.Placeable;
 using NoxusBoss.Core.DialogueSystem;
 using NoxusBoss.Core.World.WorldGeneration;
 using NoxusBoss.Core.World.WorldSaving;
+
 using Terraria;
-using Terraria.DataStructures;
 using Terraria.ModLoader;
 
 namespace NoxusBoss.Core.SolynEvents;
@@ -33,8 +34,8 @@ public class CampSetupEvent : SolynEvent
 
         DialogueManager.FindByRelativePrefix("SolynTentSetUpDialogue").GetByRelativeKey("Solyn3").ClickAction = seenBefore =>
         {
-            if (!seenBefore)
-                Main.LocalPlayer.QuickSpawnItem(new EntitySource_WorldEvent(), ModContent.ItemType<StrangeFlagpole>());
+            if (!DialogueSaveSystem.ItemHasBeenGiven<StrangeFlagpole>())
+                DialogueSaveSystem.GiveItemToPlayer<StrangeFlagpole>(Main.LocalPlayer, Solyn?.TalkingTo == Main.myPlayer);
         };
 
         ConversationSelector.PriorityConversationSelectionEvent += SelectIntroductionDialogue;

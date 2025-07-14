@@ -1,12 +1,15 @@
 ﻿using Luminance.Assets;
 using Luminance.Common.DataStructures;
 using Luminance.Core.Graphics;
+
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+
 using NoxusBoss.Content.NPCs.Bosses.Avatar.SecondPhaseForm;
 using NoxusBoss.Content.NPCs.Bosses.NamelessDeity;
 using NoxusBoss.Content.NPCs.Friendly;
 using NoxusBoss.Core.Graphics.Automators;
+
 using Terraria;
 using Terraria.ModLoader;
 
@@ -22,7 +25,7 @@ public class SolynProtectiveForcefieldForPlayer : ModProjectile, IProjOwnedByBos
     /// <summary>
     /// The owner of this forcefield.
     /// </summary>
-    public Player Owner => Main.player[Projectile.owner];
+    public Player Owner => Main.player[(int)Projectile.ai[1]];
 
     public override string Texture => MiscTexturesRegistry.InvisiblePixelPath;
 

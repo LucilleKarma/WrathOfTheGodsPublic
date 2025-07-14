@@ -1,13 +1,17 @@
 ﻿using System.Runtime.CompilerServices;
+
 using Luminance.Core.Graphics;
+
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+
 using NoxusBoss.Core.Graphics.GenesisEffects;
 using NoxusBoss.Core.Graphics.RenderTargets;
 using NoxusBoss.Core.Graphics.SpecificEffectManagers;
 using NoxusBoss.Core.Netcode;
 using NoxusBoss.Core.Netcode.Packets;
 using NoxusBoss.Core.World.TileDisabling;
+
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
@@ -219,5 +223,29 @@ public class GrowingGenesisRenderSystem : ModSystem
 
         if (loadedTileData.Length <= tileData.Length)
             loadedTileData.CopyTo(tileData);
+    }
+
+    public override void NetSend(BinaryWriter writer)
+    {
+        writer.Write(genesisPoints.Count);
+        foreach (var genesisPoint in genesisPoints)
+        {
+            writer.Write(genesisPoint.Anchor.X);
+            writer.Write(genesisPoint.Anchor.Y);
+            writer.Write(genesisPoint.GrowthStage);
+        }
+    }
+
+    public override void NetReceive(BinaryReader reader)
+    {
+        genesisPoints.Clear();
+
+        var count = reader.ReadInt32();
+        for (var i = 0; i < count; i++)
+        {
+            var anchor = new Point(reader.ReadInt32(), reader.ReadInt32());
+            var growth = reader.ReadSingle();
+            genesisPoints.Add(new GenesisInstance(anchor) { GrowthStage = growth });
+        }
     }
 }

@@ -1,4 +1,5 @@
 ﻿using SubworldLibrary;
+
 using Terraria;
 using Terraria.DataStructures;
 using Terraria.ModLoader;
@@ -17,10 +18,14 @@ public class DialogueSaveSystem : ModSystem
     public static bool ItemHasBeenGiven<TModItem>() where TModItem : ModItem =>
         givenItems.Contains(ModContent.GetInstance<TModItem>().FullName);
 
-    public static void GiveItemToPlayer<TModItem>(Player player) where TModItem : ModItem
+    public static void GiveItemToPlayer<TModItem>(Player player, bool giveItem) where TModItem : ModItem
     {
-        int itemID = ModContent.ItemType<TModItem>();
-        player.QuickSpawnItem(new EntitySource_WorldEvent(), itemID);
+        if (giveItem)
+        {
+            int itemID = ModContent.ItemType<TModItem>();
+            player.QuickSpawnItem(new EntitySource_WorldEvent(), itemID);
+        }
+
         givenItems.Add(ModContent.GetInstance<TModItem>().FullName);
     }
 
@@ -46,5 +51,36 @@ public class DialogueSaveSystem : ModSystem
         seenDialogue = tag.GetList<string>("seenDialogue").ToList();
         clickedDialogue = tag.GetList<string>("clickedDialogue").ToList();
         givenItems = tag.GetList<string>("givenItems").ToList();
+    }
+
+    public override void NetSend(BinaryWriter writer)
+    {
+        writer.Write(seenDialogue.Count);
+        foreach (var item in seenDialogue) writer.Write(item);
+
+        writer.Write(clickedDialogue.Count);
+        foreach (var item in clickedDialogue) writer.Write(item);
+
+        writer.Write(givenItems.Count);
+        foreach (var item in givenItems) writer.Write(item);
+    }
+
+    public override void NetReceive(BinaryReader reader)
+    {
+        seenDialogue.Clear();
+        clickedDialogue.Clear();
+        givenItems.Clear();
+
+        var seenCount = reader.ReadInt32();
+        for (var i = 0; i < seenCount; i++)
+            seenDialogue.Add(reader.ReadString());
+
+        var clickedCount = reader.ReadInt32();
+        for (var i = 0; i < clickedCount; i++)
+            clickedDialogue.Add(reader.ReadString());
+
+        var givenCount = reader.ReadInt32();
+        for (var i = 0; i < givenCount; i++)
+            givenItems.Add(reader.ReadString());
     }
 }

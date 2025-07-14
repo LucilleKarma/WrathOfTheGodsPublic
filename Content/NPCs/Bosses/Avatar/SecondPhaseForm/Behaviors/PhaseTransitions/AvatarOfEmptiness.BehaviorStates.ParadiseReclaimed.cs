@@ -2,7 +2,9 @@
 using Luminance.Common.Easings;
 using Luminance.Common.StateMachines;
 using Luminance.Core.Graphics;
+
 using Microsoft.Xna.Framework;
+
 using NoxusBoss.Assets;
 using NoxusBoss.Content.NPCs.Bosses.Avatar.Projectiles;
 using NoxusBoss.Content.NPCs.Bosses.Avatar.Projectiles.SolynProjectiles;
@@ -18,6 +20,7 @@ using NoxusBoss.Core.SoundSystems;
 using NoxusBoss.Core.SoundSystems.Music;
 using NoxusBoss.Core.World.TileDisabling;
 using NoxusBoss.Core.World.WorldSaving;
+
 using Terraria;
 using Terraria.Audio;
 using Terraria.DataStructures;
@@ -205,7 +208,7 @@ public partial class AvatarOfEmptiness
             Player targetPlayer = Main.player[NPC.TranslatedTargetIndex];
             targetPlayer.position.Y = Main.maxTilesY * 16f * 0.9f;
 
-            SolynAction = solyn => solyn.NPC.Center = targetPlayer.Center;
+            SolynAction = solyn => solyn.NPC.Center = solyn.Player.Center;
             return;
         }
 
@@ -224,8 +227,8 @@ public partial class AvatarOfEmptiness
             solyn.UseStarFlyEffects();
             if (AITimer <= ParadiseReclaimed_SolynDialogueDelay3)
             {
-                solyn.NPC.SmoothFlyNearWithSlowdownRadius(Target.Center, 0.11f, 0.85f, 90f);
-                solyn.NPC.spriteDirection = (int)solyn.NPC.HorizontalDirectionTo(Target.Center);
+                solyn.NPC.SmoothFlyNearWithSlowdownRadius(solyn.Player.Center, 0.11f, 0.85f, 90f);
+                solyn.NPC.spriteDirection = (int)solyn.NPC.HorizontalDirectionTo(solyn.Player.Center);
                 solyn.NPC.rotation = solyn.NPC.rotation.AngleLerp(0f, 0.3f);
             }
             else
@@ -278,10 +281,10 @@ public partial class AvatarOfEmptiness
             if (solynUpwardFlySpeed > 24f)
                 solynUpwardFlySpeed = 24f;
 
-            solyn.NPC.velocity.X = Lerp(solyn.NPC.velocity.X, NPC.SafeDirectionTo(Target.Center + Vector2.UnitX * solyn.NPC.OnRightSideOf(Target.Center).ToDirectionInt() * 50f).X * 7f, 0.037f);
+            solyn.NPC.velocity.X = Lerp(solyn.NPC.velocity.X, NPC.SafeDirectionTo(solyn.Player.Center + Vector2.UnitX * solyn.NPC.OnRightSideOf(solyn.Player.Center).ToDirectionInt() * 50f).X * 7f, 0.037f);
             solyn.NPC.velocity.Y = Lerp(solyn.NPC.velocity.Y, -solynUpwardFlySpeed, 0.073f);
             solyn.NPC.position.Y += ParadiseReclaimed_RenderStaticWallYPosition - oldYPosition;
-            solyn.NPC.spriteDirection = (int)solyn.NPC.HorizontalDirectionTo(Target.Center);
+            solyn.NPC.spriteDirection = (int)solyn.NPC.HorizontalDirectionTo(solyn.Player.Center);
             solyn.NPC.rotation = solyn.NPC.rotation.AngleLerp(0f, 0.3f);
             solyn.UseStarFlyEffects();
         };
@@ -305,16 +308,17 @@ public partial class AvatarOfEmptiness
             {
                 if (NPC.Center.Y <= ParadiseReclaimed_RenderStaticWallYPosition - 50f)
                     SolynWorldDialogueManager.CreateNew("Mods.NoxusBoss.Dialog.SolynParadiseReclaimedSaveText", -solyn.NPC.spriteDirection, solyn.NPC.Top, 150, true);
+                
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
                     foreach (Player player in Main.ActivePlayers)
-                        NewProjectileBetter(solyn.NPC.GetSource_FromAI(), player.Center, Vector2.Zero, ModContent.ProjectileType<SolynProtectiveForcefieldForPlayer>(), 0, 0f, player.whoAmI);
+                        NewProjectileBetter(solyn.NPC.GetSource_FromAI(), player.Center, Vector2.Zero, ModContent.ProjectileType<SolynProtectiveForcefieldForPlayer>(), 0, 0f, -1, 0, player.whoAmI);
                 }
             }
 
             solyn.NPC.velocity.X *= 0.95f;
             solyn.NPC.velocity.Y = Lerp(solyn.NPC.velocity.Y, wallSpeed * -0.8f, 0.1f);
-            solyn.NPC.spriteDirection = (int)solyn.NPC.HorizontalDirectionTo(Target.Center);
+            solyn.NPC.spriteDirection = (int)solyn.NPC.HorizontalDirectionTo(solyn.Player.Center);
             solyn.NPC.rotation = solyn.NPC.rotation.AngleLerp(0f, 0.3f);
             solyn.UseStarFlyEffects();
             solyn.Frame = 21f;
@@ -348,8 +352,8 @@ public partial class AvatarOfEmptiness
         SolynAction = solyn =>
         {
             solyn.Frame = 21f;
-            solyn.NPC.SmoothFlyNearWithSlowdownRadius(Target.Center, 0.02f, 0.96f, 60f);
-            solyn.NPC.spriteDirection = (int)solyn.NPC.HorizontalDirectionTo(Target.Center);
+            solyn.NPC.SmoothFlyNearWithSlowdownRadius(solyn.Player.Center, 0.02f, 0.96f, 60f);
+            solyn.NPC.spriteDirection = (int)solyn.NPC.HorizontalDirectionTo(solyn.Player.Center);
             solyn.NPC.rotation *= 0.9f;
             solyn.NPC.Opacity = 1f;
             solyn.StaticOverlayInterpolant = 1f;
@@ -368,8 +372,8 @@ public partial class AvatarOfEmptiness
         SolynAction = solyn =>
         {
             solyn.Frame = 21f;
-            solyn.NPC.SmoothFlyNearWithSlowdownRadius(Target.Center - Vector2.UnitY * 70f, 0.03f, 0.96f, 100f);
-            solyn.NPC.spriteDirection = (int)solyn.NPC.HorizontalDirectionTo(Target.Center);
+            solyn.NPC.SmoothFlyNearWithSlowdownRadius(solyn.Player.Center - Vector2.UnitY * 70f, 0.03f, 0.96f, 100f);
+            solyn.NPC.spriteDirection = (int)solyn.NPC.HorizontalDirectionTo(solyn.Player.Center);
             solyn.NPC.rotation *= 0.9f;
             solyn.NPC.Opacity = 1f;
             solyn.StaticOverlayInterpolant = 1f;
@@ -410,7 +414,7 @@ public partial class AvatarOfEmptiness
 
             SolynAction = solyn =>
             {
-                solyn.NPC.Center += Main.LocalPlayer.Center - previousPlayerPosition;
+                solyn.NPC.Center += solyn.Player.Center - previousPlayerPosition;
                 solyn.NPC.netUpdate = true;
             };
         }
@@ -461,7 +465,7 @@ public partial class AvatarOfEmptiness
             if (AITimer <= 75)
             {
                 solyn.NPC.Center = Target.Center - Vector2.UnitY * 242f;
-                while (Collision.SolidCollision(solyn.NPC.TopLeft, solyn.NPC.width, solyn.NPC.height) && solyn.NPC.Top.Y < Target.Center.Y)
+                while (Collision.SolidCollision(solyn.NPC.TopLeft, solyn.NPC.width, solyn.NPC.height) && solyn.NPC.Top.Y < solyn.Player.Center.Y)
                     solyn.NPC.position.Y += 4f;
 
                 if (AITimer == 74)
@@ -634,6 +638,9 @@ public partial class AvatarOfEmptiness
 
     public void DoBehavior_ParadiseReclaimed_CreateParticles(float wallChangeFromLastFrame)
     {
+        if (Main.netMode == NetmodeID.Server) 
+            return;
+
         if (ParadiseReclaimed_StaticPartInterpolant >= 0.01f)
             return;
 

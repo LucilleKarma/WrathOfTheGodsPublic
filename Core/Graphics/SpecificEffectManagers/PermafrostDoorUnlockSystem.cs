@@ -30,43 +30,48 @@ public class PermafrostDoorUnlockSystem : ModSystem
 
             if (DoorBrightnesses[p] >= 2.25f)
             {
-                for (int i = 1; i <= 5; i++)
-                {
-                    for (int j = 0; j < 2; j++)
-                    {
-                        Vector2 goreSpawnPosition = p.ToWorldCoordinates(8f, 0f) + new Vector2(Main.rand.NextFloatDirection() * 6f, Main.rand.NextFloat(PermafrostDoor.Height * 16f));
-                        Gore.NewGore(new EntitySource_WorldEvent(), goreSpawnPosition, Main.rand.NextVector2CircularEdge(10f, 3f) - Vector2.UnitY * 4f, ModContent.Find<ModGore>(Mod.Name, $"PermafrostDoor{i}").Type, Main.rand.NextFloat(0.5f, 1f));
-                    }
-                }
-                for (int i = 0; i < 16; i++)
-                {
-                    ParticleOrchestrator.RequestParticleSpawn(true, ParticleOrchestraType.StardustPunch, new ParticleOrchestraSettings()
-                    {
-                        PositionInWorld = p.ToWorldCoordinates() + Main.rand.NextVector2Circular(50f, 50f),
-                        MovementVector = Main.rand.NextVector2Circular(6f, 6f)
-                    });
-                }
-
-                ScreenShakeSystem.StartShakeAtPoint(p.ToWorldCoordinates(), 10f);
-
                 PermafrostKeepWorldGen.DoorHasBeenUnlocked = true;
                 ModContent.GetInstance<PermafrostKeepEvent>().SafeSetStage(2);
-                if (Main.netMode == NetmodeID.Server)
-                    NetMessage.SendData(MessageID.WorldData);
+                DoorBrightnesses[p] = 0f;
 
-                for (int i = 0; i < PermafrostDoor.Height; i++)
+                if (Main.netMode != NetmodeID.Server)
                 {
-                    Point doorPoint = new Point(p.X, p.Y + i);
-                    Tile door = Main.tile[doorPoint];
+                    for (int i = 1; i <= 5; i++)
+                    {
+                        for (int j = 0; j < 2; j++)
+                        {
+                            Vector2 goreSpawnPosition = p.ToWorldCoordinates(8f, 0f) + new Vector2(Main.rand.NextFloatDirection() * 6f, Main.rand.NextFloat(PermafrostDoor.Height * 16f));
+                            Gore.NewGore(new EntitySource_WorldEvent(), goreSpawnPosition, Main.rand.NextVector2CircularEdge(10f, 3f) - Vector2.UnitY * 4f, ModContent.Find<ModGore>(Mod.Name, $"PermafrostDoor{i}").Type, Main.rand.NextFloat(0.5f, 1f));
+                        }
+                    }
 
-                    door.Get<TileWallWireStateData>().HasTile = false;
+                    for (int i = 0; i < 16; i++)
+                    {
+                        ParticleOrchestrator.RequestParticleSpawn(true, ParticleOrchestraType.StardustPunch, new ParticleOrchestraSettings()
+                        {
+                            PositionInWorld = p.ToWorldCoordinates() + Main.rand.NextVector2Circular(50f, 50f),
+                            MovementVector = Main.rand.NextVector2Circular(6f, 6f)
+                        });
+                    }
 
-                    if (Main.netMode == NetmodeID.Server)
-                        NetMessage.SendTileSquare(-1, doorPoint.X, doorPoint.Y);
+                    ScreenShakeSystem.StartShakeAtPoint(p.ToWorldCoordinates(), 10f);
                 }
 
-                PermafrostTileProtectionVisualSystem.CreateImpact(p.ToWorldCoordinates(), 1000f);
-                DoorBrightnesses[p] = 0f;
+                if (Main.netMode != NetmodeID.MultiplayerClient)
+                {
+                    for (int i = 0; i < PermafrostDoor.Height; i++)
+                    {
+                        Point doorPoint = new Point(p.X, p.Y + i);
+                        Tile door = Main.tile[doorPoint];
+
+                        door.Get<TileWallWireStateData>().HasTile = false;
+
+                        if (Main.netMode == NetmodeID.Server)
+                            NetMessage.SendTileSquare(-1, doorPoint.X, doorPoint.Y);
+                    }
+
+                    PermafrostTileProtectionVisualSystem.CreateImpact(p.ToWorldCoordinates(), 1000f);
+                }
             }
         }
     }

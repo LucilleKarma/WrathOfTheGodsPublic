@@ -42,6 +42,6 @@ public class SolynIntroductionEvent : SolynEvent
     {
         // Register this event as completed once Solyn has existed for long enough.
         if (Solyn is not null && Solyn.TimeSinceLastTalk >= 900 && Stage <= 0)
-            Stage = 1;
+            SafeSetStage(1);
     }
 }

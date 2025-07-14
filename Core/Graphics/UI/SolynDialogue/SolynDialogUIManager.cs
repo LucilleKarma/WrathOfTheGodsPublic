@@ -1,16 +1,23 @@
 ﻿using Luminance.Common.Easings;
+
 using Microsoft.CodeAnalysis;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+
 using NoxusBoss.Assets;
 using NoxusBoss.Assets.Fonts;
 using NoxusBoss.Core.DialogueSystem;
+using NoxusBoss.Core.Netcode;
+using NoxusBoss.Core.Netcode.Packets;
 using NoxusBoss.Core.World.Subworlds;
+
 using ReLogic.Graphics;
+
 using Terraria;
 using Terraria.Audio;
 using Terraria.GameContent;
 using Terraria.UI.Chat;
+
 using static NoxusBoss.Core.Graphics.UI.UIFancyText;
 
 namespace NoxusBoss.Core.Graphics.UI.SolynDialogue;
@@ -88,7 +95,7 @@ public class SolynDialogUIManager
     public Dialogue? CurrentDialogueNode
     {
         get;
-        set;
+        private set;
     }
 
     public static float DialogScale => 0.4f;
@@ -236,6 +243,15 @@ public class SolynDialogUIManager
         RenderSolynText(dividerCenter + new Vector2(-divider.Width * 0.52f, DialogScale * -74f) * scale);
         RenderPlayerResponses(dividerCenter + new Vector2(-divider.Width * 0.46f, DialogScale * 30f) * scale);
         RenderContinueButton(dividerCenter + new Vector2(-divider.Width * 0.485f, DialogScale * 50f) * scale);
+    }
+
+    public void SetDialogue(Dialogue? dialogue)
+    {
+        CurrentDialogueNode = dialogue;
+        if (dialogue is not null)
+        {
+            PacketManager.SendPacket<PlayDialoguePacket>(dialogue.TextKey);
+        }
     }
 
     private static string WrapText(string text, DynamicSpriteFont font)
@@ -405,7 +421,7 @@ public class SolynDialogUIManager
                 oldNode.InvokeClickAction();
                 if (DialogueText == ResponseToSay || ResponseToSay is null)
                 {
-                    CurrentDialogueNode = childrenNodes.First();
+                    SetDialogue(childrenNodes.First());
                     ResponseToSay = CurrentDialogueNode.Text;
                 }
                 else
@@ -448,14 +464,16 @@ public class SolynDialogUIManager
         {
             if (childrenNodes[i].Text == text)
             {
+                PacketManager.SendPacket<PlayDialoguePacket>(childrenNodes[i].TextKey);
+
                 childrenNodes[i].InvokeClickAction();
                 childrenNodes[i].InvokeEndAction();
                 List<Dialogue> availableChildren = childrenNodes[i].Children.Where(n => n.SelectionCondition()).ToList();
 
                 if (availableChildren.Count == 1)
                 {
-                    CurrentDialogueNode = availableChildren.First();
-                    ResponseToSay = CurrentDialogueNode.Text;
+                    SetDialogue(availableChildren.First());
+                    ResponseToSay = CurrentDialogueNode!.Text;
                     ResetDialogueData();
                 }
                 break;

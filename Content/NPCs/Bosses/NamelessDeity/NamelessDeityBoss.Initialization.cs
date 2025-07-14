@@ -1,7 +1,9 @@
 ﻿using Luminance.Core.Graphics;
 using Luminance.Core.Hooking;
+
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+
 using NoxusBoss.Assets;
 using NoxusBoss.Assets.Fonts;
 using NoxusBoss.Content.Biomes;
@@ -29,8 +31,11 @@ using NoxusBoss.Core.CrossCompatibility.Inbound.WikiThis;
 using NoxusBoss.Core.DataStructures.DropRules;
 using NoxusBoss.Core.GlobalInstances;
 using NoxusBoss.Core.Graphics.UI.Bestiary;
+using NoxusBoss.Core.Netcode;
+using NoxusBoss.Core.Netcode.Packets;
 using NoxusBoss.Core.SoundSystems;
 using NoxusBoss.Core.World.WorldSaving;
+
 using Terraria;
 using Terraria.Audio;
 using Terraria.GameContent.Bestiary;
@@ -41,6 +46,7 @@ using Terraria.Localization;
 using Terraria.ModLoader;
 using Terraria.ModLoader.IO;
 using Terraria.UI.Chat;
+
 using static NoxusBoss.Core.CrossCompatibility.Inbound.CalamityRemix.CalRemixCompatibilitySystem;
 
 namespace NoxusBoss.Content.NPCs.Bosses.NamelessDeity;
@@ -443,6 +449,13 @@ public partial class NamelessDeityBoss : ModNPC, IBossChecklistSupport, IInfernu
         // Give the player loot if they're entitled to it. If not, terminate immediately.
         if (!p.GetValueRef<bool>(PlayerGiveLootFieldName))
             return;
+
+        if (Main.netMode == NetmodeID.MultiplayerClient)
+        {
+            PacketManager.SendPacket<GiveNamelessDeityLootPacket>(p.Player.whoAmI);
+            p.GetValueRef<bool>(PlayerGiveLootFieldName).Value = false;
+            return;
+        }
 
         // Move Nameless up, so that the loot comes from the sky.
         NPC dummyNameless = new NPC();

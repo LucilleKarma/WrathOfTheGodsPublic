@@ -1,7 +1,9 @@
 ﻿using Luminance.Common.StateMachines;
 using Luminance.Core.Graphics;
+
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+
 using NoxusBoss.Assets;
 using NoxusBoss.Content.NPCs.Bosses.Avatar.SpecificEffectManagers.SolynDialogue;
 using NoxusBoss.Content.NPCs.Bosses.Draedon.Projectiles;
@@ -9,6 +11,7 @@ using NoxusBoss.Content.NPCs.Bosses.Draedon.Projectiles.SolynProjectiles;
 using NoxusBoss.Content.NPCs.Friendly;
 using NoxusBoss.Content.Particles;
 using NoxusBoss.Core.CrossCompatibility.Inbound.BaseCalamity;
+
 using Terraria;
 using Terraria.Audio;
 using Terraria.GameContent;
@@ -48,6 +51,11 @@ public partial class MarsBody
     /// How long Mars spends being stunned after being hit by Solyn's dash his wave sequence attack.
     /// </summary>
     public static int EnergyWeaveSequence_PostImpactStunTime => GetAIInt("EnergyWeaveSequence_PostImpactStunTime");
+
+    /// <summary>
+    /// Player who activated solyn dash
+    /// </summary>
+    public static int EnergyWeaveSequence_SolynDashPlayer { get; set; }
 
     /// <summary>
     /// How much damage Mars' tesla fields do.
@@ -103,8 +111,8 @@ public partial class MarsBody
         // Intercept Solyn and the target at first before creating the shockwave, to ensure that they end up far away from each other when shoved.
         if (AITimer >= EnergyWeaveSequence_SolynRedirectTime && AITimer <= EnergyWeaveSequence_SolynRedirectTime + EnergyWeaveSequence_MarsInterceptionTime * 0.75f)
         {
-            NPC solyn = Main.npc[NPC.FindFirstNPC(ModContent.NPCType<BattleSolyn>())];
-            Vector2 hoverDestination = (Target.Center + solyn.Center) * 0.5f;
+            BattleSolyn solyn = BattleSolyn.GetOriginalSolyn()!;
+            Vector2 hoverDestination = (solyn.Player.Center + solyn.NPC.Center) * 0.5f;
             NPC.Center = Vector2.Lerp(NPC.Center, hoverDestination, 0.03f);
             NPC.SmoothFlyNear(hoverDestination, 0.12f, 0.8f);
         }
@@ -120,9 +128,12 @@ public partial class MarsBody
             NPC.SmoothFlyNear(hoverDestination, 0.04f, 0.92f);
         }
 
-        // Grant the target infinite flight.
-        Target.wingTime = Target.wingTimeMax;
-        CalamityCompatibility.GrantInfiniteCalFlight(Target);
+        // Grant everyone infinite flight.
+        foreach (var player in Main.ActivePlayers)
+        {
+            player.wingTime = player.wingTimeMax;
+            CalamityCompatibility.GrantInfiniteCalFlight(player);
+        }
 
         // Release electric fields that block the player's attempt at reaching Solyn.
         bool hasBegunCreatingFields = AITimer >= EnergyWeaveSequence_SolynRedirectTime + EnergyWeaveSequence_MarsInterceptionTime + EnergyWeaveSequence_FieldSummonDelay;
@@ -158,6 +169,7 @@ public partial class MarsBody
             return;
         }
 
+        Player player = Main.player[EnergyWeaveSequence_SolynDashPlayer];
         NPC solynNPC = solyn.NPC;
         solyn.WorldMapIconScale = Lerp(solyn.WorldMapIconScale, 1.6f, 0.12f);
         solynNPC.velocity += solynNPC.SafeDirectionTo(NPC.Center) * 3f;
@@ -182,7 +194,7 @@ public partial class MarsBody
         // Stop the dash immediately if Solyn is going to collide with tiles or send herself and the player outside of the world.
         if (!WorldGen.InWorld((int)(solynNPC.Center.X / 16f), (int)(solynNPC.Center.Y / 16f), 10) || !Collision.CanHit(solynNPC.Center, 1, 1, solynNPC.Center + solynNPC.velocity * 1.45f, 1, 1))
         {
-            Target.velocity = NPC.velocity.ClampLength(0f, 19f);
+            player.velocity = NPC.velocity.ClampLength(0f, 19f);
             NPC.velocity *= -0.5f;
             NPC.netUpdate = true;
             EnergyWeaveSequence_SolynDashTimer = 0f;
@@ -191,9 +203,9 @@ public partial class MarsBody
 
         // Keep the player close to Solyn.
         float playerStickToSolynInterpolant = InverseLerp(0f, 6f, EnergyWeaveSequence_SolynDashTimer);
-        Target.velocity *= 1f - playerStickToSolynInterpolant;
-        Target.Center = Vector2.Lerp(Target.Center, solynNPC.Center, playerStickToSolynInterpolant) + solynNPC.velocity * 0.8f;
-        Target.mount?.Dismount(Target);
+        player.velocity *= 1f - playerStickToSolynInterpolant;
+        player.Center = Vector2.Lerp(player.Center, solynNPC.Center, playerStickToSolynInterpolant) + solynNPC.velocity * 0.8f;
+        player.mount?.Dismount(player);
 
         // Apply impact effects and hurt Mars when he's collided with.
         if (solynNPC.Hitbox.Intersects(NPC.Hitbox))
@@ -216,23 +228,21 @@ public partial class MarsBody
                 iron.Spawn();
             }
 
+            SoundEngine.PlaySound(GennedAssets.Sounds.NPCHit.MarsHeavyHurt, NPC.Center);
+            SoundEngine.PlaySound(GennedAssets.Sounds.Mars.HitScream, NPC.Center);
+
+            EnergyWeaveSequence_PostDashImpactTimer = 1f;
+            EnergyWeaveSequence_SolynDashTimer = 0f;
+            NPC.velocity += solynNPC.SafeDirectionTo(NPC.Center) * 60f + solynNPC.velocity * 0.45f;
+
             if (Main.netMode != NetmodeID.MultiplayerClient)
             {
-                EnergyWeaveSequence_SolynDashTimer = 0f;
-                EnergyWeaveSequence_PostDashImpactTimer = 1f;
                 NPC.SimpleStrikeNPC(NPC.lifeMax / 205 + Main.rand.Next(2000), 0, true);
-                NPC.velocity += solynNPC.SafeDirectionTo(NPC.Center) * 60f + solynNPC.velocity * 0.45f;
-
-                SoundEngine.PlaySound(GennedAssets.Sounds.NPCHit.MarsHeavyHurt, NPC.Center);
-                SoundEngine.PlaySound(GennedAssets.Sounds.Mars.HitScream, NPC.Center);
-
                 NewProjectileBetter(solynNPC.GetSource_FromAI(), impactPosition + NPC.velocity * 1.7f, Vector2.Zero, ModContent.ProjectileType<SolynImpact>(), 0, 0f);
-
-                solynNPC.netUpdate = true;
-                solynNPC.velocity *= 0.6f;
-
                 NPC.netUpdate = true;
             }
+
+            solynNPC.velocity *= 0.6f;
         }
     }
 
@@ -315,6 +325,12 @@ public partial class MarsBody
     /// </summary>
     public void DoBehavior_EnergyWeaveSequence_Solyn(BattleSolyn solyn)
     {
+        if (solyn.IsMultiplayerClone)
+        {
+            solyn.Invisible = true;
+            return;
+        }
+
         NPC solynNPC = solyn.NPC;
         SolynStarAction = star => MakeSolynStarReturnToSolyn(solyn, star);
 
@@ -328,9 +344,9 @@ public partial class MarsBody
         }
         else if (AITimer <= EnergyWeaveSequence_SolynRedirectTime)
         {
-            Vector2 hoverDestination = Target.Center + Target.SafeDirectionTo(solynNPC.Center) * 300f;
+            Vector2 hoverDestination = solyn.Player.Center + solyn.Player.SafeDirectionTo(solynNPC.Center) * 300f;
             solynNPC.SmoothFlyNear(hoverDestination, 0.2f, 0.6f);
-            solynNPC.spriteDirection = (int)solynNPC.HorizontalDirectionTo(Target.Center);
+            solynNPC.spriteDirection = (int)solynNPC.HorizontalDirectionTo(solyn.Player.Center);
 
             solyn.UseStarFlyEffects();
         }
@@ -340,7 +356,7 @@ public partial class MarsBody
             if (AITimer >= EnergyWeaveSequence_SolynRedirectTime + EnergyWeaveSequence_MarsInterceptionTime * 0.5f)
             {
                 float hoverSpeedInterpolant = InverseLerp(EnergyWeaveSequence_MarsInterceptionTime * 1.35f, EnergyWeaveSequence_MarsInterceptionTime * 0.5f, AITimer - EnergyWeaveSequence_SolynRedirectTime);
-                Vector2 hoverDestination = NPC.Center + Target.SafeDirectionTo(NPC.Center) * 300f;
+                Vector2 hoverDestination = NPC.Center + solyn.Player.SafeDirectionTo(NPC.Center) * 300f;
                 solynNPC.Center = Vector2.Lerp(solynNPC.Center, hoverDestination, hoverSpeedInterpolant * 0.18f);
             }
 
@@ -351,17 +367,22 @@ public partial class MarsBody
 
             Vector2 bobbingVelocity = Vector2.UnitY * Sin(TwoPi * AITimer / 210f) * 2f;
             if (Collision.SolidCollision(NPC.Top - Vector2.UnitY * 600f, 1, 600))
-                bobbingVelocity = solynNPC.SafeDirectionTo(Target.Center) * 6f;
+                bobbingVelocity = solynNPC.SafeDirectionTo(solyn.Player.Center) * 6f;
 
             solynNPC.velocity = Vector2.Lerp(solynNPC.velocity, bobbingVelocity, 0.2f);
 
             // Initialize Solyn's dash if the player reaches her.
-            if (Target.WithinRange(solynNPC.Center, 60f) && AITimer >= EnergyWeaveSequence_SolynRedirectTime + EnergyWeaveSequence_MarsInterceptionTime + EnergyWeaveSequence_FieldSummonDelay &&
-                EnergyWeaveSequence_PostDashImpactTimer <= 0f)
+            foreach (var player in Main.ActivePlayers)
             {
-                solynNPC.oldPos = new Vector2[solynNPC.oldPos.Length];
-                EnergyWeaveSequence_SolynDashTimer = 1f;
-                NPC.netUpdate = true;
+                if (player.WithinRange(solynNPC.Center, 60f) && AITimer >= EnergyWeaveSequence_SolynRedirectTime + EnergyWeaveSequence_MarsInterceptionTime + EnergyWeaveSequence_FieldSummonDelay &&
+                    EnergyWeaveSequence_PostDashImpactTimer <= 0f)
+                {
+                    solynNPC.oldPos = new Vector2[solynNPC.oldPos.Length];
+                    EnergyWeaveSequence_SolynDashPlayer = player.whoAmI;
+                    EnergyWeaveSequence_SolynDashTimer = 1f;
+                    NPC.netUpdate = true;
+                    break;
+                }
             }
 
             if (Collision.SolidCollision(solynNPC.TopLeft, solynNPC.width, solynNPC.height))

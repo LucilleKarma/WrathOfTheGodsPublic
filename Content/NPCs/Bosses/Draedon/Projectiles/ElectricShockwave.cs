@@ -2,9 +2,12 @@
 using Luminance.Common.DataStructures;
 using Luminance.Common.Easings;
 using Luminance.Core.Graphics;
+
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+
 using NoxusBoss.Content.NPCs.Friendly;
+
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
@@ -70,30 +73,33 @@ public class ElectricShockwave : ModProjectile, IProjOwnedByBoss<MarsBody>
                 entitiesToPushBack.Add(solyn);
         }
 
-        float softDistanceLimit = Projectile.scale * Projectile.width * 0.41f;
-        float hardDistanceLimit = Projectile.scale * Projectile.width * 0.38f;
-        foreach (Entity entity in entitiesToPushBack)
+        if (Main.netMode == NetmodeID.SinglePlayer)
         {
-            if (entity.WithinRange(Projectile.Center, softDistanceLimit) && Projectile.Opacity >= 0.3f)
+            float softDistanceLimit = Projectile.scale * Projectile.width * 0.41f;
+            float hardDistanceLimit = Projectile.scale * Projectile.width * 0.38f;
+            foreach (Entity entity in entitiesToPushBack)
             {
-                if (entity is Player player)
+                if (entity.WithinRange(Projectile.Center, softDistanceLimit) && Projectile.Opacity >= 0.3f)
                 {
-                    if (Main.myPlayer == player.whoAmI)
-                        ScreenShakeSystem.StartShake(3.7f);
+                    if (entity is Player player)
+                    {
+                        if (Main.myPlayer == player.whoAmI)
+                            ScreenShakeSystem.StartShake(3.7f);
 
-                    player.mount?.Dismount(player);
-                }
+                        player.mount?.Dismount(player);
+                    }
 
-                float pushBackSpeed = generalPushBackSpeed;
-                entity.velocity = Vector2.Lerp(entity.velocity, -entity.SafeDirectionTo(Projectile.Center) * pushBackSpeed, 0.36f);
+                    float pushBackSpeed = generalPushBackSpeed;
+                    entity.velocity = Vector2.Lerp(entity.velocity, -entity.SafeDirectionTo(Projectile.Center) * pushBackSpeed, 0.36f);
 
-                if (entity.WithinRange(Projectile.Center, hardDistanceLimit))
-                {
-                    Vector2 shoveDestination = Projectile.Center + Projectile.SafeDirectionTo(entity.Center) * hardDistanceLimit;
-                    bool wouldShoveEntityIntoTiles = Collision.SolidTiles(shoveDestination - entity.Size * 0.5f, entity.width, entity.height);
-                    bool wouldEffectivelyTeleportEntity = !shoveDestination.WithinRange(entity.Center, 150f);
-                    if (!wouldShoveEntityIntoTiles && !wouldEffectivelyTeleportEntity)
-                        entity.Center = shoveDestination;
+                    if (entity.WithinRange(Projectile.Center, hardDistanceLimit))
+                    {
+                        Vector2 shoveDestination = Projectile.Center + Projectile.SafeDirectionTo(entity.Center) * hardDistanceLimit;
+                        bool wouldShoveEntityIntoTiles = Collision.SolidTiles(shoveDestination - entity.Size * 0.5f, entity.width, entity.height);
+                        bool wouldEffectivelyTeleportEntity = !shoveDestination.WithinRange(entity.Center, 150f);
+                        if (!wouldShoveEntityIntoTiles && !wouldEffectivelyTeleportEntity)
+                            entity.Center = shoveDestination;
+                    }
                 }
             }
         }

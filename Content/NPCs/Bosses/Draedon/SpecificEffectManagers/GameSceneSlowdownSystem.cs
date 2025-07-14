@@ -1,14 +1,19 @@
 ﻿using Luminance.Core.Graphics;
+
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+
 using MonoMod.Cil;
+
 using MonoStereo;
 using MonoStereo.Filters;
+
 using NoxusBoss.Content.NPCs.Bosses.Draedon.Projectiles.SolynProjectiles;
 using NoxusBoss.Content.NPCs.Friendly;
 using NoxusBoss.Core.CrossCompatibility.Inbound.MonoStereo;
 using NoxusBoss.Core.SoundSystems;
 using NoxusBoss.Core.Utilities;
+
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
@@ -236,6 +241,8 @@ public class GameSceneSlowdownSystem : ModSystem
 
     public override void PostUpdateEverything()
     {
+        if (Main.netMode == NetmodeID.Server) return;
+
         if (MonoStereoSystem.Enabled)
             UpdatePitchFilter();
 

@@ -73,7 +73,6 @@ public class TEGraphicalUniverseImager : ModTileEntity, IClientSideTileEntityUpd
         // If in multiplayer, tell the server to place the tile entity and DO NOT place it yourself. That would mismatch IDs.
         if (Main.netMode == NetmodeID.MultiplayerClient)
         {
-            NetMessage.SendTileSquare(Main.myPlayer, i, j, GraphicalUniverseImagerTile.Width, GraphicalUniverseImagerTile.Height);
             NetMessage.SendData(MessageID.TileEntityPlacement, -1, -1, null, i, j, Type);
             return -1;
         }

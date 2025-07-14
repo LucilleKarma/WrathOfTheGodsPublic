@@ -85,11 +85,15 @@ public class BackgroundStar : ModProjectile, IPixelatedPrimitiveRenderer, IProjO
         // Create fire on the first frame.
         if (Projectile.localAI[1] == 0f)
         {
-            for (int i = 0; i < 10; i++)
+            if (Main.netMode != NetmodeID.Server)
             {
-                Color fireColor = Color.Lerp(Color.Aqua, Color.Wheat, Main.rand.NextFloat(0.67f));
-                NamelessFireParticleSystemManager.ParticleSystem.CreateNew(Projectile.Center, Main.rand.NextVector2Circular(18f, 18f), Vector2.One * Main.rand.NextFloat(50f, 100f), fireColor);
+                for (int i = 0; i < 10; i++)
+                {
+                    Color fireColor = Color.Lerp(Color.Aqua, Color.Wheat, Main.rand.NextFloat(0.67f));
+                    NamelessFireParticleSystemManager.ParticleSystem.CreateNew(Projectile.Center, Main.rand.NextVector2Circular(18f, 18f), Vector2.One * Main.rand.NextFloat(50f, 100f), fireColor);
+                }
             }
+
             Projectile.localAI[1] = 1f;
         }
 

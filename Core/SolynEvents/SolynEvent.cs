@@ -1,6 +1,11 @@
 ﻿using NoxusBoss.Content.NPCs.Friendly;
+using NoxusBoss.Core.Netcode;
+using NoxusBoss.Core.Netcode.Packets;
+
 using SubworldLibrary;
+
 using Terraria;
+using Terraria.ID;
 using Terraria.ModLoader;
 using Terraria.ModLoader.IO;
 
@@ -53,7 +58,14 @@ public abstract class SolynEvent : ModSystem
     public void SafeSetStage(int value)
     {
         if (Stage < value)
+        {
             Stage = value;
+
+            if (Main.netMode == NetmodeID.MultiplayerClient)
+            {
+                PacketManager.SendPacket<EventStageUpdatedPacket>(GetType().FullName!, Stage);
+            }
+        }
     }
 
     public sealed override void PreUpdateNPCs()

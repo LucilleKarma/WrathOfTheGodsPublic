@@ -1,14 +1,20 @@
 ﻿using System.Reflection;
+
 using Luminance.Core.Hooking;
+
 using Microsoft.Xna.Framework;
+
 using Mono.Cecil.Cil;
+
 using MonoMod.Cil;
+
 using NoxusBoss.Content.NPCs.Friendly;
 using NoxusBoss.Content.Tiles.SolynCampsite;
 using NoxusBoss.Content.Tiles.TileEntities;
 using NoxusBoss.Core.CrossCompatibility.Inbound.BaseCalamity;
 using NoxusBoss.Core.GlobalInstances;
 using NoxusBoss.Core.SolynEvents;
+
 using Terraria;
 using Terraria.DataStructures;
 using Terraria.ID;
@@ -184,9 +190,16 @@ public class SolynCampsiteWorldGen : ModSystem
         if (telescopePosition != Point.Zero)
             WorldGen.KillTile(telescopePosition.X, telescopePosition.Y, noItem: true);
 
+        var syncPos = CampSitePosition.ToTileCoordinates();
+
         CampSitePosition = Vector2.Zero;
         TentPosition = Vector2.Zero;
         TelescopePosition = Point.Zero;
+
+        if (Main.netMode == NetmodeID.Server)
+        {
+            NetMessage.SendTileSquare(-1, syncPos.X, syncPos.Y, 100);
+        }
     }
 
     private static bool FlatTerrainExists(Point checkPoint, int width, out Point result)
@@ -335,6 +348,9 @@ public class SolynCampsiteWorldGen : ModSystem
 
     public static void PlaceCampOnNewThread(Point point)
     {
+        if (Main.netMode == NetmodeID.MultiplayerClient) 
+            return;
+
         if (generating)
             return;
 
@@ -371,6 +387,20 @@ public class SolynCampsiteWorldGen : ModSystem
                         {
                             if (te is TESolynTelescope telescope)
                                 telescope.IsRepaired = true;
+                        }
+                    }
+
+                    if (Main.netMode == NetmodeID.Server)
+                    {
+                        NetMessage.SendData(MessageID.WorldData);
+                        NetMessage.SendTileSquare(-1, point.X, point.Y, 100);
+
+                        foreach (TileEntity te in TileEntity.ByID.Values)
+                        {
+                            if (te is TESolynTelescope || te is TESolynFlag || te is TESolynTent)
+                            {
+                                NetMessage.SendData(MessageID.TileEntitySharing, -1, -1, null, te.ID);
+                            }
                         }
                     }
                 }

@@ -1,5 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
+
 using NoxusBoss.Content.NPCs.Friendly;
+
 using Terraria;
 using Terraria.ModLoader;
 using Terraria.UI;
@@ -77,7 +79,7 @@ public class SolynDialogSystem : ModSystem
             return;
 
         SolynDialogSystem system = ModContent.GetInstance<SolynDialogSystem>();
-        system.DialogUI.CurrentDialogueNode = null;
+        system.DialogUI.SetDialogue(null);
         system.DialogUI.DialogueText = string.Empty;
         system.DialogUI.ResponseToSay = null;
         Visible = false;

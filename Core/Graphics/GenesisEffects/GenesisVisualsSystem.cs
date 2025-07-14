@@ -1,7 +1,9 @@
 ﻿using Luminance.Common.Easings;
 using Luminance.Core.Graphics;
+
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+
 using NoxusBoss.Assets;
 using NoxusBoss.Content.NPCs.Bosses.Avatar.FirstPhaseForm;
 using NoxusBoss.Content.NPCs.Bosses.Avatar.SecondPhaseForm;
@@ -14,6 +16,7 @@ using NoxusBoss.Core.DataStructures;
 using NoxusBoss.Core.Graphics.SpecificEffectManagers;
 using NoxusBoss.Core.Netcode;
 using NoxusBoss.Core.Netcode.Packets;
+
 using Terraria;
 using Terraria.Audio;
 using Terraria.DataStructures;
@@ -147,17 +150,20 @@ public class GenesisVisualsSystem : ModSystem
             ring.Spawn();
         }
 
-        float blurIntensity = energyChargeUpCompletion.Cubed() * Lerp(0.5f, 1.5f, Cos01(TwoPi * Time / 30f)) * 0.5f;
-        ManagedScreenFilter waveShader = ShaderManager.GetFilter("NoxusBoss.GenesisWaveMotionBlurShader");
-        waveShader.TrySetParameter("blurOrigin", WorldSpaceToScreenUV(Position));
-        waveShader.TrySetParameter("blurIntensity", blurIntensity);
-        waveShader.TrySetParameter("glowIntensity", Lerp(0.05f, 0.11f, energyChargeUpCompletion) * GlowIntensityFactor);
-        waveShader.TrySetParameter("blurEnabled", !WoTGConfig.Instance.PhotosensitivityMode);
-        waveShader.TrySetParameter("glowColor", new Color(193, 108, 255).ToVector4());
-        waveShader.SetTexture(TileTargetManagers.TileTarget, 1, SamplerState.PointClamp);
-        waveShader.Activate();
+        if (Main.netMode != NetmodeID.Server)
+        {
+            float blurIntensity = energyChargeUpCompletion.Cubed() * Lerp(0.5f, 1.5f, Cos01(TwoPi * Time / 30f)) * 0.5f;
+            ManagedScreenFilter waveShader = ShaderManager.GetFilter("NoxusBoss.GenesisWaveMotionBlurShader");
+            waveShader.TrySetParameter("blurOrigin", WorldSpaceToScreenUV(Position));
+            waveShader.TrySetParameter("blurIntensity", blurIntensity);
+            waveShader.TrySetParameter("glowIntensity", Lerp(0.05f, 0.11f, energyChargeUpCompletion) * GlowIntensityFactor);
+            waveShader.TrySetParameter("blurEnabled", !WoTGConfig.Instance.PhotosensitivityMode);
+            waveShader.TrySetParameter("glowColor", new Color(193, 108, 255).ToVector4());
+            waveShader.SetTexture(TileTargetManagers.TileTarget, 1, SamplerState.PointClamp);
+            waveShader.Activate();
 
-        ScreenShakeSystem.StartShakeAtPoint(Position, Pow(energyChargeUpCompletion, 1.5f) * 5f, TwoPi, Vector2.UnitX, 0.3f, 7500f, 5000f);
+            ScreenShakeSystem.StartShakeAtPoint(Position, Pow(energyChargeUpCompletion, 1.5f) * 5f, TwoPi, Vector2.UnitX, 0.3f, 7500f, 5000f);
+        }
 
         if (Time >= energyChargeUpTime + idleEnergyTime)
         {
@@ -176,14 +182,17 @@ public class GenesisVisualsSystem : ModSystem
     {
         int suspenseTime = 15;
 
-        ManagedScreenFilter waveShader = ShaderManager.GetFilter("NoxusBoss.GenesisWaveMotionBlurShader");
-        waveShader.TrySetParameter("blurOrigin", WorldSpaceToScreenUV(Position));
-        waveShader.TrySetParameter("blurIntensity", InverseLerp(15f, 0f, Time));
-        waveShader.TrySetParameter("glowIntensity", GlowIntensityFactor * 0.08f);
-        waveShader.TrySetParameter("blurEnabled", !WoTGConfig.Instance.PhotosensitivityMode);
-        waveShader.TrySetParameter("glowColor", new Color(193, 108, 255).ToVector4());
-        waveShader.SetTexture(TileTargetManagers.TileTarget, 1, SamplerState.PointClamp);
-        waveShader.Activate();
+        if (Main.netMode != NetmodeID.Server)
+        {
+            ManagedScreenFilter waveShader = ShaderManager.GetFilter("NoxusBoss.GenesisWaveMotionBlurShader");
+            waveShader.TrySetParameter("blurOrigin", WorldSpaceToScreenUV(Position));
+            waveShader.TrySetParameter("blurIntensity", InverseLerp(15f, 0f, Time));
+            waveShader.TrySetParameter("glowIntensity", GlowIntensityFactor * 0.08f);
+            waveShader.TrySetParameter("blurEnabled", !WoTGConfig.Instance.PhotosensitivityMode);
+            waveShader.TrySetParameter("glowColor", new Color(193, 108, 255).ToVector4());
+            waveShader.SetTexture(TileTargetManagers.TileTarget, 1, SamplerState.PointClamp);
+            waveShader.Activate();
+        }
 
         if (Time >= suspenseTime)
         {
@@ -207,20 +216,23 @@ public class GenesisVisualsSystem : ModSystem
                 NewProjectileBetter(new EntitySource_WorldEvent(), Position + Vector2.UnitY * 18f, Vector2.Zero, ModContent.ProjectileType<GenesisOmegaDeathray>(), 0, 0f);
         }
 
-        float cameraPanInterpolant = SmoothStep(0f, 1f, InverseLerp(0f, 45f, Time));
-        CameraPanSystem.PanTowards(Position - Vector2.UnitY * 280f, cameraPanInterpolant);
+        if (Main.netMode != NetmodeID.Server)
+        {
+            float cameraPanInterpolant = SmoothStep(0f, 1f, InverseLerp(0f, 45f, Time));
+            CameraPanSystem.PanTowards(Position - Vector2.UnitY * 280f, cameraPanInterpolant);
 
-        ScreenShakeSystem.StartShake(7.5f);
+            ScreenShakeSystem.StartShake(7.5f);
 
-        float fadeOut = InverseLerp(GenesisOmegaDeathray.Lifetime, GenesisOmegaDeathray.Lifetime - 10f, Time);
-        ManagedScreenFilter waveShader = ShaderManager.GetFilter("NoxusBoss.GenesisWaveMotionBlurShader");
-        waveShader.TrySetParameter("blurOrigin", WorldSpaceToScreenUV(Position));
-        waveShader.TrySetParameter("blurIntensity", Lerp(1.2f, 1.4f, Cos01(TwoPi * Time / 15f)) * fadeOut);
-        waveShader.TrySetParameter("glowIntensity", GlowIntensityFactor * fadeOut * 0.23f);
-        waveShader.TrySetParameter("blurEnabled", false);
-        waveShader.TrySetParameter("glowColor", new Color(193, 108, 255).ToVector4());
-        waveShader.SetTexture(TileTargetManagers.TileTarget, 1, SamplerState.PointClamp);
-        waveShader.Activate();
+            float fadeOut = InverseLerp(GenesisOmegaDeathray.Lifetime, GenesisOmegaDeathray.Lifetime - 10f, Time);
+            ManagedScreenFilter waveShader = ShaderManager.GetFilter("NoxusBoss.GenesisWaveMotionBlurShader");
+            waveShader.TrySetParameter("blurOrigin", WorldSpaceToScreenUV(Position));
+            waveShader.TrySetParameter("blurIntensity", Lerp(1.2f, 1.4f, Cos01(TwoPi * Time / 15f)) * fadeOut);
+            waveShader.TrySetParameter("glowIntensity", GlowIntensityFactor * fadeOut * 0.23f);
+            waveShader.TrySetParameter("blurEnabled", false);
+            waveShader.TrySetParameter("glowColor", new Color(193, 108, 255).ToVector4());
+            waveShader.SetTexture(TileTargetManagers.TileTarget, 1, SamplerState.PointClamp);
+            waveShader.Activate();
+        }
 
         if (Time >= GenesisOmegaDeathray.Lifetime)
         {
@@ -234,7 +246,7 @@ public class GenesisVisualsSystem : ModSystem
             ActivationPhase = GenesisActivationPhase.Inactive;
             Time = 0;
 
-            if (Main.netMode != NetmodeID.SinglePlayer)
+            if (Main.netMode == NetmodeID.Server)
                 PacketManager.SendPacket<GenesisAnimationStatePacket>();
         }
     }

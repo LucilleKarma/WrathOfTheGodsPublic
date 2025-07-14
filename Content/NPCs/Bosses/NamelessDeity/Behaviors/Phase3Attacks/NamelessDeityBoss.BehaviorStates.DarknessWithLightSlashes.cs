@@ -173,7 +173,7 @@ public partial class NamelessDeityBoss : ModNPC
             SoundEngine.PlaySound(GennedAssets.Sounds.Common.Glitch with { PitchVariance = 0.2f, Volume = 1.3f, MaxInstances = 8 });
 
         // Make the heartbeat sound go on when slashes are not present.
-        if (AITimer == 1f || (HeartbeatLoopSound.HasBeenStopped && !AnyProjectiles(ModContent.ProjectileType<LightSlash>())))
+        if (AITimer == 1f || (HeartbeatLoopSound?.HasBeenStopped == true && !AnyProjectiles(ModContent.ProjectileType<LightSlash>())))
         {
             HeartbeatLoopSound?.Stop();
             HeartbeatLoopSound = LoopedSoundManager.CreateNew(GennedAssets.Sounds.NamelessDeity.Heartbeat with { Volume = 1.75f }, () =>
