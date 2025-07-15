@@ -1,7 +1,9 @@
 ﻿using Luminance.Common.DataStructures;
 using Luminance.Core.Graphics;
+
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+
 using NoxusBoss.Assets;
 using NoxusBoss.Content.Items.MiscOPTools;
 using NoxusBoss.Content.NPCs.Bosses.Avatar.Projectiles;
@@ -28,7 +30,9 @@ using NoxusBoss.Core.World.GameScenes.OldDukeDeath;
 using NoxusBoss.Core.World.GameScenes.RiftEclipse;
 using NoxusBoss.Core.World.Subworlds;
 using NoxusBoss.Core.World.WorldSaving;
+
 using ReLogic.Utilities;
+
 using Terraria;
 using Terraria.Audio;
 using Terraria.Chat;
@@ -38,6 +42,7 @@ using Terraria.GameContent.Bestiary;
 using Terraria.ID;
 using Terraria.Localization;
 using Terraria.ModLoader;
+
 using static NoxusBoss.Content.NPCs.Bosses.Avatar.SecondPhaseForm.AvatarOfEmptiness;
 
 namespace NoxusBoss.Content.NPCs.Bosses.Avatar.FirstPhaseForm;
@@ -304,7 +309,14 @@ public class AvatarRift : ModNPC, IBossDowned
             if (Main.gameMenu)
                 return myself = null;
 
-            if (myself is not null && !myself.active)
+            if (myself is null)
+                return null;
+
+            if (!myself.active)
+                return null;
+
+            //There was BattleSolyn for some reason
+            if (myself.type != ModContent.NPCType<AvatarRift>())
                 return null;
 
             return myself;
@@ -521,6 +533,9 @@ public class AvatarRift : ModNPC, IBossDowned
 
     public override void ReceiveExtraAI(BinaryReader reader)
     {
+        //Server syncs always AITimer + 1 instead of correct AITimer, causing client to "skip" first frame, causing some audio and visual issues
+        AITimer--;
+
         Arms.Clear();
         int armCount = reader.ReadInt32();
         for (int i = 0; i < armCount; i++)

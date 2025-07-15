@@ -47,7 +47,7 @@ public partial class BattleSolyn : ModNPC
         }
         else
         {
-            var rift = AvatarOfEmptiness.Myself.As<AvatarRift>();
+            var rift = AvatarRift.Myself.As<AvatarRift>();
             if (AvatarRift_ShouldSwap(rift))
             {
                 SwitchTo(rift.Target);

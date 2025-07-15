@@ -517,6 +517,8 @@ public partial class MarsBody : ModNPC, IBossDowned
 
     public override void ReceiveExtraAI(BinaryReader reader)
     {
+        AITimer--;
+
         PreviousState = (MarsAIType)reader.ReadInt32();
         RailgunCannonAngle = reader.ReadSingle();
         SolynAndPlayerCanDoTeamAttack = reader.ReadBoolean();

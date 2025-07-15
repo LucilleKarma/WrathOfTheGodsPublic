@@ -928,6 +928,8 @@ public partial class AvatarOfEmptiness : ModNPC
 
     public override void ReceiveExtraAI(BinaryReader reader)
     {
+        AITimer--;
+
         // Read binary data.
         BitsByte b1 = reader.ReadByte();
         FrontArmsAreDetached = b1[0];
