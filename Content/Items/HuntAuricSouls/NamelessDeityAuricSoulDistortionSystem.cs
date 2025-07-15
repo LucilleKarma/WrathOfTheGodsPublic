@@ -42,7 +42,7 @@ public class NamelessDeityAuricSoulDistortionSystem : ModSystem
     private void UpdateTargetWrapper()
     {
         int itemID = ModContent.ItemType<NamelessAuricSoul>();
-        var items = Main.item.Take(Main.maxItems).Where(i => i.active && i.type == itemID);
+        var items = Main.item.Take(Main.maxItems).Where(i => i != null && i.active && i.type == itemID); //here
         if (!items.Any() && AnimationCompletion <= 0f)
             return;
 
@@ -64,7 +64,7 @@ public class NamelessDeityAuricSoulDistortionSystem : ModSystem
         orig(self);
 
         int itemID = ModContent.ItemType<NamelessAuricSoul>();
-        var items = Main.item.Take(Main.maxItems).Where(i => i.active && i.type == itemID);
+        var items = Main.item.Take(Main.maxItems).Where(i => i != null && i.active && i.type == itemID); //here
         bool anySouls = items.Any();
         AnimationCompletion = Saturate(AnimationCompletion + anySouls.ToDirectionInt() / 129f);
 
