@@ -1,7 +1,10 @@
 ﻿using Luminance.Core.Graphics;
+
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+
 using NoxusBoss.Core.DataStructures;
+
 using Terraria;
 using Terraria.Graphics;
 using Terraria.Graphics.Renderers;
@@ -14,13 +17,13 @@ public class PlayerPostProcessingShaderSystem : ModSystem
 {
     private static bool renderingToTargets;
 
-    internal static List<ManagedRenderTarget> PlayerTargets
+    internal static Dictionary<int, ManagedRenderTarget> PlayerTargets
     {
         get;
         private set;
     } = new(1);
 
-    internal static List<ManagedRenderTarget> AuxiliaryTargets
+    internal static Dictionary<int, ManagedRenderTarget> AuxiliaryTargets
     {
         get;
         private set;
@@ -55,11 +58,18 @@ public class PlayerPostProcessingShaderSystem : ModSystem
 
     private static void VerifyPlayerTargetSizes()
     {
-        int totalActivePlayers = Main.player.Count(p => p.active);
-        while (PlayerTargets.Count < totalActivePlayers)
-            PlayerTargets.Add(new(true, ManagedRenderTarget.CreateScreenSizedTarget));
-        while (AuxiliaryTargets.Count < totalActivePlayers)
-            AuxiliaryTargets.Add(new(true, ManagedRenderTarget.CreateScreenSizedTarget));
+        foreach (var player in Main.ActivePlayers)
+        {
+            if (!PlayerTargets.ContainsKey(player.whoAmI))
+            {
+                PlayerTargets.Add(player.whoAmI, new(true, ManagedRenderTarget.CreateScreenSizedTarget));
+            }
+
+            if (!AuxiliaryTargets.ContainsKey(player.whoAmI))
+            {
+                AuxiliaryTargets.Add(player.whoAmI, new(true, ManagedRenderTarget.CreateScreenSizedTarget));
+            }
+        }
     }
 
     private static void UpdateTargets()
@@ -72,22 +82,18 @@ public class PlayerPostProcessingShaderSystem : ModSystem
         FinalPlayerTargets.Clear();
 
         renderingToTargets = true;
-        for (int i = 0; i < Main.maxPlayers; i++)
+        foreach (var player in Main.ActivePlayers)
         {
-            Player player = Main.player[i];
-            if (!player.active)
-                continue;
-
             GraphicsDevice gd = Main.instance.GraphicsDevice;
 
-            gd.SetRenderTarget(PlayerTargets[i]);
+            gd.SetRenderTarget(PlayerTargets[player.whoAmI]);
             gd.Clear(Color.Transparent);
 
             Main.PlayerRenderer.DrawPlayers(Main.Camera, [player]);
 
             // Store the final targets for later.
             ManagedRenderTarget? finalTarget = ApplyAllPostProcessingEffects(player);
-            FinalPlayerTargets[i] = finalTarget;
+            FinalPlayerTargets[player.whoAmI] = finalTarget;
         }
 
         renderingToTargets = false;

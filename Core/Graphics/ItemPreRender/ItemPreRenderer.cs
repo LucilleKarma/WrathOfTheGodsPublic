@@ -1,7 +1,10 @@
 ﻿using System.Reflection;
+
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+
 using ReLogic.Content;
+
 using Terraria;
 using Terraria.GameContent;
 using Terraria.ID;
@@ -114,6 +117,10 @@ public sealed class ItemPreRenderer : ModSystem
     {
         foreach ((int itemType, IPreRenderedItem preRenderedItem) in preRenderedItems)
         {
+            //During one of the mod loading I got an error where originalTextures had an item 9794 and renderTargets did not.
+            //This is probably due to the fact that code inside Main.RunOnMainThread did not get executed before this method
+            if (!renderTargets.ContainsKey(itemType)) continue;
+
             Texture2D originalTexture = originalTextures[itemType];
             RenderTarget2D renderTarget = renderTargets[itemType];
 
