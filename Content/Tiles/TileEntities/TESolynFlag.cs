@@ -23,8 +23,10 @@ public class TESolynFlag : ModTileEntity, IClientSideTileEntityUpdater
 
     public override bool IsTileValidForEntity(int x, int y)
     {
-        Tile tile = Main.tile[x, y];
-        return tile.HasTile && tile.TileType == ModContent.TileType<SolynFlagTile>() && tile.TileFrameX == 0 && tile.TileFrameY == 0;
+        //This check did not work in MP for some reason, is it required tho?
+        //Tile tile = Main.tile[x, y];
+        //return tile.HasTile && tile.TileType == ModContent.TileType<SolynFlagTile>() && tile.TileFrameX == 0 && tile.TileFrameY == 0;
+        return true;
     }
 
     public void ClientSideUpdate_RenderCycle()
