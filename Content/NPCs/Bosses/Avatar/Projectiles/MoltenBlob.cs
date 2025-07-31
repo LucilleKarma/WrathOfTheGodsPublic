@@ -67,7 +67,7 @@ public class MoltenBlob : ModProjectile, IPixelatedPrimitiveRenderer, IProjOwned
             Projectile.velocity = Vector2.Zero;
 
         // Create lava particles.
-        var metaball = ModContent.GetInstance<MoltenLavaMetaball>();
+        MoltenLavaMetaball metaball = ModContent.GetInstance<MoltenLavaMetaball>();
         for (int i = 0; i < 2; i++)
             metaball.CreateParticle(Projectile.Center, Main.rand.NextVector2Circular(3f, 3f) + Projectile.velocity * 0.35f, Projectile.width, Main.rand.NextFloat(0.09f));
 

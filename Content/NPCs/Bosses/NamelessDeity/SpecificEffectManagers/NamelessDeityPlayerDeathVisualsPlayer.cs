@@ -62,7 +62,7 @@ public class NamelessDeityPlayerDeathVisualsPlayer : ModPlayer
             if (!p.active)
                 continue;
 
-            var modPlayer = p.GetModPlayer<NamelessDeityPlayerDeathVisualsPlayer>();
+            NamelessDeityPlayerDeathVisualsPlayer modPlayer = p.GetModPlayer<NamelessDeityPlayerDeathVisualsPlayer>();
             if (!modPlayer.TakePlayerScreenshot)
                 continue;
 
@@ -74,15 +74,15 @@ public class NamelessDeityPlayerDeathVisualsPlayer : ModPlayer
             return;
 
         // Go through all players that need a screenshot and take on, drawing the results to their render target.
-        var gd = Main.instance.GraphicsDevice;
-        foreach (var player in playersInNeedOfScreenshot)
+        GraphicsDevice gd = Main.instance.GraphicsDevice;
+        foreach (NamelessDeityPlayerDeathVisualsPlayer player in playersInNeedOfScreenshot)
         {
             // Go to the screenshot target.
             player.PlayerAtTimeOfDeath ??= new(false, (width, height) =>
             {
                 return new(Main.instance.GraphicsDevice, 350, 350);
             });
-            var screenshotTarget = player.PlayerAtTimeOfDeath;
+            ManagedRenderTarget screenshotTarget = player.PlayerAtTimeOfDeath;
             gd.SetRenderTarget(screenshotTarget);
             gd.Clear(Color.Transparent);
 
@@ -117,7 +117,7 @@ public class NamelessDeityPlayerDeathVisualsPlayer : ModPlayer
         }
 
         // Draw the dissipation effect.
-        var modPlayer = player.GetModPlayer<NamelessDeityPlayerDeathVisualsPlayer>();
+        NamelessDeityPlayerDeathVisualsPlayer modPlayer = player.GetModPlayer<NamelessDeityPlayerDeathVisualsPlayer>();
         if (!modPlayer.TakePlayerScreenshot && modPlayer.WasKilledByNamelessDeity && !player.ShouldNotDraw && player.dead)
         {
             // Prepare the sprite batch for shaders.
@@ -132,7 +132,7 @@ public class NamelessDeityPlayerDeathVisualsPlayer : ModPlayer
             float scale = Utils.Remap(deathAnimationCompletion, 0.3f, 0.6f, 1f, 1.4f);
             Color screenshotColor = Color.Lerp(Color.White, Color.Gold with { A = 0 }, InverseLerp(0.05f, 0.12f, deathAnimationCompletion)) * (1f - fadeOut);
 
-            var afterimageShader = ShaderManager.GetShader("NoxusBoss.NamelessDeityPsychedelicAfterimageShader");
+            ManagedShader afterimageShader = ShaderManager.GetShader("NoxusBoss.NamelessDeityPsychedelicAfterimageShader");
             afterimageShader.TrySetParameter("uScreenResolution", screenshot.Size());
             afterimageShader.TrySetParameter("warpSpeed", dissipationIntensity);
             afterimageShader.SetTexture(TurbulentNoise, 1);

@@ -94,7 +94,7 @@ public class StellarRemnant : ModProjectile, IDrawsWithShader, IProjOwnedByBoss<
         subtractiveAccentFactor = Color.Lerp(subtractiveAccentFactor, Color.White, whiteInterpolant);
 
         float spinSpeed = Utils.Remap(Projectile.width, 100f, 400f, 0.9f, 0.3f);
-        var fireballShader = ShaderManager.GetShader("NoxusBoss.StellarRemnantShader");
+        ManagedShader fireballShader = ShaderManager.GetShader("NoxusBoss.StellarRemnantShader");
         fireballShader.TrySetParameter("coronaIntensityFactor", 0.09f);
         fireballShader.TrySetParameter("mainColor", mainColor);
         fireballShader.TrySetParameter("darkerColor", darkerColor);

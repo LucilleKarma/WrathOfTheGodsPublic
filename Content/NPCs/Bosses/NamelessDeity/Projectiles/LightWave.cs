@@ -75,7 +75,7 @@ public class LightWave : ModProjectile, IProjOwnedByBoss<NamelessDeityBoss>
         Main.spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend, SamplerState.LinearWrap, DepthStencilState.None, RasterizerState.CullNone, null, Main.GameViewMatrix.TransformationMatrix);
         DrawData explosionDrawData = new DrawData(DendriticNoise, new Rectangle(0, 0, Main.screenWidth, Main.screenHeight), Color.White * Projectile.Opacity);
 
-        var shockwaveShader = ShaderManager.GetShader("NoxusBoss.ShockwaveShader");
+        ManagedShader shockwaveShader = ShaderManager.GetShader("NoxusBoss.ShockwaveShader");
         shockwaveShader.TrySetParameter("shockwaveColor", DetermineExplosionColor().ToVector3());
         shockwaveShader.TrySetParameter("screenSize", Main.ScreenSize.ToVector2());
         shockwaveShader.TrySetParameter("explosionDistance", Radius * Projectile.scale * 0.5f);

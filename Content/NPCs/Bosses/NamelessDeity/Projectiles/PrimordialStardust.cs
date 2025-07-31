@@ -70,7 +70,7 @@ public class PrimordialStardust : ModProjectile, IDrawsWithShader, IProjOwnedByB
 
     public void DrawWithShader(SpriteBatch spriteBatch)
     {
-        var fogShader = ShaderManager.GetShader("NoxusBoss.PrimordialStardustShader");
+        ManagedShader fogShader = ShaderManager.GetShader("NoxusBoss.PrimordialStardustShader");
         fogShader.TrySetParameter("scrollSpeed", 0.09f);
         fogShader.TrySetParameter("scrollOffset", new Vector2(Projectile.identity * 8.39317f % 1f, Projectile.identity * 9.7673f % 1f));
         fogShader.TrySetParameter("greenBias", Lerp(0.04f, 0.48f, Projectile.identity / 21f % 1f));

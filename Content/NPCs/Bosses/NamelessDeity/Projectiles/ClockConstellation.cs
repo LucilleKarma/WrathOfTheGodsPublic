@@ -335,7 +335,7 @@ public class ClockConstellation : ConstellationProjectile, IProjOwnedByBoss<Name
                     Vector2 hourHandDirection = HourHandRotation.ToRotationVector2();
                     Vector2 minuteHandDirection = MinuteHandRotation.ToRotationVector2();
 
-                    foreach (var starburst in AllProjectilesByID(starburstID))
+                    foreach (Projectile? starburst in AllProjectilesByID(starburstID))
                         starburst.Kill();
 
                     Projectile.NewProjectileBetter_InheritedOwner(Projectile.GetSource_FromThis(), Projectile.Center - minuteHandDirection * telegraphLineLength * 0.5f, minuteHandDirection, ModContent.ProjectileType<TelegraphedScreenSlice>(), 0, 0f, -1, telegraphTime, telegraphLineLength);
@@ -426,14 +426,17 @@ public class ClockConstellation : ConstellationProjectile, IProjOwnedByBoss<Name
 
         EffectiveDeathZoneRadius = Lerp(EffectiveDeathZoneRadius, deathRadius, 0.1f);
 
-        ManagedScreenFilter deathShader = ShaderManager.GetFilter("NoxusBoss.NamelessClockDeathZoneShader");
-        deathShader.TrySetParameter("time", DeathZoneVisualsTimer);
-        deathShader.TrySetParameter("distortionIntensity", Projectile.Opacity * (1f - WoTGConfig.Instance.PhotosensitivityMode.ToInt()));
-        deathShader.TrySetParameter("zoom", Main.GameViewMatrix.Zoom);
-        deathShader.TrySetParameter("center", Projectile.Center);
-        deathShader.TrySetParameter("deathRadius", EffectiveDeathZoneRadius);
-        deathShader.TrySetParameter("whiteGlow", WoTGConfig.Instance.PhotosensitivityMode ? 0.75f : 0.5f);
-        deathShader.Activate();
+        if (Main.netMode != NetmodeID.Server)
+        {
+            ManagedScreenFilter deathShader = ShaderManager.GetFilter("NoxusBoss.NamelessClockDeathZoneShader");
+            deathShader.TrySetParameter("time", DeathZoneVisualsTimer);
+            deathShader.TrySetParameter("distortionIntensity", Projectile.Opacity * (1f - WoTGConfig.Instance.PhotosensitivityMode.ToInt()));
+            deathShader.TrySetParameter("zoom", Main.GameViewMatrix.Zoom);
+            deathShader.TrySetParameter("center", Projectile.Center);
+            deathShader.TrySetParameter("deathRadius", EffectiveDeathZoneRadius);
+            deathShader.TrySetParameter("whiteGlow", WoTGConfig.Instance.PhotosensitivityMode ? 0.75f : 0.5f);
+            deathShader.Activate();
+        }
     }
 
     public void DrawClockHands()

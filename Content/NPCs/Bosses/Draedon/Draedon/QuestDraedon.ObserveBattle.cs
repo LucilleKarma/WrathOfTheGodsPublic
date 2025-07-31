@@ -35,7 +35,7 @@ public partial class QuestDraedon : ModNPC
 
         // Stay within the safe zone if Mars is firing his disintegration ray.
         int solynIndex = NPC.FindFirstNPC(ModContent.NPCType<BattleSolyn>());
-        var disintegrationRays = AllProjectilesByID(ModContent.ProjectileType<ExoelectricDisintegrationRay>()).ToList();
+        List<Projectile> disintegrationRays = AllProjectilesByID(ModContent.ProjectileType<ExoelectricDisintegrationRay>()).ToList();
         bool disintegrationRayIsBeingFired = disintegrationRays.Count >= 1;
         bool standUp = false;
         if (solynIndex != -1 && disintegrationRayIsBeingFired)

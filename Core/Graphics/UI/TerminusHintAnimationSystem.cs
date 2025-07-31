@@ -81,7 +81,7 @@ public class TerminusHintAnimationSystem : ModSystem
         Main.spriteBatch.Draw(WhitePixel, Main.ScreenSize.ToVector2() * 0.5f, null, Color.White * whiteOverlayOpacity, 0f, WhitePixel.Size() * 0.5f, pixelScale, 0, 0f);
 
         // Draw the text that directs the player to seek the Terminus.
-        var font = FontRegistry.Instance.NamelessDeityText;
+        DynamicSpriteFont font = FontRegistry.Instance.NamelessDeityText;
         for (int i = 0; i < TextLines.Length; i++)
         {
             string line = TextLines[i];

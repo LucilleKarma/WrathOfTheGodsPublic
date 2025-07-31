@@ -1,7 +1,9 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+
 using NoxusBoss.Assets;
 using NoxusBoss.Content.Projectiles.Typeless;
+
 using Terraria;
 using Terraria.DataStructures;
 using Terraria.ID;
@@ -171,28 +173,19 @@ public class TEGoodAppleTree : ModTileEntity, IClientSideTileEntityUpdater
 
     public override void NetSend(BinaryWriter writer)
     {
-        BitsByte[] treesActiveBits = new BitsByte[(int)Ceiling(ApplesOnTree.Length / 8f)];
-
-        writer.Write(treesActiveBits.Length);
+        writer.Write(ApplesOnTree.Length);
         for (int i = 0; i < ApplesOnTree.Length; i++)
         {
-            int byteIndex = i / 8;
-            treesActiveBits[i][byteIndex] = ApplesOnTree[i].Active;
+            writer.Write(ApplesOnTree[i].Active);
         }
     }
 
     public override void NetReceive(BinaryReader reader)
     {
-        int totalBytes = reader.ReadInt32();
-        BitsByte[] bytes = new BitsByte[totalBytes];
-        for (int i = 0; i < totalBytes; i++)
-            bytes[i] = reader.ReadByte();
-
-        for (int i = 0; i < ApplesOnTree.Length; i++)
+        int count = reader.ReadInt32();
+        for (int i = 0; i < count; i++)
         {
-            int byteIndex = i / 8;
-            int bitIndex = i % 8;
-            ApplesOnTree[i].Active = bytes[byteIndex][bitIndex];
+            ApplesOnTree[i].Active = reader.ReadBoolean();
         }
     }
 
@@ -223,7 +216,6 @@ public class TEGoodAppleTree : ModTileEntity, IClientSideTileEntityUpdater
         // If in multiplayer, tell the server to place the tile entity and DO NOT place it yourself. That would mismatch IDs.
         if (Main.netMode == NetmodeID.MultiplayerClient)
         {
-            NetMessage.SendTileSquare(Main.myPlayer, i, j, GoodAppleTree.TrunkWidth, GoodAppleTree.TrunkHeight);
             NetMessage.SendData(MessageID.TileEntityPlacement, -1, -1, null, i, j, Type);
             return -1;
         }

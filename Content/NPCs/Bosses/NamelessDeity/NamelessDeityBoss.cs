@@ -578,7 +578,7 @@ public partial class NamelessDeityBoss : ModNPC, IInfernumBossBarSupport, IBossD
 
         // Get rid of all falling stars. Their noises completely ruin the ambience.
         // active = false must be used over Kill because the Kill method causes them to drop their fallen star items.
-        var fallingStars = AllProjectilesByID(ProjectileID.FallingStar);
+        IEnumerable<Projectile> fallingStars = AllProjectilesByID(ProjectileID.FallingStar);
         foreach (Projectile star in fallingStars)
             star.active = false;
 
@@ -711,7 +711,7 @@ public partial class NamelessDeityBoss : ModNPC, IInfernumBossBarSupport, IBossD
         {
             foreach (Player player in Main.ActivePlayers)
             {
-                var hitRef = player.GetValueRef<int>(TestOfResolveSystem.RemainingHitsVariableName);
+                Core.DataStructures.Referenced<int> hitRef = player.GetValueRef<int>(TestOfResolveSystem.RemainingHitsVariableName);
                 if (hitRef >= 1)
                     hitRef.Value = Utils.Clamp(hitRef + 1, 0, 20);
             }

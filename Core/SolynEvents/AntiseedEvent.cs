@@ -1,6 +1,8 @@
 ﻿using Luminance.Core.Cutscenes;
 using Luminance.Core.Graphics;
+
 using Microsoft.Xna.Framework;
+
 using NoxusBoss.Assets;
 using NoxusBoss.Content.Items.GenesisComponents;
 using NoxusBoss.Content.NPCs.Bosses.CeaselessVoid;
@@ -9,7 +11,9 @@ using NoxusBoss.Core.CrossCompatibility.Inbound;
 using NoxusBoss.Core.DialogueSystem;
 using NoxusBoss.Core.World.GameScenes.AvatarUniverseExploration;
 using NoxusBoss.Core.World.Subworlds;
+
 using SubworldLibrary;
+
 using Terraria;
 using Terraria.Audio;
 using Terraria.ModLoader;
@@ -36,6 +40,27 @@ public class AntiseedEvent : SolynEvent
         get;
         private set;
     }
+
+    /// <summary>
+    /// Who talked to Solyn before Solyn entered rift
+    /// </summary>
+    public static int PlayerTriggeredSolynEnterRift 
+    { 
+        get; 
+        private set; 
+    }
+
+    /// <summary>
+    /// Blocker timer, to fix the softlock in case if Solyn for some reason is futher than player can talk with her
+    /// (I mean, this also can be fixed if someone else talk with her, but this is better)
+    /// </summary>
+    public static int BlockerTimer
+    {
+        get;
+        private set;
+    }
+
+    public static int BlockerTimer_Limit => SecondsToFrames(5f);
 
     public override int TotalStages => 6;
 
@@ -81,12 +106,14 @@ public class AntiseedEvent : SolynEvent
             WithRerollCondition(_ => Stage >= 4);
         DialogueManager.FindByRelativePrefix("CeaselessVoidDiscussionBeforeEnteringRift").GetByRelativeKey("Start").EndAction = seenBefore =>
         {
-            BlockerSystem.Start(true, false, () => !Finished);
+            if (Solyn?.TalkingTo != Main.myPlayer) return;
+            BlockerSystem.Start(true, false, () => !Finished && BlockerTimer <= BlockerTimer_Limit);
         };
         DialogueManager.FindByRelativePrefix("CeaselessVoidDiscussionBeforeEnteringRift").GetByRelativeKey("Conversation3").ClickAction = seenBefore =>
         {
             if (Solyn is not null)
             {
+                PlayerTriggeredSolynEnterRift = Solyn.TalkingTo;
                 WaitNearCeaselessVoidRift_WaitPosition = Solyn.NPC.Center;
                 Solyn.AITimer = 0;
                 Solyn.NPC.netUpdate = true;
@@ -102,8 +129,8 @@ public class AntiseedEvent : SolynEvent
             WithRerollCondition(_ => Finished);
         DialogueManager.FindByRelativePrefix("CeaselessVoidDiscussionAfterEnteringRift").GetByRelativeKey("Conversation6").ClickAction = seenBefore =>
         {
-            if (!seenBefore)
-                DialogueSaveSystem.GiveItemToPlayer<TheAntiseed>(Main.LocalPlayer);
+            if (!DialogueSaveSystem.ItemHasBeenGiven<TheAntiseed>())
+                DialogueSaveSystem.GiveItemToPlayer<TheAntiseed>(Main.LocalPlayer, Solyn?.TalkingTo == Main.myPlayer);
         };
         DialogueManager.FindByRelativePrefix("CeaselessVoidDiscussionAfterEnteringRift").GetByRelativeKey("Conversation7").EndAction = seenBefore =>
         {
@@ -112,24 +139,56 @@ public class AntiseedEvent : SolynEvent
 
             // Desperation.
             if (!DialogueSaveSystem.ItemHasBeenGiven<TheAntiseed>())
-                DialogueSaveSystem.GiveItemToPlayer<TheAntiseed>(Main.LocalPlayer);
+                DialogueSaveSystem.GiveItemToPlayer<TheAntiseed>(Main.LocalPlayer, Solyn?.TalkingTo == Main.myPlayer);
         };
 
         ConversationSelector.PriorityConversationSelectionEvent += SelectAntiseedDialogue;
     }
 
-    public override void OnWorldLoad() => SolynHasPlayedRiftEnterSound = false;
+    public override void OnWorldLoad()
+    {
+        SolynHasPlayedRiftEnterSound = false;
+        PlayerTriggeredSolynEnterRift = -1;
+        base.OnWorldLoad();
+    }
 
-    public override void OnWorldUnload() => SolynHasPlayedRiftEnterSound = false;
+    public override void OnWorldUnload()
+    {
+        SolynHasPlayedRiftEnterSound = false;
+        PlayerTriggeredSolynEnterRift = -1;
+        base.OnWorldLoad();
+    }
 
     public override void SaveWorldData(TagCompound tag)
     {
         tag["WaitNearCeaselessVoidRift_WaitPositionX"] = WaitNearCeaselessVoidRift_WaitPosition.X;
         tag["WaitNearCeaselessVoidRift_WaitPositionY"] = WaitNearCeaselessVoidRift_WaitPosition.Y;
+        base.SaveWorldData(tag);
     }
 
-    public override void LoadWorldData(TagCompound tag) =>
-        WaitNearCeaselessVoidRift_WaitPosition = new Vector2(tag.GetFloat("WaitNearCeaselessVoidRift_WaitPositionX"), tag.GetFloat("WaitNearCeaselessVoidRift_WaitPositionY"));
+    public override void LoadWorldData(TagCompound tag)
+    {
+        WaitNearCeaselessVoidRift_WaitPosition = new Vector2(
+            tag.GetFloat("WaitNearCeaselessVoidRift_WaitPositionX"), 
+            tag.GetFloat("WaitNearCeaselessVoidRift_WaitPositionY")
+        );
+
+        base.LoadWorldData(tag);
+    }
+
+    public override void NetSend(BinaryWriter writer)
+    {
+        writer.WriteVector2(WaitNearCeaselessVoidRift_WaitPosition);
+
+        base.NetSend(writer);
+    }
+
+    public override void NetReceive(BinaryReader reader)
+    {
+        WaitNearCeaselessVoidRift_WaitPosition = reader.ReadVector2();
+
+        base.NetReceive(reader);
+    }
 
     private Conversation? SelectAntiseedDialogue()
     {
@@ -167,7 +226,10 @@ public class AntiseedEvent : SolynEvent
             if (Stage == 4)
                 MakeSolynExitRift(Solyn);
             if (Stage == 5)
+            {
+                BlockerTimer++;
                 Solyn?.PerformStandardFraming();
+            }
         }
     }
 
@@ -253,10 +315,14 @@ public class AntiseedEvent : SolynEvent
         npc.noTileCollide = true;
         npc.noGravity = true;
 
+        SolynEnteringRiftScene cutscene = ModContent.GetInstance<SolynEnteringRiftScene>();
+        
         // Update the event once the cutscene finishes.
-        if (SolynHasPlayedRiftEnterSound && !CutsceneManager.IsActive(ModContent.GetInstance<SolynEnteringRiftScene>()) && solyn.AITimer >= 30)
+        // (As server does not know about cutscenes, we use CutsceneLength with solyn.AITimer instead)
+        if (SolynHasPlayedRiftEnterSound && solyn.AITimer >= cutscene.CutsceneLength)
         {
             ModContent.GetInstance<AntiseedEvent>().SafeSetStage(4);
+            BlockerTimer = 0;
             solyn.AITimer = 0;
             npc.netUpdate = true;
         }
@@ -272,14 +338,19 @@ public class AntiseedEvent : SolynEvent
             SoundEngine.PlaySound(GennedAssets.Sounds.Avatar.RiftPlayerAbsorb, npc.Center);
             SolynHasPlayedRiftEnterSound = true;
 
-            CutsceneManager.QueueCutscene(ModContent.GetInstance<SolynEnteringRiftScene>());
+            CutsceneManager.QueueCutscene(cutscene);
         }
     }
 
     private static void MakeSolynExitRift(Solyn solyn)
     {
         NPC npc = solyn.NPC;
-        Player nearestPlayer = Main.player[Player.FindClosest(npc.Center, 1, 1)];
+        Player nearestPlayer = Main.player[PlayerTriggeredSolynEnterRift];
+        if (!nearestPlayer.active)
+        {
+            nearestPlayer = Main.player[Player.FindClosest(npc.Center, 1, 1)];
+        }
+            
         if (solyn.AITimer == 1)
         {
             ScreenShakeSystem.StartShakeAtPoint(npc.Center, 6f);

@@ -114,7 +114,7 @@ public partial class GlobalNPCEventHandlers : GlobalNPC
             if (Main.netMode != NetmodeID.SinglePlayer)
                 PacketManager.SendPacket<PermafrostKeepKeyReceivePacket>();
 
-            Item.NewItem(npc.GetSource_FromThis(), Main.LocalPlayer.Hitbox, ModContent.ItemType<DormantKey>());
+            Main.LocalPlayer.QuickSpawnItem(npc.GetSource_FromThis(), ModContent.ItemType<DormantKey>());
 
             chat = GetLine("PermafrostChat.Saved");
         }

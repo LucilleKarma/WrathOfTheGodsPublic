@@ -32,7 +32,7 @@ public abstract class SpeciallyRenderedRarity : ModRarity
 
         private static void RenderSpecialRarities(ILContext il)
         {
-            var c = new ILCursor(il);
+            ILCursor c = new ILCursor(il);
 
             // Tomat: This IL edit is awesome.  Match into the second loop that
             // renders the text and its outline, modify it to only run the last
@@ -41,7 +41,7 @@ public abstract class SpeciallyRenderedRarity : ModRarity
             // draw operations to use our custom API instead.
 
             // Get popup text.
-            var popupTextLoc = -1;
+            int popupTextLoc = -1;
             c.GotoNext(x => x.MatchLdsfld<Main>(nameof(Main.popupText)));
             c.GotoNext(x => x.MatchStloc(out popupTextLoc));
 

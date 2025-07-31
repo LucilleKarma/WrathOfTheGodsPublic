@@ -95,7 +95,7 @@ public class EmptinessSprayer : ModItem
         Main.spriteBatch.Begin(SpriteSortMode.Immediate, null, null, null, null, null, transformation);
 
         Texture2D layerTexture = GennedAssets.Textures.MiscOPTools.EmptinessSprayer_SprayGlowmask.Value;
-        var maskShader = ShaderManager.GetShader("NoxusBoss.TextureMaskShader");
+        ManagedShader maskShader = ShaderManager.GetShader("NoxusBoss.TextureMaskShader");
         maskShader.TrySetParameter("zoomFactor", Vector2.One * 0.02f);
         maskShader.SetTexture(ParadiseStaticTargetSystem.StaticTarget, 1, SamplerState.LinearClamp);
         maskShader.Apply();

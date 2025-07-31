@@ -2,17 +2,21 @@
 using Luminance.Common.Easings;
 using Luminance.Common.StateMachines;
 using Luminance.Core.Graphics;
+
 using Microsoft.Xna.Framework;
+
 using NoxusBoss.Assets;
 using NoxusBoss.Content.Buffs;
 using NoxusBoss.Content.NPCs.Bosses.Avatar.Projectiles;
 using NoxusBoss.Content.NPCs.Bosses.Avatar.SpecificEffectManagers;
 using NoxusBoss.Content.NPCs.Bosses.Avatar.SpecificEffectManagers.SolynDialogue;
+using NoxusBoss.Content.NPCs.Friendly;
 using NoxusBoss.Content.Particles;
 using NoxusBoss.Core.Balancing;
 using NoxusBoss.Core.CrossCompatibility.Inbound;
 using NoxusBoss.Core.Graphics.GeneralScreenEffects;
 using NoxusBoss.Core.Graphics.SpecificEffectManagers;
+
 using Terraria;
 using Terraria.Audio;
 using Terraria.DataStructures;
@@ -159,12 +163,23 @@ public partial class AvatarOfEmptiness
 
         // Make Solyn warn the player to get away before the Avatar creates the blast.
         SolynAction = s => StandardSolynBehavior_FlyNearPlayer(s, NPC);
-        if (AITimer == explosionWaitTime - SecondsToFrames(3f) && NPC.WithinRange(Target.Center, 1400f))
+        if (AITimer == explosionWaitTime - SecondsToFrames(3f))
         {
-            SolynAction = solyn =>
+            bool anyPlayerCloseToAvatar = false;
+            foreach (Player? player in Main.ActivePlayers)
+            {
+                if (NPC.WithinRange(player.Center, 1400f))
+                {
+                    anyPlayerCloseToAvatar = true;
+                    break;
+                }
+            }
+
+            BattleSolyn? solyn = BattleSolyn.GetOriginalSolyn();
+            if (solyn is not null && anyPlayerCloseToAvatar) 
             {
                 SolynWorldDialogueManager.CreateNew("Mods.NoxusBoss.Dialog.SolynRunAway", -solyn.NPC.spriteDirection, solyn.NPC.Top, 150, true);
-            };
+            }
         }
 
         // Create an explosion.

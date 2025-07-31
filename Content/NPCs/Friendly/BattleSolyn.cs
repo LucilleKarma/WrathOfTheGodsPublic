@@ -1,6 +1,8 @@
 ﻿using Luminance.Core.Graphics;
+
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+
 using NoxusBoss.Assets;
 using NoxusBoss.Content.Items.MiscOPTools;
 using NoxusBoss.Content.NPCs.Bosses.Avatar;
@@ -10,8 +12,12 @@ using NoxusBoss.Content.NPCs.Bosses.Avatar.SpecificEffectManagers.ParadiseReclai
 using NoxusBoss.Content.NPCs.Bosses.Draedon.SpecificEffectManagers;
 using NoxusBoss.Content.Particles;
 using NoxusBoss.Core.Graphics.RenderTargets;
+using NoxusBoss.Core.Netcode;
+using NoxusBoss.Core.Netcode.Packets;
 using NoxusBoss.Core.World.WorldSaving;
+
 using Terraria;
+using Terraria.Audio;
 using Terraria.DataStructures;
 using Terraria.GameContent;
 using Terraria.ID;
@@ -170,6 +176,11 @@ public partial class BattleSolyn : ModNPC
     }
 
     /// <summary>
+    /// Player related to this instance of Solyn
+    /// </summary>
+    public Player Player => Main.player[MultiplayerIndex];
+
+    /// <summary>
     /// Whether the client associated with this Solyn instance is invalid in some way. This only applies to multiplayer clones.
     /// </summary>
     public bool AssociatedClientIsInvalid
@@ -201,7 +212,7 @@ public partial class BattleSolyn : ModNPC
     /// <summary>
     /// Whether this Solyn instance is a clone created for multiplayer purposes.
     /// </summary>
-    public bool IsMultiplayerClone => MultiplayerIndex >= 1;
+    public bool IsMultiplayerClone => NPC.ai[3] == 1;
 
     /// <summary>
     /// The currently frame Solyn should use on her sprite sheet.
@@ -370,6 +381,73 @@ public partial class BattleSolyn : ModNPC
     }
 
     /// <summary>
+    /// Changed player related to Solyn and teleports her to him
+    /// </summary>
+    public void SwitchTo(Player player, bool playTeleportEffect = true)
+    {
+        // For some reason things are bad when client tries to execute this code, so better not to do it
+        if (Main.netMode == NetmodeID.MultiplayerClient)
+            return;
+
+        if (!player.active || player.whoAmI == MultiplayerIndex || IsMultiplayerClone)
+            return;
+
+        Vector2 oldPosition = NPC.position;
+        Vector2 newPosition;
+
+        BattleSolyn? targetSolyn = GetSolynRelatedTo(player);
+        if (targetSolyn is null)
+        {
+            newPosition = player.position;
+
+            MultiplayerIndex = player.whoAmI;
+            NPC.netUpdate = true;
+        }
+        else
+        {
+            (MultiplayerIndex, targetSolyn.MultiplayerIndex) = (targetSolyn.MultiplayerIndex, MultiplayerIndex);
+
+            newPosition = targetSolyn.NPC.position;
+            targetSolyn.NPC.position = oldPosition;
+
+            NPC.netUpdate = true;
+            targetSolyn.NPC.netUpdate = true;
+        }
+
+        if (playTeleportEffect)
+        {
+            PlayTeleportEffect(oldPosition, newPosition);
+        }
+    }
+
+    public static void PlayTeleportEffect(Vector2 from, Vector2 to)
+    {
+        if (Main.netMode == NetmodeID.Server)
+        {
+            PacketManager.SendPacket<BattleSolynTeleportEffectPacket>(from, to);
+            return;
+        }
+
+        // Create teleport particles at the starting position.
+        ExpandingGreyscaleCircleParticle circle = new ExpandingGreyscaleCircleParticle(from, Vector2.Zero, Color.IndianRed, 8, 0.1f);
+        circle.Spawn();
+        MagicBurstParticle burst = new MagicBurstParticle(from, Vector2.Zero, Color.Wheat, 20, 1.04f);
+        burst.Spawn();
+
+        // Play a teleport out sound.
+        SoundEngine.PlaySound(GennedAssets.Sounds.Common.TeleportOut with { Volume = 0.5f, Pitch = 0.3f, MaxInstances = 5, PitchVariance = 0.16f }, from);
+
+        // Create teleport particles at the ending position.
+        circle = new(to, Vector2.Zero, Color.IndianRed, 8, 0.1f);
+        circle.Spawn();
+        burst = new(to, Vector2.Zero, Color.Wheat, 20, 1.04f);
+        burst.Spawn();
+
+        // Play a teleport in sound.
+        SoundEngine.PlaySound(GennedAssets.Sounds.Common.TeleportIn with { Volume = 0.5f, Pitch = 0.3f, MaxInstances = 5, PitchVariance = 0.16f }, from);
+    }
+
+    /// <summary>
     /// Attempts to summon Solyn for a given battle.
     /// </summary>
     /// <param name="spawnSource">The spawn source for Solyn.</param>
@@ -421,8 +499,28 @@ public partial class BattleSolyn : ModNPC
                 continue;
 
             if (!solynMappingsCacheByIndex.ContainsKey(player.whoAmI))
-                NPC.NewNPC(spawnSource, (int)spawnPosition.X, (int)spawnPosition.Y, ModContent.NPCType<BattleSolyn>(), 1, (int)state, 0f, player.whoAmI);
+                NPC.NewNPC(spawnSource, (int)spawnPosition.X, (int)spawnPosition.Y, ModContent.NPCType<BattleSolyn>(), 1, (int)state, 0f, player.whoAmI, 1);
         }
+    }
+
+    public static BattleSolyn? GetOriginalSolyn()
+    {
+        foreach (NPC? npc in Main.ActiveNPCs)
+        {
+            if (npc.ModNPC is BattleSolyn solyn && !solyn.IsMultiplayerClone) return solyn;
+        }
+
+        return null;
+    }
+
+    public static BattleSolyn? GetSolynRelatedTo(Player player)
+    {
+        foreach (NPC? npc in Main.ActiveNPCs)
+        {
+            if (npc.ModNPC is BattleSolyn solyn && solyn.Player == player) return solyn;
+        }
+
+        return null;
     }
 
     #endregion AI

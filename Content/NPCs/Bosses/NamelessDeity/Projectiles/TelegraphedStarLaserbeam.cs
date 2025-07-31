@@ -145,14 +145,17 @@ public class TelegraphedStarLaserbeam : BaseTelegraphedPrimitiveLaserbeam, IDraw
             PitchVariance = 0.12f
         });
 
-        for (int i = 0; i < 35; i++)
+        if (Main.netMode != NetmodeID.Server)
         {
-            float arcInterpolant = Main.rand.NextFloat();
-            Vector2 fireVelocity = Projectile.velocity.RotatedBy(Main.rand.NextFromList(-1f, 1f) * arcInterpolant * 0.44f) * Lerp(120f, 31f, arcInterpolant) * Main.rand.NextFloat(0.6f, 1.5f);
-            fireVelocity += Main.rand.NextVector2Circular(15f, 15f);
+            for (int i = 0; i < 35; i++)
+            {
+                float arcInterpolant = Main.rand.NextFloat();
+                Vector2 fireVelocity = Projectile.velocity.RotatedBy(Main.rand.NextFromList(-1f, 1f) * arcInterpolant * 0.44f) * Lerp(120f, 31f, arcInterpolant) * Main.rand.NextFloat(0.6f, 1.5f);
+                fireVelocity += Main.rand.NextVector2Circular(15f, 15f);
 
-            float fireSize = SmoothStep(70f, 280f, arcInterpolant);
-            NamelessFireParticleSystemManager.ParticleSystem.CreateNew(Projectile.Center, fireVelocity, new Vector2(Main.rand.NextFloat(0.5f, 1f), 1f) * fireSize, new Color(255, 150, 0));
+                float fireSize = SmoothStep(70f, 280f, arcInterpolant);
+                NamelessFireParticleSystemManager.ParticleSystem.CreateNew(Projectile.Center, fireVelocity, new Vector2(Main.rand.NextFloat(0.5f, 1f), 1f) * fireSize, new Color(255, 150, 0));
+            }
         }
     }
 

@@ -72,7 +72,7 @@ public class ControlledStar : ModProjectile, IDrawsWithShader, IProjOwnedByBoss<
         Color mainColor = Color.Lerp(new Color(204, 163, 79), new Color(100, 199, 255), Saturate(UnstableOverlayInterpolant).Cubed());
         Color darkerColor = Color.Lerp(new Color(204, 92, 25), new Color(255, 255, 255), Saturate(UnstableOverlayInterpolant).Cubed());
 
-        var fireballShader = ShaderManager.GetShader("NoxusBoss.SunShader");
+        ManagedShader fireballShader = ShaderManager.GetShader("NoxusBoss.SunShader");
         fireballShader.TrySetParameter("coronaIntensityFactor", UnstableOverlayInterpolant.Squared() * 1.92f + 0.044f);
         fireballShader.TrySetParameter("mainColor", mainColor);
         fireballShader.TrySetParameter("darkerColor", darkerColor);

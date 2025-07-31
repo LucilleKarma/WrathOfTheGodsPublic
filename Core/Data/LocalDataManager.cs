@@ -192,7 +192,7 @@ public sealed class LocalDataManager : ModSystem
                 return manualCast;
 
             Dictionary<string, TJsonData> convertedDictionary = [];
-            foreach (var kv in storedData.Data)
+            foreach (KeyValuePair<string, object> kv in storedData.Data)
                 convertedDictionary[kv.Key] = (TJsonData)kv.Value;
 
             return convertedDictionary;

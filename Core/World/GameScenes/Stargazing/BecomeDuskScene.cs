@@ -1,12 +1,15 @@
 ﻿using Luminance.Common.Easings;
 using Luminance.Core.Cutscenes;
+
 using Microsoft.Xna.Framework;
+
 using NoxusBoss.Assets;
 using NoxusBoss.Content.NPCs.Friendly;
 using NoxusBoss.Core.Netcode;
 using NoxusBoss.Core.Netcode.Packets;
 using NoxusBoss.Core.SoundSystems;
 using NoxusBoss.Core.World.WorldGeneration;
+
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
@@ -31,7 +34,7 @@ public class BecomeDuskScene : Cutscene
     {
         get;
         set;
-    }
+    } = -1;
 
     /// <summary>
     /// The screen position at the start of the animation.
@@ -70,6 +73,8 @@ public class BecomeDuskScene : Cutscene
     public override void OnBegin()
     {
         OriginalScreenPosition = Main.screenPosition;
+        if (CutsceneStarterPlayerIndex != -1) return;
+
         TimeAtStartOfAnimation = (int)Main.time;
         CutsceneStarterPlayerIndex = Main.myPlayer;
         if (Main.netMode != NetmodeID.SinglePlayer)
@@ -83,8 +88,10 @@ public class BecomeDuskScene : Cutscene
         EndAction?.Invoke();
         EndAction = null;
 
-        if (Main.netMode != NetmodeID.SinglePlayer)
+        if (CutsceneStarterPlayerIndex == Main.myPlayer && Main.netMode != NetmodeID.SinglePlayer)
             PacketManager.SendPacket<DuskCutsceneTimePacket>();
+
+        CutsceneStarterPlayerIndex = -1;
     }
 
     public override void Update()
@@ -98,7 +105,7 @@ public class BecomeDuskScene : Cutscene
         ClockTickSound ??= LoopedSoundManager.CreateNew(GennedAssets.Sounds.NamelessDeity.ClockTick with { Volume = 1.1f, IsLooped = true }, () => !IsActive);
         ClockTickSound?.Update(Main.screenPosition + Main.ScreenSize.ToVector2() * 0.5f);
 
-        if (Timer == CutsceneLength / 2)
+        if (CutsceneStarterPlayerIndex == Main.myPlayer && Timer == CutsceneLength / 2)
         {
             Vector2 telescopePosition = SolynCampsiteWorldGen.TelescopePosition.ToWorldCoordinates(30f, 8f);
             Main.LocalPlayer.Bottom = FindGroundVertical(telescopePosition.ToTileCoordinates()).ToWorldCoordinates(8f, 0f);
@@ -113,6 +120,9 @@ public class BecomeDuskScene : Cutscene
                 npc.Bottom = FindGroundVertical((telescopePosition + Vector2.UnitX * 27f).ToTileCoordinates()).ToWorldCoordinates(8f, 0f);
                 npc.direction = -1;
                 npc.netUpdate = true;
+
+                // Since the cutscene plays on a client the server handles the NPC's, we need to tell server to teleport her.
+                PacketManager.SendPacket<TeleportNPCPacket>(npc.whoAmI);
             }
         }
 
@@ -121,6 +131,9 @@ public class BecomeDuskScene : Cutscene
 
     public override void ModifyScreenPosition()
     {
+        if (CutsceneStarterPlayerIndex != Main.myPlayer)
+            return;
+
         float moveBackInterpolant = InverseLerp(0.93f, 1f, LifetimeRatio);
         float moveUpInterpolant = InverseLerpBump(0f, 0.3f, 0.93f, 1f, LifetimeRatio);
         float moveUpOffset = EasingCurves.Quadratic.Evaluate(EasingType.InOut, 0f, 1f, moveUpInterpolant) * Main.screenHeight;

@@ -101,7 +101,7 @@ public partial class NamelessDeityBoss : ModNPC
         int spinDuration = ClockConstellation_RegularSpinDuration + ClockConstellation_ReversedTimeSpinDuration;
         int waitDuration = (int)(1f / ClockConstellation_FadeOutIncrement) + ClockConstellation_TollWaitDuration * ClockConstellation.MaxTolls;
         int attackDuration = redirectTime + ClockConstellation_ClockConvergenceDuration + spinDuration + waitDuration + 10;
-        var clocks = AllProjectilesByID(ModContent.ProjectileType<ClockConstellation>());
+        IEnumerable<Projectile> clocks = AllProjectilesByID(ModContent.ProjectileType<ClockConstellation>());
         bool clockExists = clocks.Any();
 
         // Flap wings.
@@ -167,7 +167,7 @@ public partial class NamelessDeityBoss : ModNPC
 
         if (AITimer >= attackDuration && !ClockConstellation_AttackHasConcluded)
         {
-            foreach (var clock in clocks)
+            foreach (Projectile? clock in clocks)
             {
                 clock.Kill();
                 ImmediateTeleportTo(clock.Center);

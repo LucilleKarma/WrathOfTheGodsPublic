@@ -38,4 +38,20 @@ public class DialogueManager : ModSystem
         Conversations[localizationPrefix] = new Conversation(localizationPrefix, rootNodeKey);
         return Conversations[localizationPrefix];
     }
+
+    /// <summary>
+    /// Finds a given dialogue by translation key
+    /// </summary>
+    public static Dialogue? FindDialogue(string textKey)
+    {
+        foreach (Conversation conv in Conversations.Values)
+        {
+            foreach (Dialogue dialogue in conv.Tree.PossibleDialogue.Values)
+            {
+                if (dialogue.TextKey == textKey) return dialogue;
+            }
+        }
+
+        return null;
+    }
 }

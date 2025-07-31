@@ -41,7 +41,7 @@ public class ThePurifier : ModItem
     public override void ModifyTooltips(List<TooltipLine> tooltips)
     {
         // Ensure that the tooltip is colored with a danger-indicating red.
-        foreach (var tooltip in tooltips)
+        foreach (TooltipLine tooltip in tooltips)
         {
             if (!tooltip.Name.Contains("Tooltip"))
                 continue;

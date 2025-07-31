@@ -1,4 +1,10 @@
 ﻿using Microsoft.Xna.Framework;
+
+using NoxusBoss.Core.Netcode;
+using NoxusBoss.Core.Netcode.Packets;
+
+using Terraria;
+using Terraria.ID;
 using Terraria.Localization;
 
 namespace NoxusBoss.Core.DialogueSystem;
@@ -88,8 +94,13 @@ public class Dialogue
     /// <summary>
     /// Invokes the <see cref="EndAction"/>.
     /// </summary>
-    public void InvokeEndAction()
+    public void InvokeEndAction(bool serverAction = false)
     {
+        if (!serverAction && Main.netMode == NetmodeID.MultiplayerClient)
+        {
+            PacketManager.SendPacket<DialogueEventPacket>(TextKey, DialogueEventPacket.END_ACTION);
+        }
+
         bool seenBefore = true;
         if (!DialogueSaveSystem.seenDialogue.Contains(TextKey))
         {
@@ -103,8 +114,13 @@ public class Dialogue
     /// <summary>
     /// Invokes the <see cref="ClickAction"/>.
     /// </summary>
-    public void InvokeClickAction()
+    public void InvokeClickAction(bool serverAction = false)
     {
+        if (!serverAction && Main.netMode == NetmodeID.MultiplayerClient)
+        {
+            PacketManager.SendPacket<DialogueEventPacket>(TextKey, DialogueEventPacket.CLICK_ACTION);
+        }
+
         bool clickedBefore = true;
         if (!DialogueSaveSystem.clickedDialogue.Contains(TextKey))
         {

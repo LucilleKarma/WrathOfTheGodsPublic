@@ -1,6 +1,8 @@
 ﻿using Luminance.Core.Graphics;
+
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+
 using NoxusBoss.Assets;
 using NoxusBoss.Content.Emotes;
 using NoxusBoss.Content.Items.MiscOPTools;
@@ -16,11 +18,14 @@ using NoxusBoss.Core.DialogueSystem;
 using NoxusBoss.Core.Graphics.SpecificEffectManagers;
 using NoxusBoss.Core.Graphics.TentInterior;
 using NoxusBoss.Core.Graphics.UI.SolynDialogue;
+using NoxusBoss.Core.Netcode;
+using NoxusBoss.Core.Netcode.Packets;
 using NoxusBoss.Core.World.GameScenes.AvatarUniverseExploration;
 using NoxusBoss.Core.World.GameScenes.EndCredits;
 using NoxusBoss.Core.World.Subworlds;
 using NoxusBoss.Core.World.WorldGeneration;
 using NoxusBoss.Core.World.WorldSaving;
+
 using Terraria;
 using Terraria.Audio;
 using Terraria.DataStructures;
@@ -29,6 +34,7 @@ using Terraria.GameContent.Bestiary;
 using Terraria.ID;
 using Terraria.ModLoader;
 using Terraria.ModLoader.IO;
+
 using static NoxusBoss.Core.CrossCompatibility.Inbound.CalamityRemix.CalRemixCompatibilitySystem;
 
 namespace NoxusBoss.Content.NPCs.Friendly;
@@ -135,6 +141,15 @@ public partial class Solyn : ModNPC, IPixelatedPrimitiveRenderer
     /// How long it's been since anyone last talked to Solyn.
     /// </summary>
     public int TimeSinceLastTalk
+    {
+        get;
+        set;
+    }
+
+    /// <summary>
+    /// The player Solyn is talking to.
+    /// </summary>
+    public int TalkingTo
     {
         get;
         set;
@@ -290,7 +305,7 @@ public partial class Solyn : ModNPC, IPixelatedPrimitiveRenderer
         NPC.breath = 200;
         NPC.breathCounter = 0;
         NPC.Opacity = Saturate(NPC.Opacity + 0.01f);
-        CanBeSpokenTo = true;
+        CanBeSpokenTo = TalkingTo == -1 || TalkingTo == Main.myPlayer;
         HasBackglow = false;
         SoulForm = false;
         Squish *= 0.85f;
@@ -369,7 +384,7 @@ public partial class Solyn : ModNPC, IPixelatedPrimitiveRenderer
         HandleConversationEffects();
 
         // Zoom in on Solyn based on the zoom interpolant.
-        if (ZoomInInterpolant > 0f)
+        if (ZoomInInterpolant > 0f && TalkingTo == Main.myPlayer)
         {
             CameraPanSystem.Zoom = Pow(ZoomInInterpolant, 0.7f) * 0.6f;
             CameraPanSystem.PanTowards(NPC.Center, ZoomInInterpolant);
@@ -409,7 +424,7 @@ public partial class Solyn : ModNPC, IPixelatedPrimitiveRenderer
 
         string currentDialogueUsedByUI = ModContent.GetInstance<SolynDialogSystem>().DialogUI.CurrentDialogueNode?.TextKey ?? string.Empty;
         if (!CurrentConversation.Tree.PossibleDialogue.Values.Any(d => d.TextKey == currentDialogueUsedByUI))
-            ModContent.GetInstance<SolynDialogSystem>().DialogUI.CurrentDialogueNode = CurrentConversation.RootSelectionFunction();
+            ModContent.GetInstance<SolynDialogSystem>().DialogUI.SetDialogue(CurrentConversation.RootSelectionFunction());
 
         SolynDialogSystem.ShowUI();
 
@@ -433,11 +448,25 @@ public partial class Solyn : ModNPC, IPixelatedPrimitiveRenderer
 
     public void HandleConversationEffects()
     {
+        if (Main.netMode == NetmodeID.Server) return;
+
+        Player player = Main.LocalPlayer;
+        if (TalkingTo == -1 && player.talkNPC == NPC.whoAmI)
+        {
+            TalkingTo = player.whoAmI;
+            PacketManager.SendPacket<PlayerTalkToSolynPacket>(NPC.whoAmI, TalkingTo);
+        }
+        else if (TalkingTo == player.whoAmI && (player.talkNPC != NPC.whoAmI || !CanBeSpokenTo))
+        {
+            TalkingTo = -1;
+            PacketManager.SendPacket<PlayerTalkToSolynPacket>(NPC.whoAmI, TalkingTo);
+        }
+
         CurrentConversation ??= ConversationSelector.ChooseRandomSolynConversation(this);
         ConversationSelector.Evaluate(this);
 
         // Toggle the UI as necessary.
-        if ((Main.LocalPlayer.talkNPC == NPC.whoAmI && CanBeSpokenTo) || ForcedConversation)
+        if ((TalkingTo == player.whoAmI && CanBeSpokenTo) || ForcedConversation)
         {
             SpeakToPlayerEffects();
             return;
@@ -446,7 +475,7 @@ public partial class Solyn : ModNPC, IPixelatedPrimitiveRenderer
         if (ForcedConversation)
             return;
 
-        if (Main.LocalPlayer.talkNPC == -1 || Main.npc[Main.LocalPlayer.talkNPC].type != Type)
+        if (TalkingTo != player.whoAmI)
             SolynDialogSystem.HideUI();
 
         // Zoom out.

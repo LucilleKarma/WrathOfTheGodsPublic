@@ -1,11 +1,16 @@
 ﻿using Luminance.Common.StateMachines;
 using Luminance.Core.Graphics;
+
 using Microsoft.Xna.Framework;
+
 using NoxusBoss.Content.NPCs.Bosses.Avatar.SpecificEffectManagers.SolynDialogue;
 using NoxusBoss.Content.NPCs.Bosses.Draedon.Projectiles.SolynProjectiles;
 using NoxusBoss.Content.NPCs.Bosses.Draedon.SpecificEffectManagers;
 using NoxusBoss.Content.NPCs.Friendly;
 using NoxusBoss.Core.CrossCompatibility.Inbound.BaseCalamity;
+using NoxusBoss.Core.Netcode;
+using NoxusBoss.Core.Netcode.Packets;
+
 using Terraria;
 using Terraria.DataStructures;
 using Terraria.Localization;
@@ -83,8 +88,10 @@ public partial class MarsBody
             TeachPlayerAboutTeamAttack_HitByBeam = true;
             AITimer = 0;
         }
+
+        Player caster = Main.player[beam.owner];
         float antiSpacePush = InverseLerp(900f, 2700f, NPC.Center.Y);
-        NPC.velocity += Target.SafeDirectionTo(NPC.Center) * beam.localNPCHitCooldown * TeachPlayerAboutTeamAttack_LaserPushForce * antiSpacePush;
+        NPC.velocity += caster.SafeDirectionTo(NPC.Center) * beam.localNPCHitCooldown * TeachPlayerAboutTeamAttack_LaserPushForce * antiSpacePush;
         NPC.netUpdate = true;
     }
 
@@ -146,9 +153,14 @@ public partial class MarsBody
     /// </summary>
     public void DoBehavior_TeachPlayerAboutTeamAttack_Solyn(BattleSolyn solyn)
     {
+        if (solyn.IsMultiplayerClone)
+        {
+            return;
+        }
+
         NPC solynNPC = solyn.NPC;
-        Vector2 lookDestination = Target.Center;
-        Vector2 hoverDestination = Target.Center + new Vector2(Target.direction * -30f, -50f);
+        Vector2 lookDestination = solyn.Player.Center;
+        Vector2 hoverDestination = solyn.Player.Center + new Vector2(solyn.Player.direction * -30f, -50f);
 
         solynNPC.Center = Vector2.Lerp(solynNPC.Center, hoverDestination, 0.1f);
         solynNPC.SmoothFlyNear(hoverDestination, 0.27f, 0.6f);
@@ -184,27 +196,33 @@ public partial class MarsBody
     /// </summary>
     public void HandleSolynPlayerTeamAttack(BattleSolyn solyn)
     {
+        if (solyn.IsMultiplayerClone)
+        {
+            return;
+        }
+
         if (!SolynAndPlayerCanDoTeamAttack)
         {
             ResetSolynPlayerTeamAttackTimers();
             return;
         }
 
+        Player player = solyn.Player;
         int beamID = ModContent.ProjectileType<SolynTagTeamBeam>();
-        if (SolynEnergyBeamIsCharging(Main.player[solyn.MultiplayerIndex]))
+        if (SolynEnergyBeamIsCharging(player))
         {
-            Vector2 hoverDestination = Target.Center + (TagTeamBeamDirection + PiOver2).ToRotationVector2() * 67f;
+            Vector2 hoverDestination = player.Center + (TagTeamBeamDirection + PiOver2).ToRotationVector2() * 67f;
             solyn.NPC.spriteDirection = Cos(TagTeamBeamDirection).NonZeroSign();
             solyn.NPC.SmoothFlyNear(hoverDestination, 0.4f, 0.6f);
             solyn.Frame = 44f;
 
-            Target.SetCompositeArmFront(true, Player.CompositeArmStretchAmount.Full, TagTeamBeamDirection - PiOver2);
-            Target.direction = solyn.NPC.spriteDirection;
+            player.SetCompositeArmFront(true, Player.CompositeArmStretchAmount.Full, TagTeamBeamDirection - PiOver2);
+            player.direction = solyn.NPC.spriteDirection;
 
             float idealRotation = TagTeamBeamDirection;
             foreach (Projectile projectile in Main.ActiveProjectiles)
             {
-                if (projectile.owner != NPC.target || projectile.type != beamID)
+                if (projectile.owner != player.whoAmI || projectile.type != beamID)
                     continue;
 
                 idealRotation = projectile.velocity.ToRotation();
@@ -216,61 +234,70 @@ public partial class MarsBody
 
             solyn.NPC.rotation = idealRotation.AngleLerp(0f, 0.45f);
 
-            int attackTimer = GetSolynPlayerTeamAttackTimer(Main.player[solyn.MultiplayerIndex]);
+            int attackTimer = SolynPlayerTeamAttackTimer;
             if (attackTimer <= 0 || attackTimer >= 19)
             {
-                Target.eyeHelper.BlinkBecausePlayerGotHurt();
+                player.eyeHelper.BlinkBecausePlayerGotHurt();
                 solyn.Frame = 45f;
             }
         }
 
-        if (Main.myPlayer != NPC.target)
-            return;
-
         // Let the beam simply exist until it dies if one is present, rather than having another one be charged up
-        if (Target.ownedProjectileCounts[beamID] >= 1)
+        if (player.ownedProjectileCounts[beamID] >= 1)
         {
             ResetSolynPlayerTeamAttackTimers();
             return;
         }
 
-        // Handle beam charge up effects.
-        if (Main.mouseRight && Main.mouseLeft)
+        if (Main.myPlayer == player.whoAmI)
         {
-            SolynPlayerTeamAttackTimers[Main.myPlayer] = GetSolynPlayerTeamAttackTimer(Main.LocalPlayer) + 1;
-
-            // Charge up the beam with a custom visual.
-            if (SolynPlayerTeamAttackTimers[Main.myPlayer] == 2)
+            // Handle beam charge up effects.
+            if (Main.mouseRight && Main.mouseLeft)
             {
-                TagTeamBeamDirection = Target.AngleTo(Main.MouseWorld);
-                NPC.netUpdate = true;
+                SolynPlayerTeamAttackTimer++;
 
-                NewProjectileBetter(Target.GetSource_FromThis(), Target.Center, TagTeamBeamDirection.ToRotationVector2(), ModContent.ProjectileType<SolynTagTeamChargeUp>(), 0, 0f, solyn.MultiplayerIndex, solyn.NPC.whoAmI);
+                //Tell server and other clients that we are charging beam
+                if (SolynPlayerTeamAttackTimer == 1)
+                {
+                    PacketManager.SendPacket<MarsBeamChargePacket>();
+                }
+
+                // Charge up the beam with a custom visual.
+                if (SolynPlayerTeamAttackTimer == 2)
+                {
+                    TagTeamBeamDirection = player.AngleTo(Main.MouseWorld);
+                    NewProjectileBetter(player.GetSource_FromThis(), player.Center, TagTeamBeamDirection.ToRotationVector2(), ModContent.ProjectileType<SolynTagTeamChargeUp>(), 0, 0f, solyn.MultiplayerIndex, solyn.NPC.whoAmI);
+                }
+
+                // Fire the laser when ready.
+                if (SolynPlayerTeamAttackTimer >= SolynTagTeamChargeUp.Lifetime)
+                {
+                    ResetSolynPlayerTeamAttackTimers();
+
+                    // This looks stupid. And I gotta say, it is.
+                    // But due to a non-defensive attempt by the PetsOverhaulCalamityAddon mod to access item data from projectile sources, this is necessary for compatibility with that mod in this fight.
+                    // They make the mistaken assumption that damage to NPCs is all from player items and not potentially from miscellaneous/neutral sources for some reason, and I'm accomodating this via this
+                    // scuffed solution (and making a PR to their repo shortly after).
+                    // It doesn't really affect things otherwise it seems, so all is good.
+                    EntitySource_ItemUse source = new EntitySource_ItemUse(player, new Item());
+                    Projectile.NewProjectile(source, player.Center, TagTeamBeamDirection.ToRotationVector2(), beamID, TagTeamBeamBaseDamage, 0f, solyn.MultiplayerIndex, solyn.NPC.whoAmI);
+                }
+
+                player.channel = true;
+                player.itemAnimation = 0;
+                player.itemTime = 0;
+            }
+            else
+            {
+                ResetSolynPlayerTeamAttackTimers();
             }
 
-            // Fire the laser when ready.
-            if (SolynPlayerTeamAttackTimers[Main.myPlayer] >= SolynTagTeamChargeUp.Lifetime)
-            {
-                SolynPlayerTeamAttackTimers[Main.myPlayer] = 0;
-                NPC.netUpdate = true;
-
-                // This looks stupid. And I gotta say, it is.
-                // But due to a non-defensive attempt by the PetsOverhaulCalamityAddon mod to access item data from projectile sources, this is necessary for compatibility with that mod in this fight.
-                // They make the mistaken assumption that damage to NPCs is all from player items and not potentially from miscellaneous/neutral sources for some reason, and I'm accomodating this via this
-                // scuffed solution (and making a PR to their repo shortly after).
-                // It doesn't really affect things otherwise it seems, so all is good.
-                EntitySource_ItemUse source = new EntitySource_ItemUse(Target, new Item());
-
-                Projectile.NewProjectile(source, Target.Center, TagTeamBeamDirection.ToRotationVector2(), beamID, TagTeamBeamBaseDamage, 0f, solyn.MultiplayerIndex, solyn.NPC.whoAmI);
-            }
-
-            Target.channel = true;
-            Target.itemAnimation = 0;
-            Target.itemTime = 0;
+            return;
         }
-        else
+
+        if (SolynPlayerTeamAttackTimer > 0)
         {
-            ResetSolynPlayerTeamAttackTimers();
+            SolynPlayerTeamAttackTimer++;
         }
     }
 }

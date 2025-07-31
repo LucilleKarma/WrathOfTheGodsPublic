@@ -1,5 +1,7 @@
 ﻿using Luminance.Common.StateMachines;
+
 using Microsoft.Xna.Framework;
+
 using NoxusBoss.Assets;
 using NoxusBoss.Content.NPCs.Bosses.Avatar.SpecificEffectManagers;
 using NoxusBoss.Content.NPCs.Friendly;
@@ -7,6 +9,7 @@ using NoxusBoss.Core.Balancing;
 using NoxusBoss.Core.Graphics.GeneralScreenEffects;
 using NoxusBoss.Core.Netcode;
 using NoxusBoss.Core.Netcode.Packets;
+
 using Terraria;
 using Terraria.Audio;
 using Terraria.ID;
@@ -187,7 +190,7 @@ public partial class AvatarOfEmptiness
 
         if (AITimer == 1)
         {
-            solynNPC.Center = Target.Center;
+            solynNPC.Center = solyn.Player.Center;
             solynNPC.netUpdate = true;
         }
 

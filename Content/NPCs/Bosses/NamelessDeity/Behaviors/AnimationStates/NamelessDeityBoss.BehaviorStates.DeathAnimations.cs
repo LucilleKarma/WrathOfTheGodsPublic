@@ -149,7 +149,7 @@ public partial class NamelessDeityBoss : ModNPC
 
         if (AITimer <= blackDelay + riseDelay + 60f)
         {
-            foreach (var hand in Hands)
+            foreach (NamelessDeityHand hand in Hands)
             {
                 hand.Opacity = 0f;
                 hand.HandType = NamelessDeityHandType.OpenPalm;
@@ -254,7 +254,7 @@ public partial class NamelessDeityBoss : ModNPC
         // Cast a ridiculous quantity of arms outward.
         if (AITimer >= blackDelay + riseDelay + riseTime && AITimer % handReleaseRate == 0f && Hands.Count < handCount)
         {
-            foreach (var hand in Hands)
+            foreach (NamelessDeityHand hand in Hands)
                 hand.Opacity = 1f;
             ConjureHandsAtPosition(hoverDestinationForHand(Hands.Count), Vector2.Zero);
         }
@@ -373,7 +373,7 @@ public partial class NamelessDeityBoss : ModNPC
         CalamityCompatibility.MakeCalamityBossBarClose(NPC);
 
         // Make hands invisible.
-        foreach (var hand in Hands)
+        foreach (NamelessDeityHand hand in Hands)
             hand.Opacity = 0f;
 
         // Teleport in front of the target on the first frame and create a funny death sound.

@@ -74,15 +74,15 @@ public class InterfacedEntityDrawSystem : ModSystem
     public static void DrawShaderEntities(List<IDrawsWithShader> orderedDrawers)
     {
         // Draw all projectiles that have the shader interface.
-        foreach (var drawer in orderedDrawers.Where(d => !d.ShaderShouldDrawAdditively))
+        foreach (IDrawsWithShader? drawer in orderedDrawers.Where(d => !d.ShaderShouldDrawAdditively))
             drawer.DrawWithShader(Main.spriteBatch);
 
         // Check for shader projectiles marked with the additive bool.
-        var additiveDrawers = orderedDrawers.Where(d => d.ShaderShouldDrawAdditively);
+        IEnumerable<IDrawsWithShader> additiveDrawers = orderedDrawers.Where(d => d.ShaderShouldDrawAdditively);
         if (additiveDrawers.Any())
         {
             Main.spriteBatch.PrepareForShaders(BlendState.Additive);
-            foreach (var drawer in additiveDrawers)
+            foreach (IDrawsWithShader? drawer in additiveDrawers)
                 drawer.DrawWithShader(Main.spriteBatch);
         }
     }
@@ -90,7 +90,7 @@ public class InterfacedEntityDrawSystem : ModSystem
     public static void DrawSubtractiveProjectiles(List<IDrawSubtractive> orderedDrawers)
     {
         // Draw all projectiles that have the subtractive interface.
-        foreach (var drawer in orderedDrawers)
+        foreach (IDrawSubtractive drawer in orderedDrawers)
             drawer.DrawSubtractive(Main.spriteBatch);
     }
 }

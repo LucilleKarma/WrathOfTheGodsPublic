@@ -5,6 +5,8 @@ using Microsoft.Xna.Framework.Graphics;
 using NoxusBoss.Assets;
 using NoxusBoss.Assets.Fonts;
 using NoxusBoss.Core.DialogueSystem;
+using NoxusBoss.Core.Netcode;
+using NoxusBoss.Core.Netcode.Packets;
 using NoxusBoss.Core.World.Subworlds;
 using ReLogic.Graphics;
 using Terraria;
@@ -88,7 +90,7 @@ public class SolynDialogUIManager
     public Dialogue? CurrentDialogueNode
     {
         get;
-        set;
+        private set;
     }
 
     public static float DialogScale => 0.4f;
@@ -139,7 +141,7 @@ public class SolynDialogUIManager
     {
         // Check if the dialog node has children that are spoken by the player.
         // These only appear once the dialogue has been said completely.
-        var childrenNodes = CurrentDialogueNode?.Children;
+        List<Dialogue>? childrenNodes = CurrentDialogueNode?.Children;
         List<string> playerResponses = [];
         if (childrenNodes is not null && childrenNodes.Count != 0 && DialogueText == ResponseToSay)
         {
@@ -238,6 +240,15 @@ public class SolynDialogUIManager
         RenderContinueButton(dividerCenter + new Vector2(-divider.Width * 0.485f, DialogScale * 50f) * scale);
     }
 
+    public void SetDialogue(Dialogue? dialogue)
+    {
+        CurrentDialogueNode = dialogue;
+        if (dialogue is not null)
+        {
+            PacketManager.SendPacket<PlayDialoguePacket>(dialogue.TextKey);
+        }
+    }
+
     private static string WrapText(string text, DynamicSpriteFont font)
     {
         Texture2D divider = GennedAssets.Textures.SolynDialogue.Divider;
@@ -264,7 +275,7 @@ public class SolynDialogUIManager
 
         for (int i = 0; i < totalLines + 1; i++)
         {
-            var linesForText = splitText.Where(t => t.LineIndex == i).ToList();
+            List<TextPart> linesForText = splitText.Where(t => t.LineIndex == i).ToList();
 
             // Draw the line parts.
             int partIndex = 0;
@@ -390,7 +401,7 @@ public class SolynDialogUIManager
         if (CurrentDialogueNode is null)
             return;
 
-        var childrenNodes = CurrentDialogueNode.Children;
+        List<Dialogue>? childrenNodes = CurrentDialogueNode.Children;
         if (childrenNodes is null)
             return;
 
@@ -405,7 +416,7 @@ public class SolynDialogUIManager
                 oldNode.InvokeClickAction();
                 if (DialogueText == ResponseToSay || ResponseToSay is null)
                 {
-                    CurrentDialogueNode = childrenNodes.First();
+                    SetDialogue(childrenNodes.First());
                     ResponseToSay = CurrentDialogueNode.Text;
                 }
                 else
@@ -440,7 +451,7 @@ public class SolynDialogUIManager
     {
         // If the dialogue has no children on the dialogue tree, terminate immediately, since there's no dialogue to transfer to.
         // This should never happen in practice, but it's a useful sanity check.
-        var childrenNodes = CurrentDialogueNode?.Children;
+        List<Dialogue>? childrenNodes = CurrentDialogueNode?.Children;
         if (childrenNodes is null || childrenNodes.Count == 0)
             return;
 
@@ -448,14 +459,16 @@ public class SolynDialogUIManager
         {
             if (childrenNodes[i].Text == text)
             {
+                PacketManager.SendPacket<PlayDialoguePacket>(childrenNodes[i].TextKey);
+
                 childrenNodes[i].InvokeClickAction();
                 childrenNodes[i].InvokeEndAction();
                 List<Dialogue> availableChildren = childrenNodes[i].Children.Where(n => n.SelectionCondition()).ToList();
 
                 if (availableChildren.Count == 1)
                 {
-                    CurrentDialogueNode = availableChildren.First();
-                    ResponseToSay = CurrentDialogueNode.Text;
+                    SetDialogue(availableChildren.First());
+                    ResponseToSay = CurrentDialogueNode!.Text;
                     ResetDialogueData();
                 }
                 break;

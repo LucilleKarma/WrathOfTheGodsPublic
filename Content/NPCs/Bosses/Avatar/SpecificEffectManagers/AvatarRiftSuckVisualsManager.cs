@@ -295,7 +295,7 @@ public class AvatarRiftSuckVisualsManager : ModSystem
         Vector3[] palette = AvatarOfEmptinessSky.Palettes["Standard"];
 
         // Draw the background with a special shader.
-        var backgroundShader = ShaderManager.GetShader("NoxusBoss.AvatarPhase2BackgroundShader");
+        ManagedShader backgroundShader = ShaderManager.GetShader("NoxusBoss.AvatarPhase2BackgroundShader");
         backgroundShader.TrySetParameter("intensity", 1f);
         backgroundShader.TrySetParameter("screenOffset", Main.screenPosition * 0.00007f);
         backgroundShader.TrySetParameter("gradientCount", palette.Length);

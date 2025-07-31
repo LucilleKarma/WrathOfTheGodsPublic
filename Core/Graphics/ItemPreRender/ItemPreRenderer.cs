@@ -1,7 +1,10 @@
 ﻿using System.Reflection;
+
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+
 using ReLogic.Content;
+
 using Terraria;
 using Terraria.GameContent;
 using Terraria.ID;
@@ -98,7 +101,7 @@ public sealed class ItemPreRenderer : ModSystem
             foreach ((int itemType, _) in preRenderedItems)
             {
                 Texture2D originalTexture = originalTextures[itemType];
-                var renderTarget = new RenderTarget2D(
+                RenderTarget2D renderTarget = new RenderTarget2D(
                     Main.graphics.GraphicsDevice,
                     originalTexture.Width,
                     originalTexture.Height
@@ -114,6 +117,9 @@ public sealed class ItemPreRenderer : ModSystem
     {
         foreach ((int itemType, IPreRenderedItem preRenderedItem) in preRenderedItems)
         {
+            if (!renderTargets.ContainsKey(itemType))
+                continue;
+
             Texture2D originalTexture = originalTextures[itemType];
             RenderTarget2D renderTarget = renderTargets[itemType];
 

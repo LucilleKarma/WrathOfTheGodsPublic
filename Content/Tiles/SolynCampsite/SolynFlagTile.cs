@@ -1,10 +1,12 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+
 using NoxusBoss.Assets;
 using NoxusBoss.Content.Tiles.TileEntities;
 using NoxusBoss.Core.Netcode;
 using NoxusBoss.Core.Netcode.Packets;
 using NoxusBoss.Core.World.WorldGeneration;
+
 using Terraria;
 using Terraria.DataStructures;
 using Terraria.Enums;
@@ -53,13 +55,12 @@ public class SolynFlagTile : ModTile
         HitSound = SoundID.Tink;
     }
 
+    public override bool CanPlace(int i, int j) => SolynCampsiteWorldGen.FlagPosition == Point.Zero;
+
     public override void PlaceInWorld(int i, int j, Item item)
     {
-        if (SolynCampsiteWorldGen.FlagPosition == Point.Zero)
-        {
-            SolynCampsiteWorldGen.FlagPosition = new Point(i, j);
-            PacketManager.SendPacket<SetSolynFlagPositionPacket>(SolynCampsiteWorldGen.FlagPosition);
-        }
+        SolynCampsiteWorldGen.FlagPosition = new Point(i, j);
+        PacketManager.SendPacket<SetSolynFlagPositionPacket>(SolynCampsiteWorldGen.FlagPosition);
     }
 
     public override void KillMultiTile(int i, int j, int frameX, int frameY)
@@ -71,6 +72,9 @@ public class SolynFlagTile : ModTile
         // Kill the hosted tile entity directly and immediately.
         TESolynFlag? flag = FindTileEntity<TESolynFlag>(i, j, Width, Height);
         flag?.Kill(left, top);
+
+        SolynCampsiteWorldGen.FlagPosition = Point.Zero;
+        PacketManager.SendPacket<SetSolynFlagPositionPacket>(SolynCampsiteWorldGen.FlagPosition);
     }
 
     public override void PostDraw(int i, int j, SpriteBatch spriteBatch)

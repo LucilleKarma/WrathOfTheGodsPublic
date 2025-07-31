@@ -115,7 +115,7 @@ public partial class NamelessDeityBoss : ModNPC
         int slashDelay = SwordConstellation_SlashDelay;
         int slashCount = SwordConstellation_SlashCount;
         int teleportVisualsTime = SwordConstellation_TeleportVisualsTime;
-        var swords = AllProjectilesByID(ModContent.ProjectileType<SwordConstellation>());
+        IEnumerable<Projectile> swords = AllProjectilesByID(ModContent.ProjectileType<SwordConstellation>());
         float maxHandOffset = 300f;
         ref float swordDoesDamage = ref NPC.ai[2];
 

@@ -543,7 +543,7 @@ public class UniverseImagerUI : ModSystem
 
         float minDistance = 999999f;
         TEGraphicalUniverseImager? closest = null;
-        foreach (var tePair in TileEntity.ByPosition)
+        foreach (KeyValuePair<Point16, TileEntity> tePair in TileEntity.ByPosition)
         {
             if (tePair.Value is not TEGraphicalUniverseImager gui)
                 continue;

@@ -1,5 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
+
 using NoxusBoss.Core.Netcode.Packets;
+
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
@@ -12,6 +14,8 @@ namespace NoxusBoss.Core.Netcode;
 public class PacketManager : ModSystem
 {
     internal static Dictionary<string, Packet> RegisteredPackets = [];
+    private const int VECTOR = 1;
+    private const int POINT = 2;
 
     public override void OnModLoad()
     {
@@ -51,7 +55,16 @@ public class PacketManager : ModSystem
 
             TagCompound tagCompound = new TagCompound();
             for (int i = 0; i < context.Length; i++)
+            {
+                tagCompound[$"{i}_type"] = context[i] switch
+                {
+                    Point => POINT,
+                    Vector2 => VECTOR,
+                    _ => 0
+                };
+
                 tagCompound[$"{i}"] = context[i];
+            }
 
             TagIO.Write(tagCompound, writer);
 
@@ -105,11 +118,27 @@ public class PacketManager : ModSystem
             context = new object[contextLength];
             for (int i = 0; i < contextLength; i++)
             {
-                context[i] = tag.Get<object>($"{i}");
-                if (context[i] is TagCompound subTag && subTag.TryGet("x", out int x) && subTag.TryGet("y", out int y))
-                    context[i] = new Vector2(x, y);
-                else if (context[i] is TagCompound subTag2 && subTag2.TryGet("x", out float x2) && subTag2.TryGet("y", out float y2))
-                    context[i] = new Vector2(x2, y2);
+                object value = tag.Get<object>($"{i}");
+                int valueType = tag.Get<int>($"{i}_type");
+
+                switch (valueType)
+                {
+                    case VECTOR:
+                        {
+                            TagCompound subTag = (TagCompound)value;
+                            context[i] = new Vector2(subTag.Get<float>("x"), subTag.Get<float>("y"));
+                        }
+                        break;
+                    case POINT:
+                        {
+                            TagCompound subTag = (TagCompound)value;
+                            context[i] = new Point(subTag.Get<int>("x"), subTag.Get<int>("y"));
+                        }
+                        break;
+                    default:
+                        context[i] = value;
+                        break;
+                }
             }
         }
 

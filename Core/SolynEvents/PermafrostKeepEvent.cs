@@ -1,10 +1,13 @@
 ﻿using Microsoft.Xna.Framework;
+
 using NoxusBoss.Content.NPCs.Friendly;
 using NoxusBoss.Core.DialogueSystem;
 using NoxusBoss.Core.Pathfinding;
 using NoxusBoss.Core.World.Subworlds;
 using NoxusBoss.Core.World.WorldGeneration;
+
 using SubworldLibrary;
+
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
@@ -27,7 +30,10 @@ public class PermafrostKeepEvent : SolynEvent
             WithRerollCondition(_ => Stage >= 1);
         DialogueManager.FindByRelativePrefix("DormantKeyDiscussion").GetByRelativeKey("Conversation8").EndAction += seenBefore =>
         {
-            Main.LocalPlayer.SetTalkNPC(-1);
+            if (Solyn?.TalkingTo == Main.myPlayer)
+            {
+                Main.LocalPlayer.SetTalkNPC(-1);
+            }
 
             SafeSetStage(1);
             if (Solyn is not null)
@@ -53,8 +59,7 @@ public class PermafrostKeepEvent : SolynEvent
         DialogueManager.FindByRelativePrefix("PermafrostKeepDiscussion_AtSeed").GetByRelativeKey("Conversation6").EndAction += seenBefore =>
         {
             SafeSetStage(3);
-            if (Solyn is not null)
-                Solyn.SwitchState(SolynAIType.WaitToTeleportHome);
+            Solyn?.SwitchState(SolynAIType.WaitToTeleportHome);
         };
 
         ConversationSelector.PriorityConversationSelectionEvent += SelectKeepDialogue;
@@ -132,16 +137,22 @@ public class PermafrostKeepEvent : SolynEvent
         NPC npc = solyn.NPC;
 
         Vector2 walkDestination = PermafrostKeepWorldGen.KeepArea.Center() * 16f + new Vector2(40f, 322f);
-        List<Vector2> path = AStarPathfinding.PathfindThroughTiles(npc.Center - Vector2.UnitX * npc.spriteDirection * 10f, walkDestination, point =>
-        {
-            if (!WorldGen.InWorld(point.X, point.Y, 20))
-                return 100f;
-
-            return 0f;
-        });
         Vector2 aheadPathfindingPoint = walkDestination;
-        if (path.Count >= 6)
-            aheadPathfindingPoint = path[5];
+
+        // This DDoS'es clients if the "chunk" with Permaforst's keep is not loaded.
+        if (Main.netMode != NetmodeID.Server && Main.LocalPlayer.WithinRange(PermafrostKeepWorldGen.KeepArea.Center(), 1000))
+        {
+            List<Vector2> path = AStarPathfinding.PathfindThroughTiles(npc.Center - Vector2.UnitX * npc.spriteDirection * 10f, walkDestination, point =>
+            {
+                if (!WorldGen.InWorld(point.X, point.Y, 20))
+                    return 100f;
+
+                return 0f;
+            });
+
+            if (path.Count >= 6)
+                aheadPathfindingPoint = path[5];
+        }
 
         bool reachedSeed = npc.WithinRange(walkDestination, 80f);
 

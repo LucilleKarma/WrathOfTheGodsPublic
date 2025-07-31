@@ -38,7 +38,7 @@ public class InfernumCompatibilitySystem : ModSystem
             return;
 
         // Collect all bosses that should adhere to Infernum's boss card mod calls.
-        var modNPCsWithIntroSupport = Mod.LoadInterfacesFromContent<ModNPC, IInfernumBossBarSupport>();
+        IEnumerable<ModNPC> modNPCsWithIntroSupport = Mod.LoadInterfacesFromContent<ModNPC, IInfernumBossBarSupport>();
 
         // Use the mod call for boss intro cards.
         foreach (ModNPC? modNPC in modNPCsWithIntroSupport)
@@ -55,7 +55,7 @@ public class InfernumCompatibilitySystem : ModSystem
             return;
 
         // Collect all bosses that should adhere to Infernum's boss card mod calls.
-        var modNPCsWithBarSupport = Mod.LoadInterfacesFromContent<ModNPC, IInfernumBossBarSupport>();
+        IEnumerable<ModNPC> modNPCsWithBarSupport = Mod.LoadInterfacesFromContent<ModNPC, IInfernumBossBarSupport>();
 
         // Use the mod call for boss intro cards.
         foreach (ModNPC modNPC in modNPCsWithBarSupport)

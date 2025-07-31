@@ -24,7 +24,8 @@ public partial class MarsBody
         if (CurrentState != MarsAIType.VulnerableUntilDeath)
             return;
 
-        NPC.velocity += Target.SafeDirectionTo(NPC.Center) * beam.localNPCHitCooldown * 0.93f;
+        Player caster = Main.player[beam.owner];
+        NPC.velocity += caster.SafeDirectionTo(NPC.Center) * beam.localNPCHitCooldown * 0.93f;
         NPC.netUpdate = true;
     }
 
@@ -82,8 +83,8 @@ public partial class MarsBody
     public void DoBehavior_VulnerableUntilDeath_Solyn(BattleSolyn solyn)
     {
         NPC solynNPC = solyn.NPC;
-        Vector2 lookDestination = Target.Center;
-        Vector2 hoverDestination = Target.Center + new Vector2(Target.direction * -30f, -50f);
+        Vector2 lookDestination = solyn.Player.Center;
+        Vector2 hoverDestination = solyn.Player.Center + new Vector2(solyn.Player.direction * -30f, -50f);
 
         solynNPC.Center = Vector2.Lerp(solynNPC.Center, hoverDestination, 0.033f);
         solynNPC.SmoothFlyNear(hoverDestination, 0.27f, 0.6f);

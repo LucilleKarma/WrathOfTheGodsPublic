@@ -54,7 +54,7 @@ public partial class AvatarOfEmptiness
         }, () =>
         {
             PreviousState = StartingAttacks.First();
-            foreach (var attack in StartingAttacks.Reverse())
+            foreach (AvatarAIType attack in StartingAttacks.Reverse())
                 StateMachine.StateStack.Push(StateMachine.StateRegistry[attack]);
         });
 

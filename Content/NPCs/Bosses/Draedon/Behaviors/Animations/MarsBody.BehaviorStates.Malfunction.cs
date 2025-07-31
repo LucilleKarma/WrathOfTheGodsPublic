@@ -1,7 +1,10 @@
 ﻿using Luminance.Common.Easings;
 using Luminance.Common.StateMachines;
+
 using Microsoft.Xna.Framework;
+
 using NoxusBoss.Content.NPCs.Friendly;
+
 using Terraria;
 
 namespace NoxusBoss.Content.NPCs.Bosses.Draedon;
@@ -25,8 +28,9 @@ public partial class MarsBody
         if (CurrentState != MarsAIType.Malfunction)
             return;
 
+        Player caster = Main.player[beam.owner];
         float antiSpacePush = InverseLerp(900f, 2700f, NPC.Center.Y);
-        NPC.velocity += Target.SafeDirectionTo(NPC.Center) * beam.localNPCHitCooldown * antiSpacePush * 0.22f;
+        NPC.velocity += caster.SafeDirectionTo(NPC.Center) * beam.localNPCHitCooldown * antiSpacePush * 0.22f;
         NPC.netUpdate = true;
     }
 
@@ -62,8 +66,8 @@ public partial class MarsBody
     public void DoBehavior_Malfunction_Solyn(BattleSolyn solyn)
     {
         NPC solynNPC = solyn.NPC;
-        Vector2 lookDestination = Target.Center;
-        Vector2 hoverDestination = Target.Center + new Vector2(Target.direction * -30f, -50f);
+        Vector2 lookDestination = solyn.Player.Center;
+        Vector2 hoverDestination = solyn.Player.Center + new Vector2(solyn.Player.direction * -30f, -50f);
 
         solynNPC.Center = Vector2.Lerp(solynNPC.Center, hoverDestination, 0.033f);
         solynNPC.SmoothFlyNear(hoverDestination, 0.27f, 0.6f);

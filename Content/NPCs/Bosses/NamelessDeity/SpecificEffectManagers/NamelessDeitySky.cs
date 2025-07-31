@@ -257,7 +257,7 @@ public class NamelessDeitySky : CustomSky
         float minKaleidoscopeInterpolant = 0f;
         if (NamelessDeityBoss.Myself is not null && NamelessDeityBoss.Myself.As<NamelessDeityBoss>().CurrentPhase >= 2)
         {
-            var namelessAIState = NamelessDeityBoss.Myself.As<NamelessDeityBoss>().CurrentState;
+            NamelessDeityBoss.NamelessAIType namelessAIState = NamelessDeityBoss.Myself.As<NamelessDeityBoss>().CurrentState;
             if (namelessAIState is NamelessDeityBoss.NamelessAIType.SuperCosmicLaserbeam or NamelessDeityBoss.NamelessAIType.MomentOfCreation)
                 minKaleidoscopeInterpolant = 0f;
             else if (namelessAIState == NamelessDeityBoss.NamelessAIType.ClockConstellation)
@@ -362,7 +362,7 @@ public class NamelessDeitySky : CustomSky
 
     public static void DrawStarDimension()
     {
-        var starTexture = NamelessDeityDimensionSkyGenerator.NamelessDeityDimensionTarget;
+        Luminance.Core.Graphics.ManagedRenderTarget starTexture = NamelessDeityDimensionSkyGenerator.NamelessDeityDimensionTarget;
         float opacity = Intensity.Squared();
         if (DeificTouch.UsingEffect)
             opacity = 1f;

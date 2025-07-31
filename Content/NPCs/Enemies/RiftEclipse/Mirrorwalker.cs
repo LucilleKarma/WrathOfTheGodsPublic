@@ -222,7 +222,7 @@ public class Mirrorwalker : ModNPC
         }
 
         // Apply the horror shader.
-        var horrorShader = ShaderManager.GetShader("NoxusBoss.MirrorwalkerHorrorShader");
+        ManagedShader horrorShader = ShaderManager.GetShader("NoxusBoss.MirrorwalkerHorrorShader");
         horrorShader.TrySetParameter("contrastMatrix", GeneralScreenEffectSystem.CalculateContrastMatrix(NPC.Opacity * 2f));
         horrorShader.TrySetParameter("noiseOffsetFactor", Lerp(6f, 1f, NPC.Opacity) * HorrorInterpolant);
         horrorShader.TrySetParameter("noiseOverlayColor", Color.MediumPurple);

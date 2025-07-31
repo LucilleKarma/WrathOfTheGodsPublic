@@ -337,7 +337,7 @@ public class Vivajuyfylae : ModNPC, IBoid
         {
             // Check for nearby Vivajuflae. If there aren't enough to do an animation, don't try to do it.
             float checkArea = 950f;
-            var nearbyInstances = GetNearbyInRange(checkArea, true);
+            List<NPC> nearbyInstances = GetNearbyInRange(checkArea, true);
             if (nearbyInstances.Count <= 30)
                 return;
 

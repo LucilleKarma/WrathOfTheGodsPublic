@@ -493,7 +493,7 @@ public class EternalGardenUpdateSystem : ModSystem
             });
         }
 
-        if (SoundEngine.TryGetActiveSound(StandingInCenterSound, out var sound))
+        if (SoundEngine.TryGetActiveSound(StandingInCenterSound, out ActiveSound? sound))
             sound.Callback?.Invoke(sound);
 
         // Disallow player movement shortly after the sound plays to force the feeling of suspense.

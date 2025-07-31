@@ -58,10 +58,10 @@ public partial class MarsBody
             IProjOwnedByBoss<BattleSolyn>.KillAll();
 
         // Stay near Solyn in anticipation of the trapping effect.
-        int solynIndex = NPC.FindFirstNPC(ModContent.NPCType<BattleSolyn>());
-        if (AITimer <= ElectricCageBlasts_TrapDelay && solynIndex != -1)
+        BattleSolyn? solyn = BattleSolyn.GetOriginalSolyn();
+        if (AITimer <= ElectricCageBlasts_TrapDelay && solyn is not null)
         {
-            NPC solynNPC = Main.npc[solynIndex];
+            NPC solynNPC = solyn.NPC;
             float flySpeedInterpolant = InverseLerp(0f, ElectricCageBlasts_TrapDelay * 0.4f, AITimer);
 
             Vector2 hoverDestination = solynNPC.Center + new Vector2(100f, -ElectricCageBlasts_ForcefieldSize + 16f - NPC.height);

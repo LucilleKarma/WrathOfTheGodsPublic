@@ -1,7 +1,9 @@
 ﻿using Luminance.Common.Easings;
 using Luminance.Common.StateMachines;
 using Luminance.Core.Graphics;
+
 using Microsoft.Xna.Framework;
+
 using NoxusBoss.Assets;
 using NoxusBoss.Content.NPCs.Bosses.Avatar.Projectiles;
 using NoxusBoss.Content.NPCs.Bosses.Avatar.Projectiles.SolynProjectiles;
@@ -9,6 +11,7 @@ using NoxusBoss.Content.NPCs.Bosses.Avatar.SpecificEffectManagers;
 using NoxusBoss.Content.NPCs.Bosses.Avatar.SpecificEffectManagers.SolynDialogue;
 using NoxusBoss.Content.NPCs.Friendly;
 using NoxusBoss.Core.Graphics.ScreenShake;
+
 using Terraria;
 using Terraria.Audio;
 using Terraria.ID;
@@ -215,7 +218,7 @@ public partial class AvatarOfEmptiness
     {
         NPC solynNPC = solyn.NPC;
 
-        if (AITimer == 5)
+        if (AITimer == 5 && Main.netMode != NetmodeID.MultiplayerClient)
         {
             BloodiedFountainBlasts_SolynXHoverOffset = Main.rand.NextFloatDirection() * BloodiedFountainBlasts_MaxSolynXOffset;
             NPC.netUpdate = true;
@@ -224,7 +227,7 @@ public partial class AvatarOfEmptiness
         if (AITimer == 60)
         {
             if (Main.netMode != NetmodeID.MultiplayerClient)
-                NewProjectileBetter(NPC.GetSource_FromAI(), NPC.Center, Vector2.Zero, ModContent.ProjectileType<SolynProtectiveForcefield>(), 0, 0f);
+                NewProjectileBetter(NPC.GetSource_FromAI(), NPC.Center, Vector2.Zero, ModContent.ProjectileType<SolynProtectiveForcefield>(), 0, 0f, -1, 0, solyn.NPC.whoAmI);
 
             SolynWorldDialogueManager.CreateNew("Mods.NoxusBoss.Dialog.SolynStayBelowMe", -solynNPC.spriteDirection, solynNPC.Top - Vector2.UnitY * 90f, 150, true);
         }
@@ -233,7 +236,7 @@ public partial class AvatarOfEmptiness
         if (AITimer <= hoverRedirectTime + 25)
         {
             float redirectSpeed = Lerp(0.11f, 0.25f, Convert01To010(InverseLerp(0f, hoverRedirectTime, AITimer).Squared()));
-            Vector2 hoverDestination = Target.Center + new Vector2(BloodiedFountainBlasts_SolynXHoverOffset, -250f);
+            Vector2 hoverDestination = solyn.Player.Center + new Vector2(BloodiedFountainBlasts_SolynXHoverOffset, -250f);
             solynNPC.SmoothFlyNearWithSlowdownRadius(hoverDestination, redirectSpeed, 1f - redirectSpeed, 50f);
         }
 
@@ -241,8 +244,8 @@ public partial class AvatarOfEmptiness
         {
             solynNPC.velocity *= 0.85f;
 
-            if (Distance(solynNPC.Center.Y, Target.Center.Y) >= 1200f)
-                solynNPC.Center = Vector2.Lerp(solynNPC.Center, Target.Center, 0.1f);
+            if (Distance(solynNPC.Center.Y, solyn.Player.Center.Y) >= 1200f)
+                solynNPC.Center = Vector2.Lerp(solynNPC.Center, solyn.Player.Center, 0.1f);
         }
 
         solynNPC.rotation = solynNPC.velocity.X * 0.008f;
@@ -257,7 +260,7 @@ public partial class AvatarOfEmptiness
     public void DoBehavior_BloodiedFountainBlasts_DenseBurst_HandleForcefield(BattleSolyn solyn, int timeSinceSpawned)
     {
         IEnumerable<Projectile> forcefields = AllProjectilesByID(ModContent.ProjectileType<SolynProtectiveForcefield>());
-        Projectile? forcefield = forcefields.FirstOrDefault();
+        Projectile? forcefield = forcefields.FirstOrDefault(x => x.As<SolynProtectiveForcefield>().SolynIndex == solyn.NPC.whoAmI);
         if (forcefield is null)
             return;
 

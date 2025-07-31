@@ -40,7 +40,7 @@ public class AdvancedProjectileOwnershipSystem : GlobalProjectile
         else if (owner is Player player)
         {
             ownerIndex = player.whoAmI;
-            ownerType = EntityOwnerType.NPC;
+            ownerType = EntityOwnerType.Player;
         }
         else if (owner is Projectile projectileOwner)
         {
@@ -55,7 +55,7 @@ public class AdvancedProjectileOwnershipSystem : GlobalProjectile
 
         if (hasOwner)
         {
-            binaryWriter.Write((int)ownerType);
+            binaryWriter.Write((byte)ownerType);
             binaryWriter.Write(ownerIndex);
         }
     }

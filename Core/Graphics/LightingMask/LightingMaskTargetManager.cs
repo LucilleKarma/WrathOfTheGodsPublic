@@ -43,7 +43,7 @@ public class LightingMaskTargetManager : ModSystem
                 {
                     for (int i = 0; i < horizontalSamples; i++)
                     {
-                        Lighting.GetCornerColors(tileArea.X + i * 2, tileArea.Y + j * 2, out var vertexColors);
+                        Lighting.GetCornerColors(tileArea.X + i * 2, tileArea.Y + j * 2, out Terraria.Graphics.VertexColors vertexColors);
                         bool rightEdge = i * 2 == tileArea.Width;
                         bool bottomEdge = j * 2 == tileArea.Height;
 

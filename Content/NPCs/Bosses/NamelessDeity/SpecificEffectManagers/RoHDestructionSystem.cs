@@ -39,9 +39,9 @@ public class RoHDestructionSystem : ModSystem
     public override void SetupContent()
     {
         // Load Fanny dialog.
-        var nonEvilText = new FannyDialog("RodOfHarmonyBreak", "FannyIdle").WithDuration(4.5f).WithCondition(_ => AnimationTimer == SlashDelay + SlashHitDelay + 1).WithoutClickability();
-        var evilText1 = new FannyDialog("RodOfHarmonyBreakEvil1", "EvilFannyIdle").WithDuration(5f).WithEvilness().WithCondition(_ => AnimationTimer == SlashDelay + SlashHitDelay + 36).WithoutClickability();
-        var evilText2 = new FannyDialog("RodOfHarmonyBreakEvil2", "EvilFannyIdle").WithDuration(5.5f).WithEvilness().WithParentDialog(evilText1, 0.5f);
+        FannyDialog nonEvilText = new FannyDialog("RodOfHarmonyBreak", "FannyIdle").WithDuration(4.5f).WithCondition(_ => AnimationTimer == SlashDelay + SlashHitDelay + 1).WithoutClickability();
+        FannyDialog evilText1 = new FannyDialog("RodOfHarmonyBreakEvil1", "EvilFannyIdle").WithDuration(5f).WithEvilness().WithCondition(_ => AnimationTimer == SlashDelay + SlashHitDelay + 36).WithoutClickability();
+        FannyDialog evilText2 = new FannyDialog("RodOfHarmonyBreakEvil2", "EvilFannyIdle").WithDuration(5.5f).WithEvilness().WithParentDialog(evilText1, 0.5f);
 
         nonEvilText.Register();
         evilText1.Register();

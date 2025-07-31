@@ -127,7 +127,7 @@ public class EternalGardenNew : Subworld
 
         // Give text about how the player's test begins when entering the garden.
         // When exiting, the regular load details text is displayed.
-        var font = FontRegistry.Instance.NamelessDeityText;
+        ReLogic.Graphics.DynamicSpriteFont font = FontRegistry.Instance.NamelessDeityText;
         string text = Language.GetTextValue($"Mods.{Mod.Name}.Dialog.NamelessDeityEnterGardenText");
         Color textColor = DialogColorRegistry.NamelessDeityTextColor;
         if (!SubworldSystem.IsActive<EternalGardenNew>())

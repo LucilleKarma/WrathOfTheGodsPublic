@@ -123,7 +123,7 @@ public class DivineWingDrawer : ModSystem
         if (!ShaderManager.HasFinishedLoading || Main.gameMenu || !anyoneIsUsingWings)
             return;
 
-        var gd = Main.instance.GraphicsDevice;
+        GraphicsDevice gd = Main.instance.GraphicsDevice;
 
         // Prepare the render target for drawing.
         Main.spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend, SamplerState.AnisotropicClamp, DepthStencilState.Default, RasterizerState.CullNone, null, Matrix.Identity);
@@ -149,7 +149,7 @@ public class DivineWingDrawer : ModSystem
     public static void DrawPlayerWingsToTarget()
     {
         // Prepare the wing psychedelic shader.
-        var wingShader = ShaderManager.GetShader("NoxusBoss.NamelessDeityPsychedelicWingShader");
+        ManagedShader wingShader = ShaderManager.GetShader("NoxusBoss.NamelessDeityPsychedelicWingShader");
         wingShader.TrySetParameter("colorShift", WingColorShift);
         wingShader.TrySetParameter("lightDirection", Vector3.UnitZ);
         wingShader.TrySetParameter("normalMapCrispness", 0.86f);
@@ -186,12 +186,12 @@ public class DivineWingDrawer : ModSystem
         if (!ShaderManager.HasFinishedLoading || !anyoneIsUsingWings)
             return;
 
-        var gd = Main.instance.GraphicsDevice;
+        GraphicsDevice gd = Main.instance.GraphicsDevice;
         gd.SetRenderTarget(AfterimageTargetPrevious);
         gd.Clear(Color.Transparent);
 
         // Prepare the afterimage psychedelic shader.
-        var afterimageShader = ShaderManager.GetShader("NoxusBoss.NamelessDeityPsychedelicAfterimageShader");
+        ManagedShader afterimageShader = ShaderManager.GetShader("NoxusBoss.NamelessDeityPsychedelicAfterimageShader");
         afterimageShader.TrySetParameter("uScreenResolution", Main.ScreenSize.ToVector2());
         afterimageShader.TrySetParameter("warpSpeed", 0.00028f);
         afterimageShader.SetTexture(TurbulentNoise, 1);

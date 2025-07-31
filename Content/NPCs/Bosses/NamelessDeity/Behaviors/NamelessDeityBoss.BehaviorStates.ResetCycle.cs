@@ -31,8 +31,6 @@ public partial class NamelessDeityBoss : ModNPC
                         phaseCycle.AddRange(Phase2Cycle);
                     if (DifficultyFactor >= 1.4f)
                         phaseCycle.AddRange(Phase3Cycle);
-                    if (DifficultyFactor >= 2f)
-                        phaseCycle.Add(NamelessAIType.Glock);
 
                     // Remove certain attacks from the cycle.
                     while (phaseCycle.Remove(NamelessAIType.CrushStarIntoQuasar) ||

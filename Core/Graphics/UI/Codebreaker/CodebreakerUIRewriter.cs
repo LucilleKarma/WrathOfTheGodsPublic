@@ -144,7 +144,7 @@ public class CodebreakerUIRewriter : ModSystem
 
                 if (Main.netMode != NetmodeID.SinglePlayer)
                 {
-                    var netMessage = CalamityCompatibility.Calamity.GetPacket();
+                    ModPacket netMessage = CalamityCompatibility.Calamity.GetPacket();
                     netMessage.Write((byte)CalamityModMessageType.CodebreakerSummonStuff);
                     netMessage.Write(CalamityWorld.DraedonSummonCountdown);
                     netMessage.WriteVector2(CalamityWorld.DraedonSummonPosition);
@@ -202,7 +202,7 @@ public class CodebreakerUIRewriter : ModSystem
 
                 if (Main.netMode != NetmodeID.SinglePlayer)
                 {
-                    var netMessage = CalamityCompatibility.Calamity.GetPacket();
+                    ModPacket netMessage = CalamityCompatibility.Calamity.GetPacket();
                     netMessage.Write((byte)CalamityModMessageType.CodebreakerSummonStuff);
                     netMessage.Write(CalamityWorld.DraedonSummonCountdown);
                     netMessage.WriteVector2(CalamityWorld.DraedonSummonPosition);

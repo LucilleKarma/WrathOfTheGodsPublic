@@ -103,7 +103,7 @@ public class StarlitCampfireTile : ModTile
     }
     public override void AnimateIndividualTile(int type, int i, int j, ref int frameXOffset, ref int frameYOffset)
     {
-        var tile = Main.tile[i, j];
+        Tile tile = Main.tile[i, j];
         if (tile.TileFrameY < 36)
             frameYOffset = Main.tileFrame[type] * 36;
 
@@ -156,7 +156,7 @@ public class StarlitCampfireTile : ModTile
 
     public override void PostDraw(int i, int j, SpriteBatch spriteBatch)
     {
-        var tile = Main.tile[i, j];
+        Tile tile = Main.tile[i, j];
 
         if (!TileDrawing.IsVisible(tile))
             return;

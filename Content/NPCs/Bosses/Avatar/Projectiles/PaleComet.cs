@@ -78,7 +78,7 @@ public class PaleComet : ModProjectile, IPixelatedPrimitiveRenderer, IProjOwnedB
     public override void OnKill(int timeLeft)
     {
         // Create gas particles.
-        var metaball = ModContent.GetInstance<PaleAvatarBlobMetaball>();
+        PaleAvatarBlobMetaball metaball = ModContent.GetInstance<PaleAvatarBlobMetaball>();
         for (int i = 0; i < 15; i++)
         {
             float gasSize = Projectile.width * Main.rand.NextFloat(0.32f, 1.6f);

@@ -105,7 +105,7 @@ public class ConstellationsRegistry : ModSystem
             centerOfMass += segmentPoints[i].ToVector2();
         centerOfMass /= segmentPoints.Count;
 
-        var orderedSegmentPoints = segmentPoints.OrderBy(s => s.ToVector2().Distance(centerOfMass));
+        IOrderedEnumerable<Point> orderedSegmentPoints = segmentPoints.OrderBy(s => s.ToVector2().Distance(centerOfMass));
         Point closestToCenterOfMass = orderedSegmentPoints.Where(s => !s.ToVector2().WithinRange(centerOfMass, 1f)).First();
 
         // Now, evaluate each point along the line to construct the vectorized line segment.

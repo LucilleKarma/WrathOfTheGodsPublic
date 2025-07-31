@@ -1,10 +1,15 @@
 ﻿using Luminance.Assets;
 using Luminance.Common.DataStructures;
 using Luminance.Core.Graphics;
+
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+
 using NoxusBoss.Assets;
 using NoxusBoss.Content.NPCs.Friendly;
+using NoxusBoss.Core.Netcode;
+using NoxusBoss.Core.Netcode.Packets;
+
 using Terraria;
 using Terraria.Audio;
 using Terraria.ID;
@@ -224,6 +229,10 @@ public class SolynTagTeamBeam : ModProjectile, IProjOwnedByBoss<BattleSolyn>, IN
     {
         if (target.ModNPC is MarsBody mars)
             mars.RegisterHitByTeamBeam(Projectile);
+
+        // As owner of the beam is client, we need to sync hits with the server and other clients.
+        if (Main.netMode == NetmodeID.MultiplayerClient)
+            PacketManager.SendPacket<MarsHitByBeamPacket>(Projectile.identity);
     }
 
     public override bool ShouldUpdatePosition() => false;

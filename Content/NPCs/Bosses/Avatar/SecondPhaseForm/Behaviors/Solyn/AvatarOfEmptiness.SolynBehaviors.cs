@@ -1,7 +1,9 @@
 ﻿using Microsoft.Xna.Framework;
+
 using NoxusBoss.Content.NPCs.Bosses.Avatar.FirstPhaseForm;
 using NoxusBoss.Content.NPCs.Bosses.Avatar.Projectiles.SolynProjectiles;
 using NoxusBoss.Content.NPCs.Friendly;
+
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
@@ -27,7 +29,7 @@ public partial class AvatarOfEmptiness
     public static void StandardSolynBehavior_FlyNearPlayer(BattleSolyn solyn, NPC? avatar)
     {
         NPC solynNPC = solyn.NPC;
-        Player playerToFollow = Main.player[Player.FindClosest(solynNPC.Center, 1, 1)];
+        Player playerToFollow = solyn.Player;
         Vector2 lookDestination = playerToFollow.Center;
         Vector2 hoverDestination = playerToFollow.Center + new Vector2(solynNPC.HorizontalDirectionTo(playerToFollow.Center) * -66f, -10f);
 
@@ -125,12 +127,12 @@ public partial class AvatarOfEmptiness
         {
             solynNPC.velocity.Y -= 4f;
 
-            if (Main.netMode != NetmodeID.MultiplayerClient)
+            if (Main.netMode != NetmodeID.MultiplayerClient && !solyn.IsMultiplayerClone)
             {
                 for (int i = 0; i < 2; i++)
                 {
                     Vector2 boltVelocity = Main.rand.NextVector2Circular(16f, 16f);
-                    Projectile.NewProjectile(solynNPC.GetSource_FromAI(), solynNPC.Center, boltVelocity, ModContent.ProjectileType<HomingStarBolt>(), SolynHomingStarBoltDamage, 0f, solynNPC.target, 0f, 0f, 1f);
+                    Projectile.NewProjectile(solynNPC.GetSource_FromAI(), solynNPC.Center, boltVelocity, ModContent.ProjectileType<HomingStarBolt>(), SolynHomingStarBoltDamage, 0f, -1, 0f, 0f, 1f);
                 }
             }
         }

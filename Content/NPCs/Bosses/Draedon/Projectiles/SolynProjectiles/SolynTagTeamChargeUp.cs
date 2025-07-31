@@ -1,10 +1,14 @@
 ﻿using Luminance.Assets;
 using Luminance.Common.DataStructures;
+
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+
 using NoxusBoss.Assets;
 using NoxusBoss.Content.NPCs.Friendly;
+
 using ReLogic.Utilities;
+
 using Terraria;
 using Terraria.Audio;
 using Terraria.ModLoader;
@@ -67,7 +71,7 @@ public class SolynTagTeamChargeUp : ModProjectile, IProjOwnedByBoss<BattleSolyn>
             return;
         }
 
-        if (MarsBody.Myself.As<MarsBody>().GetSolynPlayerTeamAttackTimer(Owner) <= 0)
+        if (MarsBody.Myself.As<MarsBody>().SolynPlayerTeamAttackTimer <= 0)
         {
             Projectile.Kill();
             return;

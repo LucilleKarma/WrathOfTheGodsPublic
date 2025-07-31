@@ -1,11 +1,14 @@
 ﻿using Luminance.Common.DataStructures;
 using Luminance.Common.StateMachines;
+
 using Microsoft.Xna.Framework;
+
 using NoxusBoss.Assets;
 using NoxusBoss.Content.NPCs.Bosses.Draedon.Projectiles;
 using NoxusBoss.Content.NPCs.Bosses.Draedon.Projectiles.SolynProjectiles;
 using NoxusBoss.Content.NPCs.Friendly;
 using NoxusBoss.Core.Graphics.SpecificEffectManagers;
+
 using Terraria;
 using Terraria.Audio;
 using Terraria.ID;
@@ -114,7 +117,7 @@ public partial class MarsBody
 
             RadialScreenShoveSystem.Start(LeftHandPosition, 20);
             if (Main.netMode != NetmodeID.MultiplayerClient)
-                NewProjectileBetter(NPC.GetSource_FromAI(), LeftHandPosition, RailgunCannonAngle.ToRotationVector2(), ModContent.ProjectileType<RailGunCannonDeathray>(), RailgunBlastDamage, 0f, NPC.target, NPC.whoAmI);
+                NewProjectileBetter(NPC.GetSource_FromAI(), LeftHandPosition, RailgunCannonAngle.ToRotationVector2(), ModContent.ProjectileType<RailGunCannonDeathray>(), RailgunBlastDamage, 0f, -1, NPC.whoAmI);
         }
 
         // Fire missiles.
@@ -122,7 +125,7 @@ public partial class MarsBody
         int fireTime = UpgradedMissileRailgunCombo_MissileFireTime;
         bool shootMissiles = AITimer % (downTime + fireTime) >= downTime;
         if (Main.netMode != NetmodeID.MultiplayerClient && AITimer >= 60 && AITimer % UpgradedMissileRailgunCombo_MissileShootRate == 0)
-            NewProjectileBetter(NPC.GetSource_FromAI(), NPC.Center, NPC.velocity.SafeDirectionTo(Target.Center).RotatedByRandom(PiOver2) * -23f, ModContent.ProjectileType<MarsMissile>(), FortifiedMissileDamage, 0f, NPC.target);
+            NewProjectileBetter(NPC.GetSource_FromAI(), NPC.Center, NPC.velocity.SafeDirectionTo(Target.Center).RotatedByRandom(PiOver2) * -23f, ModContent.ProjectileType<MarsMissile>(), FortifiedMissileDamage, 0f, -1);
 
         float idealRailGunAngle = LeftHandPosition.AngleTo(Target.Center);
         RailgunCannonAngle = RailgunCannonAngle.AngleLerp(idealRailGunAngle, railGunAimSpeed);
@@ -137,7 +140,7 @@ public partial class MarsBody
         float forcefieldDirection = 0f;
         foreach (Projectile projectile in Main.ActiveProjectiles)
         {
-            if (projectile.owner == NPC.target && projectile.type == forcefieldID)
+            if (projectile.owner == solyn.Player.whoAmI && projectile.type == forcefieldID)
             {
                 forcefieldDirection = WrapAngle360(projectile.velocity.ToRotation());
                 break;
@@ -145,12 +148,12 @@ public partial class MarsBody
         }
 
         NPC solynNPC = solyn.NPC;
-        Vector2 lookDestination = Target.Center;
+        Vector2 lookDestination = solyn.Player.Center;
 
         float angleSnapValue = PiOver2;
         float snappedForcefieldDirection = Round(forcefieldDirection * angleSnapValue) / angleSnapValue;
         Vector2 hoverOffset = snappedForcefieldDirection.ToRotationVector2() * -56f + Vector2.UnitX * 4f;
-        Vector2 hoverDestination = Target.Center + hoverOffset;
+        Vector2 hoverDestination = solyn.Player.Center + hoverOffset;
 
         solynNPC.SmoothFlyNear(hoverDestination, 0.2f, 0.8f);
 

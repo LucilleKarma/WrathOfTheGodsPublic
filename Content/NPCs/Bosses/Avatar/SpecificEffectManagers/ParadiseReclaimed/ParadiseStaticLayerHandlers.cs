@@ -1,9 +1,13 @@
 ﻿using Luminance.Core.Graphics;
+
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+
 using NoxusBoss.Content.NPCs.Bosses.Avatar.SecondPhaseForm;
 using NoxusBoss.Core.Graphics.RenderTargets;
+
 using Terraria;
+using Terraria.ID;
 using Terraria.ModLoader;
 
 namespace NoxusBoss.Content.NPCs.Bosses.Avatar.SpecificEffectManagers.ParadiseReclaimed;
@@ -85,6 +89,8 @@ public class ParadiseStaticLayerHandlers : ModSystem
 
     public override void PreUpdateProjectiles()
     {
+        if (Main.netMode == NetmodeID.Server) return;
+
         foreach (ParadiseStaticLayer layer in layers)
         {
             if (layer.ParticleSystem.particles.Any(p => p.Active))

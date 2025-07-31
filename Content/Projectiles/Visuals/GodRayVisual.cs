@@ -98,7 +98,7 @@ public class GodRayVisual : ModProjectile, IDrawsWithShader
             Main.gamePaused = false;
 
         // Collect the shader and draw data for later.
-        var godRayShader = ShaderManager.GetShader("NoxusBoss.GodRayShader");
+        ManagedShader godRayShader = ShaderManager.GetShader("NoxusBoss.GodRayShader");
         Vector2 textureArea = new Vector2(Projectile.width, Height) / WhitePixel.Size();
 
         // Apply the god ray shader.
@@ -132,7 +132,7 @@ public class GodRayVisual : ModProjectile, IDrawsWithShader
     public void DrawVignette(float brightnessInterpolant)
     {
         // Draw a pixel over the player's screen and then draw the vignette over it.
-        var vignetteShader = ShaderManager.GetShader("NoxusBoss.FleshyVignetteShader");
+        ManagedShader vignetteShader = ShaderManager.GetShader("NoxusBoss.FleshyVignetteShader");
         vignetteShader.TrySetParameter("animationSpeed", 0.05f);
         vignetteShader.TrySetParameter("vignettePower", Lerp(6f, 3.97f, brightnessInterpolant));
         vignetteShader.TrySetParameter("vignetteBrightness", Lerp(3f, 20f, brightnessInterpolant));

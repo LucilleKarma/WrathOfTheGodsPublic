@@ -1,4 +1,7 @@
-﻿using NoxusBoss.Core.World.GameScenes.Stargazing;
+﻿using Luminance.Core.Cutscenes;
+
+using NoxusBoss.Core.World.GameScenes.Stargazing;
+
 using Terraria;
 using Terraria.ModLoader;
 
@@ -23,6 +26,7 @@ public class DuskCutsceneTimePacket : Packet
         Main.time = reader.ReadInt32();
 
         bool active = reader.ReadByte() == 1;
-        ModContent.GetInstance<BecomeDuskScene>().SetActivity(active);
+        if (active)
+            CutsceneManager.QueueCutscene(ModContent.GetInstance<BecomeDuskScene>());
     }
 }

@@ -117,7 +117,7 @@ public class DarkHarbinger : ModNPC
         Main.spriteBatch.PrepareForShaders();
 
         // Prepare the cavity shader.
-        var cavityShader = ShaderManager.GetShader("NoxusBoss.DarkHarbingerCavityShader");
+        ManagedShader cavityShader = ShaderManager.GetShader("NoxusBoss.DarkHarbingerCavityShader");
         cavityShader.SetTexture(LazyAsset<Texture2D>.FromPath("NoxusBoss/Assets/Textures/Content/Items/Dyes/EntropicDyeTexture"), 1, SamplerState.PointWrap);
         cavityShader.Apply();
 

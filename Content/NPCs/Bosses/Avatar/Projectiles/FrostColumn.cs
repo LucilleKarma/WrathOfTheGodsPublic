@@ -83,7 +83,7 @@ public class FrostColumn : ModProjectile, IPixelatedPrimitiveRenderer, IProjOwne
 
     public void RenderPixelatedPrimitives(SpriteBatch spriteBatch)
     {
-        var gd = Main.instance.GraphicsDevice;
+        GraphicsDevice gd = Main.instance.GraphicsDevice;
 
         Matrix scale = Matrix.CreateTranslation(0f, 0.5f, 0f) * Matrix.CreateScale(ColumnWidth, -ColumnHeight, 1f) * Matrix.CreateTranslation(0f, -0.5f, 0f);
         Matrix world = Matrix.CreateTranslation(Projectile.Center.X - Main.screenPosition.X, Projectile.Bottom.Y - Main.screenPosition.Y, 0f);

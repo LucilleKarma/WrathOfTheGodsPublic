@@ -147,7 +147,7 @@ public class AvatarOfEmptinessSky : CustomSky
             time = Main.GlobalTimeWrappedHourly * 0.6f;
 
         // Draw the background with a special shader.
-        var backgroundShader = ShaderManager.GetShader("NoxusBoss.AvatarPhase2BackgroundShader");
+        ManagedShader backgroundShader = ShaderManager.GetShader("NoxusBoss.AvatarPhase2BackgroundShader");
         backgroundShader.TrySetParameter("intensity", intensityOverride ?? (Main.gameMenu ? 1f : Clamp(intensity, SkyIntensityOverride, 1f)));
         backgroundShader.TrySetParameter("screenOffset", Main.screenPosition * 0.00007f);
         backgroundShader.TrySetParameter("gradientCount", palette.Length);

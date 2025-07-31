@@ -1,4 +1,5 @@
-﻿using Terraria.ModLoader;
+﻿using Terraria;
+using Terraria.ModLoader;
 using static NoxusBoss.Core.Graphics.FastParticleSystems.FastParticleSystem;
 
 namespace NoxusBoss.Core.Graphics.FastParticleSystems;

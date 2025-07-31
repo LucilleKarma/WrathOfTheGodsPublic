@@ -53,7 +53,7 @@ public static class AvatarRiftTargetContent
         }
 
         // Apply the rift shader.
-        var riftShader = ShaderManager.GetShader("NoxusBoss.AvatarRiftShapeShader");
+        ManagedShader riftShader = ShaderManager.GetShader("NoxusBoss.AvatarRiftShapeShader");
         riftShader.TrySetParameter("time", time);
         riftShader.TrySetParameter("baseCutoffRadius", baseCutoffRadius);
         riftShader.TrySetParameter("swirlOutwardnessExponent", 0.151f);

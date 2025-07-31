@@ -84,7 +84,7 @@ public class LightSlash : ModProjectile, IProjOwnedByBoss<NamelessDeityBoss>
         if (Time <= 1f)
             return;
 
-        var slashShader = ShaderManager.GetShader("NoxusBoss.GenericTrailStreak");
+        ManagedShader slashShader = ShaderManager.GetShader("NoxusBoss.GenericTrailStreak");
         slashShader.SetTexture(GennedAssets.Textures.TrailStreaks.StreakBloomLine, 1);
 
         // Calculate the three points that define the overall shape of the slash.

@@ -181,7 +181,7 @@ public class CelestialDreamcatcher : ModProjectile, IProjOwnedByBoss<NamelessDei
 
     public void UpdateStrings()
     {
-        var paletteData = LocalDataManager.Read<Vector3[]>("Content/NPCs/Bosses/NamelessDeity/NamelessDeityPalettes.json");
+        Dictionary<string, Vector3[]> paletteData = LocalDataManager.Read<Vector3[]>("Content/NPCs/Bosses/NamelessDeity/NamelessDeityPalettes.json");
         for (int i = 0; i < FeatherStrings.Length; i++)
         {
             if (FeatherStrings[i] is null)

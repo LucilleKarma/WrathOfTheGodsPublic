@@ -212,7 +212,7 @@ public partial class MarsBody
         {
             // Disable contact damage on the deathray as the white overlay takes over, since obviously the player won't be able to see the borders of it anymore.
             int rayID = ModContent.ProjectileType<ExoelectricDisintegrationRay>();
-            var rays = AllProjectilesByID(rayID);
+            IEnumerable<Projectile> rays = AllProjectilesByID(rayID);
             foreach (Projectile ray in rays)
                 ray.damage = 0;
 
@@ -278,21 +278,21 @@ public partial class MarsBody
         bool separatedFromStar = AnyProjectiles(ModContent.ProjectileType<SolynSentientStar>());
         if (postLaserShootTime <= 30)
         {
-            Vector2 hoverDestination = Target.Center - Vector2.UnitX * Target.direction * 50f;
+            Vector2 hoverDestination = solyn.Player.Center - Vector2.UnitX * solyn.Player.direction * 50f;
 
             if (postLaserShootTime >= -50)
             {
                 solynNPC.spriteDirection = (int)solynNPC.HorizontalDirectionTo(NPC.Center);
-                hoverDestination += Target.SafeDirectionTo(NPC.Center) * 300f;
+                hoverDestination += solyn.Player.SafeDirectionTo(NPC.Center) * 300f;
             }
             else
-                solynNPC.spriteDirection = (int)solynNPC.HorizontalDirectionTo(Target.Center);
+                solynNPC.spriteDirection = (int)solynNPC.HorizontalDirectionTo(solyn.Player.Center);
             solynNPC.SmoothFlyNear(hoverDestination, 0.09f, 0.88f);
 
             // Make Solyn's star detach from Solyn, serving as an independent shield, alongside the magic forcefield.
             if (Main.netMode != NetmodeID.MultiplayerClient && postLaserShootTime == -30 && !separatedFromStar)
             {
-                CarvedLaserbeam_LaserbeamDirection = CorePosition.AngleTo(Target.Center);
+                CarvedLaserbeam_LaserbeamDirection = CorePosition.AngleTo(solyn.Player.Center);
                 NPC.netUpdate = true;
 
                 NewProjectileBetter(solynNPC.GetSource_FromAI(), solynNPC.Center, CarvedLaserbeam_LaserbeamDirection.ToRotationVector2() * -9f, ModContent.ProjectileType<SolynSentientStar>(), 0, 0f);

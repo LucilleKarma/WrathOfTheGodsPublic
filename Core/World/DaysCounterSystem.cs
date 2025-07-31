@@ -30,5 +30,14 @@ namespace NoxusBoss.Core.World
         public override void SaveWorldData(TagCompound tag) => tag[nameof(DayCounter)] = DayCounter;
 
         public override void LoadWorldData(TagCompound tag) => DayCounter = tag.GetInt(nameof(DayCounter));
+        public override void NetSend(BinaryWriter writer)
+        {
+            writer.Write(DayCounter);
+        }
+
+        public override void NetReceive(BinaryReader reader)
+        {
+            DayCounter = reader.ReadInt32();
+        }
     }
 }

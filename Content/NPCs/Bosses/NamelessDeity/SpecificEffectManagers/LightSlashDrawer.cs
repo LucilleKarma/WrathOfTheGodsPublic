@@ -60,7 +60,7 @@ public class LightSlashDrawer : ModSystem
         if (anySlashes)
             ContinueRenderingCountdown = 30;
 
-        var gd = Main.instance.GraphicsDevice;
+        GraphicsDevice gd = Main.instance.GraphicsDevice;
 
         // Prepare the render target for drawing.
         Main.spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend, SamplerState.AnisotropicClamp, DepthStencilState.Default, RasterizerState.CullNone, null, Matrix.Identity);
@@ -98,12 +98,12 @@ public class LightSlashDrawer : ModSystem
 
     private static void ApplyBlurEffects()
     {
-        var gd = Main.instance.GraphicsDevice;
+        GraphicsDevice gd = Main.instance.GraphicsDevice;
         gd.SetRenderTarget(SlashTarget);
         gd.Clear(Color.Transparent);
 
         // Prepare the blur shader.
-        var blurShader = ShaderManager.GetShader("NoxusBoss.GaussianBlurShader");
+        ManagedShader blurShader = ShaderManager.GetShader("NoxusBoss.GaussianBlurShader");
         blurShader.TrySetParameter("blurOffset", 0.0032f);
         blurShader.TrySetParameter("colorMask", Vector4.One);
         blurShader.TrySetParameter("invert", false);

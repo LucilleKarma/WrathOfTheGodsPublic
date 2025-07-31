@@ -12,7 +12,7 @@ public static class VerletSimulations
     {
         for (int i = segments.Count - 1; i >= 0; i--)
         {
-            var segment = segments[i];
+            VerletSimulatedSegment segment = segments[i];
             if (!segment.Locked)
             {
                 Vector2 positionBeforeUpdate = segment.Position;
@@ -55,7 +55,7 @@ public static class VerletSimulations
         List<int> groundHitSegments = [];
         for (int i = segments.Count - 1; i >= 0; i--)
         {
-            var segment = segments[i];
+            VerletSimulatedSegment segment = segments[i];
             if (!segment.Locked)
             {
                 Vector2 positionBeforeUpdate = segment.Position;

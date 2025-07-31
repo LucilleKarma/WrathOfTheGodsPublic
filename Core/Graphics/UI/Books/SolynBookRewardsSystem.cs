@@ -26,8 +26,8 @@ public class SolynBookRewardsSystem : ModSystem
 
     public override void PostSetupContent()
     {
-        var data = LocalDataManager.Read<List<SolynReward>>("Core/Graphics/UI/Books/SolynBookRewards.json");
-        var progressionData = LocalDataManager.Read<SolynProgressionRatioReward>("Core/Graphics/UI/Books/SolynProgressionRatioBookRewards.json")?.Values?.ToList();
+        Dictionary<string, List<SolynReward>>? data = LocalDataManager.Read<List<SolynReward>>("Core/Graphics/UI/Books/SolynBookRewards.json");
+        List<SolynProgressionRatioReward>? progressionData = LocalDataManager.Read<SolynProgressionRatioReward>("Core/Graphics/UI/Books/SolynProgressionRatioBookRewards.json")?.Values?.ToList();
         if (data is null || progressionData is null)
         {
             Mod.Logger.Warn("Could not load Solyn reward JSON mappings.");

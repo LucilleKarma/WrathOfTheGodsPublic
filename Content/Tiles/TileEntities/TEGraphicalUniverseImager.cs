@@ -1,4 +1,5 @@
 ﻿using NoxusBoss.Core.Graphics.UI.GraphicalUniverseImager;
+
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
@@ -37,8 +38,11 @@ public class TEGraphicalUniverseImager : ModTileEntity, IClientSideTileEntityUpd
 
     public override bool IsTileValidForEntity(int x, int y)
     {
-        Tile tile = Main.tile[x, y];
-        return tile.HasTile && tile.TileType == ModContent.TileType<GraphicalUniverseImagerTile>() && tile.TileFrameX == 0 && tile.TileFrameY == 0;
+        //This check did not work in MP for some reason, is it required tho?
+        //Tile tile = Main.tile[x, y];
+        //return tile.HasTile && tile.TileType == ModContent.TileType<GraphicalUniverseImagerTile>() && tile.TileFrameX == 0 && tile.TileFrameY == 0;
+
+        return true;
     }
 
     public void ClientSideUpdate()
@@ -73,7 +77,6 @@ public class TEGraphicalUniverseImager : ModTileEntity, IClientSideTileEntityUpd
         // If in multiplayer, tell the server to place the tile entity and DO NOT place it yourself. That would mismatch IDs.
         if (Main.netMode == NetmodeID.MultiplayerClient)
         {
-            NetMessage.SendTileSquare(Main.myPlayer, i, j, GraphicalUniverseImagerTile.Width, GraphicalUniverseImagerTile.Height);
             NetMessage.SendData(MessageID.TileEntityPlacement, -1, -1, null, i, j, Type);
             return -1;
         }
@@ -83,4 +86,14 @@ public class TEGraphicalUniverseImager : ModTileEntity, IClientSideTileEntityUpd
     // Sync the tile entity the moment it is place on the server.
     // This is done to cause it to register among all clients.
     public override void OnNetPlace() => NetMessage.SendData(MessageID.TileEntitySharing, -1, -1, null, ID, Position.X, Position.Y);
+
+    public override void NetSend(BinaryWriter writer)
+    {
+        Settings.Send(writer);
+    }
+
+    public override void NetReceive(BinaryReader reader)
+    {
+        Settings.Receive(reader);
+    }
 }

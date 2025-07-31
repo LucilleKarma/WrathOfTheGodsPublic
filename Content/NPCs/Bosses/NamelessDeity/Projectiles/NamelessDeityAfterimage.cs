@@ -91,7 +91,7 @@ public class NamelessDeityAfterimage : ModProjectile, IProjOwnedByBoss<NamelessD
             return;
 
         // Prepare the afterimage psychedelic shader.
-        var afterimageShader = ShaderManager.GetShader("NoxusBoss.NamelessDeityPsychedelicAfterimageShader");
+        ManagedShader afterimageShader = ShaderManager.GetShader("NoxusBoss.NamelessDeityPsychedelicAfterimageShader");
         afterimageShader.TrySetParameter("uScreenResolution", Main.ScreenSize.ToVector2());
         afterimageShader.TrySetParameter("warpSpeed", Time * 0.00011f);
         afterimageShader.SetTexture(TurbulentNoise, 1);

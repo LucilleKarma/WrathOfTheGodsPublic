@@ -36,7 +36,7 @@ public class DarkGas : ModProjectile, IProjOwnedByBoss<AvatarOfEmptiness>
     public override void AI()
     {
         // Create gas particles.
-        var metaball = ModContent.GetInstance<DarkGasMetaball>();
+        DarkGasMetaball metaball = ModContent.GetInstance<DarkGasMetaball>();
         float gasSize = InverseLerp(-3f, 25f, Time) * Projectile.width * 0.86f;
         float angularOffset = Sin(Time / 5f) * 0.77f;
         metaball.CreateParticle(Projectile.Center + Projectile.velocity * 2f, Main.rand.NextVector2Circular(2f, 2f) + Projectile.velocity.RotatedBy(angularOffset).RotatedByRandom(0.6f) * 0.26f, gasSize);

@@ -271,7 +271,7 @@ public class PerversePurseHoldout : ModProjectile
     /// </summary>
     public void RenderSuctionVisual()
     {
-        var gd = Main.instance.GraphicsDevice;
+        GraphicsDevice gd = Main.instance.GraphicsDevice;
 
         Vector2 suctionCenter = Projectile.Center + Vector2.UnitY.RotatedBy(Projectile.rotation) * 2f + Vector2.UnitY * Projectile.gfxOffY;
 

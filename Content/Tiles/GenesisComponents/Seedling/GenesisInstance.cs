@@ -92,7 +92,7 @@ public class GenesisInstance
         NearbyPlants.Clear();
 
         // Check for nearby plants that could influence this Genesis.
-        var allTilePoints = GenesisPlantTileRenderingSystem.allTilePoints;
+        Dictionary<GenesisPlantTileRenderingSystem, List<PlantTileData>> allTilePoints = GenesisPlantTileRenderingSystem.allTilePoints;
         foreach (GenesisPlantTileRenderingSystem system in allTilePoints.Keys)
         {
             List<PlantTileData> tilePoints = allTilePoints[system];

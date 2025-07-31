@@ -100,15 +100,21 @@ public partial class NamelessDeityBoss : ModNPC
         NPC.netUpdate = true;
 
         // Create particles.
-        for (int i = 0; i < 12; i++)
+        if (Main.netMode != NetmodeID.Server)
         {
-            Color fireColor = new Color(255, 150, 0);
-            NamelessFireParticleSystemManager.ParticleSystem.CreateNew(position, Main.rand.NextVector2Circular(24f, 24f) + velocity, Vector2.One * Main.rand.NextFloat(50f, 120f), fireColor);
+            for (int i = 0; i < 12; i++)
+            {
+                Color fireColor = new Color(255, 150, 0);
+                NamelessFireParticleSystemManager.ParticleSystem.CreateNew(position, Main.rand.NextVector2Circular(24f, 24f) + velocity, Vector2.One * Main.rand.NextFloat(50f, 120f), fireColor);
+            }
         }
     }
 
     public static void CreateHandVanishVisuals(NamelessDeityHand hand)
     {
+        if (Main.netMode == NetmodeID.Server)
+            return;
+
         // Create particles.
         for (int i = 0; i < 10; i++)
         {

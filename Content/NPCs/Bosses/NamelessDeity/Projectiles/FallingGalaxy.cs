@@ -219,7 +219,7 @@ public class FallingGalaxy : ModProjectile, IDrawsWithShader, IProjOwnedByBoss<N
         if (Time < TelegraphTime)
         {
             // Configure the streak shader's texture.
-            var streakShader = ShaderManager.GetShader("NoxusBoss.GenericTrailStreak");
+            ManagedShader streakShader = ShaderManager.GetShader("NoxusBoss.GenericTrailStreak");
             streakShader.SetTexture(GennedAssets.Textures.TrailStreaks.StreakBloomLine, 1);
             streakShader.Apply();
 
@@ -254,7 +254,7 @@ public class FallingGalaxy : ModProjectile, IDrawsWithShader, IProjOwnedByBoss<N
             M21 = 0f,
             M22 = 1.7f
         };
-        var galaxyShader = ShaderManager.GetShader("NoxusBoss.GalaxyShader");
+        ManagedShader galaxyShader = ShaderManager.GetShader("NoxusBoss.GalaxyShader");
         Matrix spinInPlaceRotation = Matrix.CreateRotationZ(SpinRotation);
         Matrix orientationRotation = Matrix.CreateRotationZ(Projectile.rotation);
         galaxyShader.TrySetParameter("time", Main.GlobalTimeWrappedHourly);

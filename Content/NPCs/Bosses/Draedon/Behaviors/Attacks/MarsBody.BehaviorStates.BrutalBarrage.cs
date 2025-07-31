@@ -1,7 +1,9 @@
 ﻿using Luminance.Common.StateMachines;
 using Luminance.Core.Graphics;
+
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+
 using NoxusBoss.Assets;
 using NoxusBoss.Content.NPCs.Bosses.Draedon.Projectiles;
 using NoxusBoss.Content.NPCs.Bosses.Draedon.Projectiles.SolynProjectiles;
@@ -9,6 +11,7 @@ using NoxusBoss.Content.NPCs.Bosses.Draedon.SpecificEffectManagers;
 using NoxusBoss.Content.NPCs.Friendly;
 using NoxusBoss.Content.Particles;
 using NoxusBoss.Core.DataStructures;
+
 using Terraria;
 using Terraria.Audio;
 using Terraria.ID;
@@ -299,12 +302,14 @@ public partial class MarsBody
         SolynAction = solyn => DoBehavior_BrutalBarrage_Solyn(solyn, false);
         EnergyCannonChainsawActive = true;
 
-        NPC.rotation = NPC.rotation.AngleLerp(NPC.velocity.X * 0.006f + NPC.SafeDirectionTo(Target.Center).X * 0.04f, 0.4f);
+        Projectile forcefield = Main.projectile[forcefieldIndex];
+        BattleSolyn solyn = BattleSolyn.GetSolynRelatedTo(Main.player[forcefield.owner])!;
+
+        NPC.rotation = NPC.rotation.AngleLerp(NPC.velocity.X * 0.006f + NPC.SafeDirectionTo(solyn.Player.Center).X * 0.04f, 0.4f);
 
         float chainsawBend = -0.01f;
-        Projectile forcefield = Main.projectile[forcefieldIndex];
-        Vector2 hoverDestination = Target.Center + forcefield.velocity.SafeNormalize(Vector2.UnitY) * new Vector2(350f, 430f);
-        hoverDestination.X -= InverseLerp(-200f, 0f, Target.Center.X - NPC.Center.X) * 190f;
+        Vector2 hoverDestination = solyn.Player.Center + forcefield.velocity.SafeNormalize(Vector2.UnitY) * new Vector2(350f, 430f);
+        hoverDestination.X -= InverseLerp(-200f, 0f, solyn.Player.Center.X - NPC.Center.X) * 190f;
 
         Vector2 chainsawDestination = forcefield.Center + forcefield.velocity.SafeNormalize(Vector2.UnitY) * -16f;
         NPC.Center = Vector2.Lerp(NPC.Center, hoverDestination, 0.24f);
@@ -320,15 +325,16 @@ public partial class MarsBody
             NPC.Center += NPC.SafeDirectionTo(RightHandPosition).RotatedBy(PiOver2) * Main.rand.NextFloatDirection() * 2.8f;
         }
 
-        float panInterpolant = SmoothStep(0f, 1f, InverseLerp(0f, 30f, AITimer));
-        float shake = InverseLerp(0f, 20f, AITimer).Squared() * 3.3f + InverseLerp(0f, BrutalBarrage_ForcefieldGrindTime, AITimer).Cubed() * 10f;
-        float zoom = panInterpolant * 0.4f;
-        ScreenShakeSystem.SetUniversalRumble(shake, TwoPi, null, 0.5f);
-        CameraPanSystem.PanTowards(forcefield.Center, panInterpolant);
-        CameraPanSystem.ZoomIn(zoom);
-
-        if (Main.netMode != NetmodeID.Server)
+        if (solyn.MultiplayerIndex == Main.myPlayer)
         {
+            float panInterpolant = SmoothStep(0f, 1f, InverseLerp(0f, 30f, AITimer));
+            float shake = InverseLerp(0f, 20f, AITimer).Squared() * 3.3f + InverseLerp(0f, BrutalBarrage_ForcefieldGrindTime, AITimer).Cubed() * 10f;
+            float zoom = panInterpolant * 0.4f;
+
+            ScreenShakeSystem.SetUniversalRumble(shake, TwoPi, null, 0.5f);
+            CameraPanSystem.PanTowards(forcefield.Center, panInterpolant);
+            CameraPanSystem.ZoomIn(zoom);
+
             ManagedScreenFilter focusShader = ShaderManager.GetFilter("NoxusBoss.AnimeFocusLinesShader");
             focusShader.TrySetParameter("intensity", panInterpolant * 1.6f);
             focusShader.SetTexture(PerlinNoise, 1, SamplerState.LinearWrap);
@@ -466,7 +472,7 @@ public partial class MarsBody
         float forcefieldDirection = 0f;
         foreach (Projectile projectile in Main.ActiveProjectiles)
         {
-            if (projectile.owner == NPC.target && projectile.type == forcefieldID)
+            if (projectile.owner == solyn.Player.whoAmI && projectile.type == forcefieldID)
             {
                 forcefieldDirection = WrapAngle360(projectile.velocity.ToRotation());
                 break;
@@ -474,12 +480,12 @@ public partial class MarsBody
         }
 
         NPC solynNPC = solyn.NPC;
-        Vector2 lookDestination = Target.Center;
+        Vector2 lookDestination = solyn.Player.Center;
 
         float angleSnapValue = PiOver2;
         float snappedForcefieldDirection = Round(forcefieldDirection * angleSnapValue) / angleSnapValue;
         Vector2 hoverOffset = snappedForcefieldDirection.ToRotationVector2() * -56f + Vector2.UnitX * 4f;
-        Vector2 hoverDestination = Target.Center + hoverOffset;
+        Vector2 hoverDestination = solyn.Player.Center + hoverOffset;
 
         solynNPC.SmoothFlyNear(hoverDestination, 0.2f, 0.8f);
 

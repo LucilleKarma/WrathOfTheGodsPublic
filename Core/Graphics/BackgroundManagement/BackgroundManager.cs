@@ -40,7 +40,7 @@ public class BackgroundManager : ModSystem
         if (Main.gameMenu)
             return;
 
-        var orderedBackgrounds = ModContent.GetContent<Background>().Where(b => b.IsActive).OrderBy(b => b.Priority);
+        IOrderedEnumerable<Background> orderedBackgrounds = ModContent.GetContent<Background>().Where(b => b.IsActive).OrderBy(b => b.Priority);
         Vector2 backgroundSize = ViewportSize;
         foreach (Background background in orderedBackgrounds)
             background.Render(backgroundSize, minDepth, maxDepth);
@@ -57,7 +57,7 @@ public class BackgroundManager : ModSystem
 
     public override void ModifySunLightColor(ref Color tileColor, ref Color backgroundColor)
     {
-        var orderedBackgrounds = ModContent.GetContent<Background>().Where(b => b.IsActive).OrderBy(b => b.Priority);
+        IOrderedEnumerable<Background> orderedBackgrounds = ModContent.GetContent<Background>().Where(b => b.IsActive).OrderBy(b => b.Priority);
         foreach (Background background in orderedBackgrounds)
             background.ModifyLightColors(ref backgroundColor, ref tileColor);
     }

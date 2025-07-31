@@ -51,7 +51,7 @@ public class DimensionTwistedComet : ModProjectile, IProjOwnedByBoss<AvatarOfEmp
         // Create gas particles.
         if (Main.rand.NextBool(3))
         {
-            var metaball = ModContent.GetInstance<PaleAvatarBlobMetaball>();
+            PaleAvatarBlobMetaball metaball = ModContent.GetInstance<PaleAvatarBlobMetaball>();
             float gasSize = InverseLerp(-3f, 25f, Time) * Projectile.width * 0.68f;
             float angularOffset = Sin(Time / 5f) * 0.77f;
             metaball.CreateParticle(Projectile.Center + Projectile.velocity * 2f, Main.rand.NextVector2Circular(2f, 2f) + Projectile.velocity.RotatedBy(angularOffset).RotatedByRandom(0.6f) * 0.26f, gasSize);
@@ -63,7 +63,7 @@ public class DimensionTwistedComet : ModProjectile, IProjOwnedByBoss<AvatarOfEmp
     public override void OnKill(int timeLeft)
     {
         // Create gas particles.
-        var metaball = ModContent.GetInstance<PaleAvatarBlobMetaball>();
+        PaleAvatarBlobMetaball metaball = ModContent.GetInstance<PaleAvatarBlobMetaball>();
         for (int i = 0; i < 15; i++)
         {
             float gasSize = Projectile.width * Main.rand.NextFloat(0.32f, 1.6f);

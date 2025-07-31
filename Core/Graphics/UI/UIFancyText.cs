@@ -109,7 +109,7 @@ public class UIFancyText : UIElement
                     lines.RemoveAt(i);
 
                     // Acquire the matched instance. If there are more than one successive loop instances will catch it.
-                    var match = regex.Match(wholeLine);
+                    Match match = regex.Match(wholeLine);
                     string textThatUsesPattern = match.Groups[1].Value;
 
                     // Add the separated text to the list of lines.
@@ -291,7 +291,7 @@ public class UIFancyText : UIElement
         int totalLines = splitText.Max(t => t.LineIndex);
         for (int i = 0; i < totalLines + 1; i++)
         {
-            var linesForText = splitText.Where(t => t.LineIndex == i).ToList();
+            List<TextPart> linesForText = splitText.Where(t => t.LineIndex == i).ToList();
 
             // Draw the line parts.
             int partIndex = 0;
@@ -299,7 +299,7 @@ public class UIFancyText : UIElement
             foreach (TextPart line in linesForText)
             {
                 Vector2 currentPosition = position + new Vector2(horizontalOffset, i * scale * SpacingPerLine);
-                var font = line.Italics ? fontItalics ?? this.font : this.font;
+                DynamicSpriteFont font = line.Italics ? fontItalics ?? this.font : this.font;
 
                 Color lineColor = line.TextColor;
 

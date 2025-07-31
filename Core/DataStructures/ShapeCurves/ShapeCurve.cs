@@ -72,7 +72,7 @@ public class ShapeCurve
         if (!polygonBounds.Intersects(aabb))
             return false;
 
-        foreach (var edge in GetPolygonEdges(shapeOffset))
+        foreach (LineSegment edge in GetPolygonEdges(shapeOffset))
         {
             if (LineIntersectsRectangle(edge, aabb))
                 return true;
@@ -88,7 +88,7 @@ public class ShapeCurve
         int maxX = int.MinValue;
         int maxY = int.MinValue;
 
-        foreach (var point in ShapePoints)
+        foreach (Vector2 point in ShapePoints)
         {
             minX = Math.Min(minX, (int)(point.X + shapeOffset.X));
             minY = Math.Min(minY, (int)(point.Y + shapeOffset.Y));
@@ -105,8 +105,8 @@ public class ShapeCurve
 
         for (int i = 0; i < pointCount; i++)
         {
-            var start = ShapePoints[i] + shapeOffset;
-            var end = ShapePoints[(i + 1) % pointCount] + shapeOffset;
+            Vector2 start = ShapePoints[i] + shapeOffset;
+            Vector2 end = ShapePoints[(i + 1) % pointCount] + shapeOffset;
             yield return new LineSegment(start, end);
         }
     }

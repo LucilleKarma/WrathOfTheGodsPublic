@@ -66,7 +66,7 @@ public class Supernova : ModProjectile, IProjOwnedByBoss<NamelessDeityBoss>, IDr
 
     public void DrawWithShader(SpriteBatch spriteBatch)
     {
-        var supernovaShader = ShaderManager.GetShader("NoxusBoss.SupernovaShader");
+        ManagedShader supernovaShader = ShaderManager.GetShader("NoxusBoss.SupernovaShader");
         supernovaShader.TrySetParameter("supernovaColor1", Color.Orange.ToVector3());
         supernovaShader.TrySetParameter("supernovaColor2", Color.Red.ToVector3());
         supernovaShader.TrySetParameter("generalOpacity", Projectile.Opacity);

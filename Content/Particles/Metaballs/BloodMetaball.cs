@@ -33,7 +33,7 @@ public class BloodMetaball : MetaballType
     public override void PrepareShaderForTarget(int layerIndex)
     {
         // Store the shader in an easy to use local variable.
-        var metaballShader = ShaderManager.GetShader("NoxusBoss.BloodMetaballShader");
+        ManagedShader metaballShader = ShaderManager.GetShader("NoxusBoss.BloodMetaballShader");
 
         // Fetch the layer texture. This is the texture that will be overlaid over the greyscale contents on the screen.
         Texture2D layerTexture = LayerTextures[layerIndex]();
@@ -72,9 +72,9 @@ public class BloodMetaball : MetaballType
     public override void DrawInstances()
     {
         AtlasTexture texture = AtlasManager.GetTexture(MetaballAtlasTextureToUse);
-        var darknessOrderedParticles = Particles.OrderByDescending(p => p.ExtraInfo[0]);
+        IOrderedEnumerable<MetaballInstance> darknessOrderedParticles = Particles.OrderByDescending(p => p.ExtraInfo[0]);
 
-        foreach (var particle in darknessOrderedParticles)
+        foreach (MetaballInstance? particle in darknessOrderedParticles)
         {
             float darknessInterpolant = particle.ExtraInfo[0];
             float dissolveInterpolant = Pow(InverseLerp(2f, 55f, particle.Size), 1f);

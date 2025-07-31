@@ -63,7 +63,7 @@ public class PortalSkirt : ModItem
         Texture2D innerRiftTexture = GennedAssets.Textures.FirstPhaseForm.RiftInnerTexture.Value;
         Vector2 textureArea = Vector2.One * 100f / innerRiftTexture.Size();
 
-        var riftShader = ShaderManager.GetShader("NoxusBoss.DarkPortalShader");
+        ManagedShader riftShader = ShaderManager.GetShader("NoxusBoss.DarkPortalShader");
         riftShader.TrySetParameter("time", Main.GlobalTimeWrappedHourly * 0.1f);
         riftShader.TrySetParameter("baseCutoffRadius", 0.1f);
         riftShader.TrySetParameter("swirlOutwardnessExponent", 0.151f);
