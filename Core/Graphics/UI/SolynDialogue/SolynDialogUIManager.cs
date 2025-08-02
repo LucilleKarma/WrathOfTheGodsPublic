@@ -1,18 +1,23 @@
 ﻿using Luminance.Common.Easings;
+
 using Microsoft.CodeAnalysis;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+
 using NoxusBoss.Assets;
 using NoxusBoss.Assets.Fonts;
 using NoxusBoss.Core.DialogueSystem;
 using NoxusBoss.Core.Netcode;
 using NoxusBoss.Core.Netcode.Packets;
 using NoxusBoss.Core.World.Subworlds;
+
 using ReLogic.Graphics;
+
 using Terraria;
 using Terraria.Audio;
 using Terraria.GameContent;
 using Terraria.UI.Chat;
+
 using static NoxusBoss.Core.Graphics.UI.UIFancyText;
 
 namespace NoxusBoss.Core.Graphics.UI.SolynDialogue;

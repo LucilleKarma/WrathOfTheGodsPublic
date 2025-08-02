@@ -191,7 +191,7 @@ public partial class Solyn : ModNPC, IPixelatedPrimitiveRenderer
         }).WithoutClickability().WithDrawSizes(1420);
         itsPeak.Register();
 
-        On_Main.DrawNPCHeadFriendly += FlipMapHead;
+        On_Main.DrawNPCHeadFriendly += FlipMapHead; 
     }
 
     private void FlipMapHead(On_Main.orig_DrawNPCHeadFriendly orig, Entity entity, byte alpha, float headScale, SpriteEffects dir, int townHeadId, float x, float y)
@@ -471,7 +471,7 @@ public partial class Solyn : ModNPC, IPixelatedPrimitiveRenderer
             SpeakToPlayerEffects();
             return;
         }
-
+        
         if (ForcedConversation)
             return;
 
