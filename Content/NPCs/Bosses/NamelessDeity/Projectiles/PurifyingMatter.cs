@@ -61,7 +61,7 @@ public class PurifyingMatter : ModProjectile, IProjOwnedByBoss<NamelessDeityBoss
 
         if (SuckingIn)
         {
-            var dreamcatchers = AllProjectilesByID(ModContent.ProjectileType<CelestialDreamcatcher>()).ToList();
+            List<Projectile> dreamcatchers = AllProjectilesByID(ModContent.ProjectileType<CelestialDreamcatcher>()).ToList();
             if (dreamcatchers.Count <= 0)
             {
                 Projectile.Kill();

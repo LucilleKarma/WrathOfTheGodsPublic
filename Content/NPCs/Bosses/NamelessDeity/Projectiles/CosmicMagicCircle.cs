@@ -153,7 +153,7 @@ public class CosmicMagicCircle : ModProjectile, IProjOwnedByBoss<NamelessDeityBo
         Main.spriteBatch.PrepareForShaders();
 
         // Apply the shader.
-        var magicCircleShader = ShaderManager.GetShader("NoxusBoss.MagicCircleShader");
+        ManagedShader magicCircleShader = ShaderManager.GetShader("NoxusBoss.MagicCircleShader");
         CalculatePrimitiveMatrices(Main.screenWidth, Main.screenHeight, out Matrix viewMatrix, out Matrix projectionMatrix);
         magicCircleShader.TrySetParameter("orientationRotation", Projectile.rotation);
         magicCircleShader.TrySetParameter("spinRotation", spinRotation);

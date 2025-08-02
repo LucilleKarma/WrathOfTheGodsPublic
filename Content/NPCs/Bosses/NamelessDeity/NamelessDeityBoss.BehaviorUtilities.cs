@@ -112,7 +112,8 @@ public partial class NamelessDeityBoss : ModNPC
 
     public static void CreateHandVanishVisuals(NamelessDeityHand hand)
     {
-        if (Main.netMode == NetmodeID.Server) return;
+        if (Main.netMode == NetmodeID.Server)
+            return;
 
         // Create particles.
         for (int i = 0; i < 10; i++)

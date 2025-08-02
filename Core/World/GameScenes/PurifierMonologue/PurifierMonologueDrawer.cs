@@ -77,7 +77,7 @@ public class PurifierMonologueDrawer : ModSystem
         }
 
         // Draw credits on the bottom right of the screen.
-        var font = FontAssets.MouseText.Value;
+        DynamicSpriteFont font = FontAssets.MouseText.Value;
         int textLineCounter = 0;
         float creditTextScale = 1.2f;
         string creditText = Language.GetTextValue($"Mods.{Mod.Name}.Dialog.LofiMusicCreditText");

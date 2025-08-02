@@ -56,8 +56,8 @@ public class LoreNamelessDeity : BaseLoreItem
 
     public override void SetupCalRemixCompatibility()
     {
-        var fanny = new FannyDialog("NamelessLore1", "FannyAwooga").WithDuration(4.25f).WithCondition(_ => FannyDialog.JustReadLoreItem(Type)).WithoutClickability();
-        var evilFanny = new FannyDialog("NamelessLore2", "EvilFannyIdle").WithDuration(5f).WithEvilness().WithParentDialog(fanny, 2f);
+        FannyDialog fanny = new FannyDialog("NamelessLore1", "FannyAwooga").WithDuration(4.25f).WithCondition(_ => FannyDialog.JustReadLoreItem(Type)).WithoutClickability();
+        FannyDialog evilFanny = new FannyDialog("NamelessLore2", "EvilFannyIdle").WithDuration(5f).WithEvilness().WithParentDialog(fanny, 2f);
         evilFanny.Register();
         fanny.Register();
     }
@@ -115,7 +115,7 @@ public class LoreNamelessDeity : BaseLoreItem
             NamelessDeityLoreManager.LookingAtNamelessDeityLoreItem = true;
 
         // Generate individual lore lines.
-        var font = FontRegistry.Instance.NamelessDeityText;
+        DynamicSpriteFont font = FontRegistry.Instance.NamelessDeityText;
         for (int i = 0; i < loreLines.Length; i++)
         {
             // Generate the line text.

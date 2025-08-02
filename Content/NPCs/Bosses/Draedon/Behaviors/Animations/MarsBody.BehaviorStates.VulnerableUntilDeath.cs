@@ -24,7 +24,7 @@ public partial class MarsBody
         if (CurrentState != MarsAIType.VulnerableUntilDeath)
             return;
 
-        var caster = Main.player[beam.owner];
+        Player caster = Main.player[beam.owner];
         NPC.velocity += caster.SafeDirectionTo(NPC.Center) * beam.localNPCHitCooldown * 0.93f;
         NPC.netUpdate = true;
     }

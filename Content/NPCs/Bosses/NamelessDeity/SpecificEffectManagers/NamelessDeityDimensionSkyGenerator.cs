@@ -85,7 +85,7 @@ public class NamelessDeityDimensionSkyGenerator : ModSystem
         // Create Nameless Deity Dimension metaballs over the mouse cursor if the special accessory is being used.
         if (DeificTouch.UsingEffect)
         {
-            var metaball = ModContent.GetInstance<NamelessDeityDimensionMetaball>();
+            NamelessDeityDimensionMetaball metaball = ModContent.GetInstance<NamelessDeityDimensionMetaball>();
             for (int i = 0; i < 2; i++)
                 metaball.CreateParticle(Main.MouseWorld, Main.rand.NextVector2Circular(4f, 4f), 28f);
         }
@@ -106,7 +106,7 @@ public class NamelessDeityDimensionSkyGenerator : ModSystem
         bool backgroundInactive = HeavenlyBackgroundIntensity <= 0f;
         if (NamelessDeityBoss.Myself is not null)
         {
-            var namelessAIState = NamelessDeityBoss.Myself.As<NamelessDeityBoss>().CurrentState;
+            NamelessDeityBoss.NamelessAIType namelessAIState = NamelessDeityBoss.Myself.As<NamelessDeityBoss>().CurrentState;
             if (namelessAIState is NamelessDeityBoss.NamelessAIType.Awaken or NamelessDeityBoss.NamelessAIType.OpenScreenTear or NamelessDeityBoss.NamelessAIType.IntroScreamAnimation)
                 backgroundInactive = false;
         }
@@ -144,7 +144,7 @@ public class NamelessDeityDimensionSkyGenerator : ModSystem
         // Update the smoke particles.
         UpdateSmokeParticles();
 
-        var gd = Main.instance.GraphicsDevice;
+        GraphicsDevice gd = Main.instance.GraphicsDevice;
 
         // Switch to the dimension render target.
         gd.SetRenderTarget(NamelessDeityDimensionTarget);
@@ -195,8 +195,8 @@ public class NamelessDeityDimensionSkyGenerator : ModSystem
         if (backgroundIntensity > 1f)
             backgroundIntensity = 1f;
 
-        var galaxyShader = ShaderManager.GetShader("NoxusBoss.GalaxyShader");
-        var gd = Main.instance.GraphicsDevice;
+        ManagedShader galaxyShader = ShaderManager.GetShader("NoxusBoss.GalaxyShader");
+        GraphicsDevice gd = Main.instance.GraphicsDevice;
         Vector2 scalingFactor = new Vector2(gd.DisplayMode.Width / 2560f, gd.DisplayMode.Height / 1440f);
 
         // Draw galaxies in the sky.
@@ -294,7 +294,7 @@ public class NamelessDeityDimensionSkyGenerator : ModSystem
         if (WoTGConfig.Instance.PhotosensitivityMode)
             animationSpeed *= 0.4f;
 
-        var kaleidoscopeShader = ShaderManager.GetShader("NoxusBoss.KaleidoscopeShader");
+        ManagedShader kaleidoscopeShader = ShaderManager.GetShader("NoxusBoss.KaleidoscopeShader");
         kaleidoscopeShader.TrySetParameter("time", ClockTimerSystem.Time);
         kaleidoscopeShader.TrySetParameter("totalSplits", inFinalPhase ? 4f : 7f);
         kaleidoscopeShader.TrySetParameter("distanceBandingFactor", 0f);

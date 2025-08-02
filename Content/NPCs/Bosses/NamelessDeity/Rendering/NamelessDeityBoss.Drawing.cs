@@ -136,7 +136,7 @@ public partial class NamelessDeityBoss : ModNPC
             Main.spriteBatch.End();
             Main.spriteBatch.Begin(SpriteSortMode.Immediate, afterimageBlend, SamplerState.AnisotropicWrap, DepthStencilState.None, RasterizerState.CullNone, null, Main.GameViewMatrix.TransformationMatrix);
 
-            var afterimages = AllProjectilesByID(ModContent.ProjectileType<NamelessDeityAfterimage>());
+            IEnumerable<Projectile> afterimages = AllProjectilesByID(ModContent.ProjectileType<NamelessDeityAfterimage>());
             foreach (Projectile afterimage in afterimages)
                 afterimage.As<NamelessDeityAfterimage>().DrawSelf();
             Main.spriteBatch.ResetToDefault();
@@ -175,7 +175,7 @@ public partial class NamelessDeityBoss : ModNPC
         // Use a pixelation shader by default.
         if ((RenderComposite.UsedPreset?.ShaderOverlayEffect ?? null) is null && NPC.Opacity >= 0.001f)
         {
-            var pixelationShader = ShaderManager.GetShader("NoxusBoss.PixelationShader");
+            ManagedShader pixelationShader = ShaderManager.GetShader("NoxusBoss.PixelationShader");
             pixelationShader.TrySetParameter("pixelationFactor", Vector2.One * 1.75f / target.Size());
             pixelationShader.Apply();
         }
@@ -257,7 +257,7 @@ public partial class NamelessDeityBoss : ModNPC
 
     public static void DrawDeathAnimationTerminationText()
     {
-        var font = FontRegistry.Instance.NamelessDeityText;
+        DynamicSpriteFont font = FontRegistry.Instance.NamelessDeityText;
         string text = Language.GetTextValue("Mods.NoxusBoss.Dialog.NamelessDeityEndScreenSkipText");
         float scale = 0.6f;
         float maxHeight = 200f;
@@ -292,7 +292,7 @@ public partial class NamelessDeityBoss : ModNPC
 
                 Main.spriteBatch.PrepareForShaders(BlendState.NonPremultiplied);
 
-                var staticShader = ShaderManager.GetShader("NoxusBoss.StaticOverlayShader");
+                ManagedShader staticShader = ShaderManager.GetShader("NoxusBoss.StaticOverlayShader");
                 staticShader.TrySetParameter("staticInterpolant", Pow(InverseLerp(0f, 240f, TimeSinceScreenSmash), 2f));
                 staticShader.TrySetParameter("staticZoomFactor", InverseLerp(0f, 210f, TimeSinceScreenSmash) * 6f + 3f);
                 staticShader.TrySetParameter("neutralizationInterpolant", 0f);
@@ -338,14 +338,14 @@ public partial class NamelessDeityBoss : ModNPC
 
     public static void ApplyMoonburnBlueEffect(Texture2D target)
     {
-        var blueShader = ShaderManager.GetShader("NoxusBoss.MoonburnBlueOverlayShader");
+        ManagedShader blueShader = ShaderManager.GetShader("NoxusBoss.MoonburnBlueOverlayShader");
         blueShader.TrySetParameter("swapHarshness", 0.85f);
         blueShader.Apply();
     }
 
     public static void ApplyMyraGoldEffect(Texture2D target)
     {
-        var goldShader = ShaderManager.GetShader("NoxusBoss.MyraGoldOverlayShader");
+        ManagedShader goldShader = ShaderManager.GetShader("NoxusBoss.MyraGoldOverlayShader");
         goldShader.TrySetParameter("swapHarshness", 0.5f);
         goldShader.Apply();
     }

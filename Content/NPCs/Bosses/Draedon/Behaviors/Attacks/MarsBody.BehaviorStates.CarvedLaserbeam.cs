@@ -212,7 +212,7 @@ public partial class MarsBody
         {
             // Disable contact damage on the deathray as the white overlay takes over, since obviously the player won't be able to see the borders of it anymore.
             int rayID = ModContent.ProjectileType<ExoelectricDisintegrationRay>();
-            var rays = AllProjectilesByID(rayID);
+            IEnumerable<Projectile> rays = AllProjectilesByID(rayID);
             foreach (Projectile ray in rays)
                 ray.damage = 0;
 

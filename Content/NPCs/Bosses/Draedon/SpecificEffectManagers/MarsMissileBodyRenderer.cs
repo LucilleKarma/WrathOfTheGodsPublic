@@ -142,7 +142,7 @@ public class MarsMissileBodyRenderer : ModSystem
             return z;
         }).ToList();
 
-        var gd = Main.instance.GraphicsDevice;
+        GraphicsDevice gd = Main.instance.GraphicsDevice;
         for (int i = 0; i < vertices.Count; i++)
             gd.DrawUserIndexedPrimitives(PrimitiveType.TriangleList, vertices[i], 0, vertices[i].Length, indices[i], 0, 2);
     }

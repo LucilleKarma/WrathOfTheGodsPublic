@@ -25,7 +25,7 @@ public partial class MarsBody
         if (CurrentState != MarsAIType.PostEnergyWeaveSequenceStun)
             return;
 
-        var caster = Main.player[beam.owner];
+        Player caster = Main.player[beam.owner];
         float antiSpacePush = InverseLerp(900f, 2700f, NPC.Center.Y);
         NPC.velocity += caster.SafeDirectionTo(NPC.Center) * beam.localNPCHitCooldown * antiSpacePush * 0.3f;
         NPC.netUpdate = true;

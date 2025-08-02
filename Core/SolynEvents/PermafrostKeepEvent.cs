@@ -139,7 +139,7 @@ public class PermafrostKeepEvent : SolynEvent
         Vector2 walkDestination = PermafrostKeepWorldGen.KeepArea.Center() * 16f + new Vector2(40f, 322f);
         Vector2 aheadPathfindingPoint = walkDestination;
 
-        //This thing DDoS'es client if "chunk" with permaforst keep is not loaded
+        // This DDoS'es clients if the "chunk" with Permaforst's keep is not loaded.
         if (Main.netMode != NetmodeID.Server && Main.LocalPlayer.WithinRange(PermafrostKeepWorldGen.KeepArea.Center(), 1000))
         {
             List<Vector2> path = AStarPathfinding.PathfindThroughTiles(npc.Center - Vector2.UnitX * npc.spriteDirection * 10f, walkDestination, point =>

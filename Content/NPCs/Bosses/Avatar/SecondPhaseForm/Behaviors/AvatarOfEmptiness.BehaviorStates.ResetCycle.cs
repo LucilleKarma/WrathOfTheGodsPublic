@@ -87,7 +87,7 @@ public partial class AvatarOfEmptiness
     {
         if (NeedsToSelectNewDimensionAttacksSoon)
         {
-            var set = Phase4StartingAttackSet.ToList();
+            List<AvatarAIType> set = Phase4StartingAttackSet.ToList();
             if (NeedsToSelectNewDimensionAttacksSoon)
                 set.RemoveAt(0);
             if (NeedsToSelectNewDimensionAttacksSoon && set[0] != AvatarAIType.SendPlayerToMyUniverse && PreviousState != AvatarAIType.SendPlayerToMyUniverse)

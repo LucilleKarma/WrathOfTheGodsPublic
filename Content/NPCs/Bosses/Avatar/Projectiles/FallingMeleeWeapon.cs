@@ -107,7 +107,7 @@ public class FallingMeleeWeapon : ModProjectile, IProjOwnedByBoss<AvatarOfEmptin
         if (StickState == AvatarStickState.Nothing || AvatarOfEmptiness.Myself is null)
             return;
 
-        var avatar = AvatarOfEmptiness.Myself.As<AvatarOfEmptiness>();
+        AvatarOfEmptiness avatar = AvatarOfEmptiness.Myself.As<AvatarOfEmptiness>();
         Projectile.scale = avatar.ZPositionScale;
 
         if (StickState == AvatarStickState.WaitingForCollision)

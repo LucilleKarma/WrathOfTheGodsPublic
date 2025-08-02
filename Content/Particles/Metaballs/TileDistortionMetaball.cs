@@ -33,8 +33,8 @@ public class TileDistortionMetaball : MetaballType
 
     public override void DrawInstances()
     {
-        var texture = AtlasManager.GetTexture(MetaballAtlasTextureToUse);
-        foreach (var particle in Particles)
+        AtlasTexture texture = AtlasManager.GetTexture(MetaballAtlasTextureToUse);
+        foreach (MetaballInstance? particle in Particles)
         {
             float fadeOut = 1f - particle.ExtraInfo[0];
             Main.spriteBatch.Draw(texture, particle.Center - Main.screenPosition, null, Color.White * fadeOut, 0f, null, new Vector2(particle.Size) * new Vector2(1.5f, 0.56f) / texture.Frame.Size(), SpriteEffects.None);

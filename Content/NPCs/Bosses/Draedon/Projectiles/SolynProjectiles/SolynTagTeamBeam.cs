@@ -230,12 +230,9 @@ public class SolynTagTeamBeam : ModProjectile, IProjOwnedByBoss<BattleSolyn>, IN
         if (target.ModNPC is MarsBody mars)
             mars.RegisterHitByTeamBeam(Projectile);
 
-        //As owner of the beam is client, we need to sync hits with the server and other clients
-        //DDoS everyone LETSGOOOOOOOOO
+        // As owner of the beam is client, we need to sync hits with the server and other clients.
         if (Main.netMode == NetmodeID.MultiplayerClient)
-        {
             PacketManager.SendPacket<MarsHitByBeamPacket>(Projectile.identity);
-        }
     }
 
     public override bool ShouldUpdatePosition() => false;

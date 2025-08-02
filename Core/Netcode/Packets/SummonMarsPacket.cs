@@ -15,7 +15,8 @@ public class SummonMarsPacket : Packet
     public override void Read(BinaryReader reader)
     {
         int draedonIndex = NPC.FindFirstNPC(ModContent.NPCType<QuestDraedon>());
-        if (draedonIndex == -1) return;
+        if (draedonIndex == -1)
+            return;
 
         NPC draedon = Main.npc[draedonIndex];
         draedon.As<QuestDraedon>().ChangeAIState(QuestDraedon.DraedonAIType.WaitForMarsToArrive);

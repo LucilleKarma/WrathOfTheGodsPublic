@@ -190,7 +190,7 @@ public class SolynCampsiteWorldGen : ModSystem
         if (telescopePosition != Point.Zero)
             WorldGen.KillTile(telescopePosition.X, telescopePosition.Y, noItem: true);
 
-        var syncPos = CampSitePosition.ToTileCoordinates();
+        Point syncPos = CampSitePosition.ToTileCoordinates();
 
         CampSitePosition = Vector2.Zero;
         TentPosition = Vector2.Zero;

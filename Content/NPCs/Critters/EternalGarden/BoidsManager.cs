@@ -127,8 +127,8 @@ public class BoidsManager : ModSystem
         }
 
         // Group boids based on ID.
-        var boidGroups = boids.GroupBy(b => b.GroupID);
-        foreach (var boidGroup in boidGroups)
+        IEnumerable<IGrouping<int, IBoid>> boidGroups = boids.GroupBy(b => b.GroupID);
+        foreach (IGrouping<int, IBoid> boidGroup in boidGroups)
             UpdateBoidGroup(boidGroup.ToList());
     }
 

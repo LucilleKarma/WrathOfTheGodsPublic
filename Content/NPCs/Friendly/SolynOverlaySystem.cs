@@ -86,7 +86,7 @@ public class SolynOverlaySystem : ModSystem
         bool dontDrawIcon = false;
         if (AvatarOfEmptiness.Myself is not null)
         {
-            var currentState = AvatarOfEmptiness.Myself.As<AvatarOfEmptiness>().CurrentState;
+            AvatarOfEmptiness.AvatarAIType currentState = AvatarOfEmptiness.Myself.As<AvatarOfEmptiness>().CurrentState;
 
             if (currentState == AvatarOfEmptiness.AvatarAIType.Awaken_RiftSizeIncrease)
                 dontDrawIcon = true;

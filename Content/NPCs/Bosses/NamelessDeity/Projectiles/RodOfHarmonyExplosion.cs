@@ -72,7 +72,7 @@ public class RodOfHarmonyExplosion : ModProjectile, IPixelatedPrimitiveRenderer
         Main.spriteBatch.PrepareForShaders();
         DrawData explosionDrawData = new DrawData(ViscousNoise, new Rectangle(0, 0, Main.screenWidth, Main.screenHeight), Color.White * Projectile.Opacity);
 
-        var shockwaveShader = ShaderManager.GetShader("NoxusBoss.ShockwaveShader");
+        ManagedShader shockwaveShader = ShaderManager.GetShader("NoxusBoss.ShockwaveShader");
         shockwaveShader.TrySetParameter("shockwaveColor", Color.Lerp(Color.BlueViolet, Color.LightGoldenrodYellow, Pow(1f - LifetimeRatio, 1.45f) * 0.95f));
         shockwaveShader.TrySetParameter("screenSize", Main.ScreenSize.ToVector2());
         shockwaveShader.TrySetParameter("explosionDistance", Radius * Projectile.scale * 0.5f);

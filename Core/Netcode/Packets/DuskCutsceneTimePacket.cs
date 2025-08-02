@@ -27,8 +27,6 @@ public class DuskCutsceneTimePacket : Packet
 
         bool active = reader.ReadByte() == 1;
         if (active)
-        {
             CutsceneManager.QueueCutscene(ModContent.GetInstance<BecomeDuskScene>());
-        }
     }
 }

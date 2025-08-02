@@ -174,7 +174,7 @@ public class ClothSimulation
             }
         }
 
-        var gd = Main.instance.GraphicsDevice;
+        GraphicsDevice gd = Main.instance.GraphicsDevice;
         XNAMatrix world = XNAMatrix.CreateTranslation(drawOffset.X, drawOffset.Y, 0f);
 
         ManagedShader clothShader = ShaderManager.GetShader("NoxusBoss.ClothShader");

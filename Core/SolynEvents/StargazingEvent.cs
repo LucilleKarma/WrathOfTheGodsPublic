@@ -42,7 +42,8 @@ public class StargazingEvent : SolynEvent
             WithRerollCondition(_ => Stage >= 2);
         DialogueManager.FindByRelativePrefix("StargazeQuestCompletion").GetByRelativeKey("Response1").EndAction += seenBefore =>
         {
-            if (Solyn?.TalkingTo != Main.myPlayer) return;
+            if (Solyn?.TalkingTo != Main.myPlayer)
+                return;
 
             BlockerSystem.Start(true, false, () => !Finished);
             Main.LocalPlayer.SetTalkNPC(-1);

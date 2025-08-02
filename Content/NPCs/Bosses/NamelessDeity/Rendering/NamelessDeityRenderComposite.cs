@@ -168,7 +168,7 @@ public class NamelessDeityRenderComposite
     {
         CompositeTarget.Request(2500, 2500, TargetIdentifier, () =>
         {
-            var orderedSteps = RenderSteps.OrderBy(s => s.LayerIndex);
+            IOrderedEnumerable<INamelessDeityRenderStep> orderedSteps = RenderSteps.OrderBy(s => s.LayerIndex);
             Vector2 viewportArea = ViewportSize;
 
             ResetSpriteBatch(false);

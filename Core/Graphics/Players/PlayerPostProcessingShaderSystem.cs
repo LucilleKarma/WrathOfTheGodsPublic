@@ -58,7 +58,7 @@ public class PlayerPostProcessingShaderSystem : ModSystem
 
     private static void VerifyPlayerTargetSizes()
     {
-        foreach (var player in Main.ActivePlayers)
+        foreach (Player? player in Main.ActivePlayers)
         {
             if (!PlayerTargets.ContainsKey(player.whoAmI))
             {
@@ -82,7 +82,7 @@ public class PlayerPostProcessingShaderSystem : ModSystem
         FinalPlayerTargets.Clear();
 
         renderingToTargets = true;
-        foreach (var player in Main.ActivePlayers)
+        foreach (Player? player in Main.ActivePlayers)
         {
             GraphicsDevice gd = Main.instance.GraphicsDevice;
 

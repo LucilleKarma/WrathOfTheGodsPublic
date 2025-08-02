@@ -69,7 +69,7 @@ public partial class AvatarOfEmptiness
         Main.spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend, SamplerState.LinearClamp, DepthStencilState.None, RasterizerState.CullNone, null, Matrix.Identity);
 
         // Prepare the smoke shader.
-        var smokeShader = ShaderManager.GetShader("NoxusBoss.AvatarSmokeShapeShader");
+        ManagedShader smokeShader = ShaderManager.GetShader("NoxusBoss.AvatarSmokeShapeShader");
         smokeShader.TrySetParameter("appearanceCutoff", Saturate(1f - LegScale.Length() * 0.707f) * 0.56f);
         smokeShader.SetTexture(DendriticNoiseZoomedOut, 1, SamplerState.LinearWrap);
         smokeShader.Apply();

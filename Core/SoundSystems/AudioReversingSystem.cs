@@ -103,7 +103,7 @@ public class AudioReversingSystem : ModSystem
         if (!Main.gamePaused && Distance(Filter.TimeSpeed, idealSpeed) >= 0.01f)
             Filter.TimeSpeed = Clamp(Filter.TimeSpeed + Sign(idealSpeed - Filter.TimeSpeed) * 0.01667f, -1f, 1f);
 
-        var currentTrack = MonoStereoMod.MonoStereoMod.GetSong(Main.curMusic);
+        MonoStereoMod.MonoStereoAudioTrack? currentTrack = MonoStereoMod.MonoStereoMod.GetSong(Main.curMusic);
         if (currentTrack is null)
             return;
 

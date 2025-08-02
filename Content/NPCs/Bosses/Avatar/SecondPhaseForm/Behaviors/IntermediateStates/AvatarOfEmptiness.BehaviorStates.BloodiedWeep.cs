@@ -135,7 +135,7 @@ public partial class AvatarOfEmptiness
         Main.spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend, SamplerState.LinearClamp, DepthStencilState.None, RasterizerState.CullNone, null, Main.GameViewMatrix.TransformationMatrix);
 
         // Draw eye blood.
-        var tearsShader = ShaderManager.GetShader("NoxusBoss.AvatarBloodyTearsShader");
+        ManagedShader tearsShader = ShaderManager.GetShader("NoxusBoss.AvatarBloodyTearsShader");
         tearsShader.TrySetParameter("topCutoffThresholdLeft", 0f);
         tearsShader.TrySetParameter("topCutoffThresholdRight", 0f);
         DrawBloodyTearsWithHeadOffset(new(-35f, 8f), screenPos, 46f, 1f);
@@ -176,11 +176,11 @@ public partial class AvatarOfEmptiness
         // Check if the player is in the range of blood. If they are, make their hair red.
         if (playerTopLeft.Between(Vector2.Zero, Vector2.One) || playerTopRight.Between(Vector2.Zero, Vector2.One))
         {
-            var hairBloodiness = PlayerBloodiedHairSystem.GetPlayerHairBloodiness(Main.LocalPlayer);
+            Core.DataStructures.Referenced<float> hairBloodiness = PlayerBloodiedHairSystem.GetPlayerHairBloodiness(Main.LocalPlayer);
             hairBloodiness.Value = Saturate(hairBloodiness.Value + 0.02f);
         }
 
-        var tearsShader = ShaderManager.GetShader("NoxusBoss.AvatarBloodyTearsShader");
+        ManagedShader tearsShader = ShaderManager.GetShader("NoxusBoss.AvatarBloodyTearsShader");
         tearsShader.TrySetParameter("animationStartInterpolant", BloodyTearsAnimationStartInterpolant);
         tearsShader.TrySetParameter("animationEndInterpolant", BloodyTearsAnimationEndInterpolant);
         tearsShader.TrySetParameter("playerTopLeft", playerTopLeft);

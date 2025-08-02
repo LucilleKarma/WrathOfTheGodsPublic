@@ -228,7 +228,7 @@ public class GrowingGenesisRenderSystem : ModSystem
     public override void NetSend(BinaryWriter writer)
     {
         writer.Write(genesisPoints.Count);
-        foreach (var genesisPoint in genesisPoints)
+        foreach (GenesisInstance genesisPoint in genesisPoints)
         {
             writer.Write(genesisPoint.Anchor.X);
             writer.Write(genesisPoint.Anchor.Y);
@@ -240,11 +240,11 @@ public class GrowingGenesisRenderSystem : ModSystem
     {
         genesisPoints.Clear();
 
-        var count = reader.ReadInt32();
-        for (var i = 0; i < count; i++)
+        int count = reader.ReadInt32();
+        for (int i = 0; i < count; i++)
         {
-            var anchor = new Point(reader.ReadInt32(), reader.ReadInt32());
-            var growth = reader.ReadSingle();
+            Point anchor = new Point(reader.ReadInt32(), reader.ReadInt32());
+            float growth = reader.ReadSingle();
             genesisPoints.Add(new GenesisInstance(anchor) { GrowthStage = growth });
         }
     }

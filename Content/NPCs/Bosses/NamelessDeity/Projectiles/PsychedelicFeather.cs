@@ -136,7 +136,7 @@ public class PsychedelicFeather : ModProjectile, IProjOwnedByBoss<NamelessDeityB
         if (Main.netMode == NetmodeID.Server)
             return;
 
-        var paletteData = LocalDataManager.Read<Vector3[]>("Content/NPCs/Bosses/NamelessDeity/NamelessDeityPalettes.json");
+        Dictionary<string, Vector3[]> paletteData = LocalDataManager.Read<Vector3[]>("Content/NPCs/Bosses/NamelessDeity/NamelessDeityPalettes.json");
         Vector3[] outerIrisPalettesPalette = paletteData["PsychedelicFeatherOuterIrisColors"];
         Vector3[] innerIrisPalettesPalette = paletteData["PsychedelicFeatherInnerIrisColors"];
 

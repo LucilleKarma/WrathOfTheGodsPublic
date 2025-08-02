@@ -71,7 +71,7 @@ public class NamelessDeityScarySkyManager : ModSystem
         // Apply the glitch shader.
         float lightBrightness = InverseLerp(0.6f, 0.85f, FlashBrightness);
         float glitchIntensity = InverseLerp(0.54f, 0.9f, FlashBrightness);
-        var glitchShader = ShaderManager.GetShader("NoxusBoss.GlitchShader");
+        ManagedShader glitchShader = ShaderManager.GetShader("NoxusBoss.GlitchShader");
         glitchShader.SetTexture(SharpNoise, 1, SamplerState.AnisotropicWrap);
         glitchShader.TrySetParameter("coordinateZoomFactor", Vector2.One * 10.5f);
         glitchShader.TrySetParameter("glitchInterpolant", glitchIntensity);
@@ -171,7 +171,7 @@ public class NamelessDeityScarySkyManager : ModSystem
             Main.spriteBatch.Draw(originalLight, screenCenter + Main.rand.NextVector2Circular(4f, 4f), null, Color.White * localBrightness * 0.6f, 0f, originalLight.Size() * 0.5f, screenSize / originalLight.Size() * 1.1f, 0, 0f);
 
         // Prepare the shader.
-        var shader = ShaderManager.GetShader("NoxusBoss.JuliaSetFractalShader");
+        ManagedShader shader = ShaderManager.GetShader("NoxusBoss.JuliaSetFractalShader");
         shader.TrySetParameter("animationTime", Saturate(1f - FlashBrightness / MaxBrightness) * 2f);
         shader.Apply();
 

@@ -101,7 +101,7 @@ public sealed class ItemPreRenderer : ModSystem
             foreach ((int itemType, _) in preRenderedItems)
             {
                 Texture2D originalTexture = originalTextures[itemType];
-                var renderTarget = new RenderTarget2D(
+                RenderTarget2D renderTarget = new RenderTarget2D(
                     Main.graphics.GraphicsDevice,
                     originalTexture.Width,
                     originalTexture.Height
@@ -117,9 +117,8 @@ public sealed class ItemPreRenderer : ModSystem
     {
         foreach ((int itemType, IPreRenderedItem preRenderedItem) in preRenderedItems)
         {
-            //During one of the mod loading I got an error where originalTextures had an item 9794 and renderTargets did not.
-            //This is probably due to the fact that code inside Main.RunOnMainThread did not get executed before this method
-            if (!renderTargets.ContainsKey(itemType)) continue;
+            if (!renderTargets.ContainsKey(itemType))
+                continue;
 
             Texture2D originalTexture = originalTextures[itemType];
             RenderTarget2D renderTarget = renderTargets[itemType];

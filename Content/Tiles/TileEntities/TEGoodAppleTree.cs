@@ -174,7 +174,7 @@ public class TEGoodAppleTree : ModTileEntity, IClientSideTileEntityUpdater
     public override void NetSend(BinaryWriter writer)
     {
         writer.Write(ApplesOnTree.Length);
-        for (var i = 0; i < ApplesOnTree.Length; i++)
+        for (int i = 0; i < ApplesOnTree.Length; i++)
         {
             writer.Write(ApplesOnTree[i].Active);
         }
@@ -182,8 +182,8 @@ public class TEGoodAppleTree : ModTileEntity, IClientSideTileEntityUpdater
 
     public override void NetReceive(BinaryReader reader)
     {
-        var count = reader.ReadInt32();
-        for (var i = 0; i < count; i++)
+        int count = reader.ReadInt32();
+        for (int i = 0; i < count; i++)
         {
             ApplesOnTree[i].Active = reader.ReadBoolean();
         }

@@ -26,7 +26,7 @@ public class BossChecklistCompatibilitySystem : ModSystem
             return;
 
         // Collect all NPCs that should adhere to boss checklist.
-        var modNPCsWithBossChecklistSupport = Mod.LoadInterfacesFromContent<ModNPC, IBossChecklistSupport>();
+        IEnumerable<ModNPC> modNPCsWithBossChecklistSupport = Mod.LoadInterfacesFromContent<ModNPC, IBossChecklistSupport>();
 
         // Load boss checklist information via mod calls.
         foreach (ModNPC modNPC in modNPCsWithBossChecklistSupport)

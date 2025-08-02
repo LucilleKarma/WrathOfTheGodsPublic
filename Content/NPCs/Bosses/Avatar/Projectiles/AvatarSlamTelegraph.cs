@@ -85,7 +85,7 @@ public class AvatarSlamTelegraph : ModProjectile, IDrawsWithShader, IProjOwnedBy
     public void DrawWithShader(SpriteBatch spriteBatch)
     {
         // Configure the streak shader's texture.
-        var streakShader = ShaderManager.GetShader("NoxusBoss.GenericTrailStreak");
+        ManagedShader streakShader = ShaderManager.GetShader("NoxusBoss.GenericTrailStreak");
         streakShader.SetTexture(GennedAssets.Textures.TrailStreaks.StreakBloomLine, 1);
 
         List<Vector2> telegraphPoints = Projectile.GetLaserControlPoints(12, 7500f, Vector2.UnitY);

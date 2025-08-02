@@ -51,8 +51,8 @@ public class LoreAvatar : BaseLoreItem
 
     public override void SetupCalRemixCompatibility()
     {
-        var fanny = new FannyDialog("AvatarLore1", "FannyAwooga").WithDuration(4.25f).WithCondition(_ => FannyDialog.JustReadLoreItem(Type)).WithoutClickability();
-        var evilFanny = new FannyDialog("AvatarLore2", "EvilFannyIdle").WithDuration(7.5f).WithEvilness().WithParentDialog(fanny, 2f);
+        FannyDialog fanny = new FannyDialog("AvatarLore1", "FannyAwooga").WithDuration(4.25f).WithCondition(_ => FannyDialog.JustReadLoreItem(Type)).WithoutClickability();
+        FannyDialog evilFanny = new FannyDialog("AvatarLore2", "EvilFannyIdle").WithDuration(7.5f).WithEvilness().WithParentDialog(fanny, 2f);
         evilFanny.Register();
         fanny.Register();
     }

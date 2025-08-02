@@ -20,7 +20,7 @@ public class PlayerBloodiedHairSystem : ModSystem
 
     private Color ApplyBloodEffect(On_Player.orig_GetHairColor orig, Player self, bool useLighting)
     {
-        var hairBloodiness = GetPlayerHairBloodiness(self);
+        Referenced<float> hairBloodiness = GetPlayerHairBloodiness(self);
         hairBloodiness.Value = Saturate(hairBloodiness - 0.004f);
 
         Color result = orig(self, useLighting);

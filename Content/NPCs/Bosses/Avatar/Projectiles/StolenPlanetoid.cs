@@ -288,7 +288,7 @@ public class StolenPlanetoid : ModProjectile, IProjOwnedByBoss<AvatarOfEmptiness
         Time++;
 
         bool pushBackPlayers = Myself is not null && Myself.As<AvatarOfEmptiness>().ParadiseReclaimedIsOngoing;
-        var planetoids = AllProjectilesByID(Type).Where(p => p.whoAmI != Projectile.whoAmI).OrderBy(p => p.DistanceSQ(Projectile.Center));
+        IOrderedEnumerable<Projectile> planetoids = AllProjectilesByID(Type).Where(p => p.whoAmI != Projectile.whoAmI).OrderBy(p => p.DistanceSQ(Projectile.Center));
         if (ZPosition <= 0f && !pushBackPlayers && planetoids.Any())
             HandlePlanetoidCollision(planetoids);
         else
@@ -312,7 +312,7 @@ public class StolenPlanetoid : ModProjectile, IProjOwnedByBoss<AvatarOfEmptiness
 
     public void HandlePlanetoidCollision(IEnumerable<Projectile> planetoids)
     {
-        var closestPlanetoid = planetoids.First();
+        Projectile closestPlanetoid = planetoids.First();
         float distanceToPlanetoid = Projectile.Distance(closestPlanetoid.Center);
 
         // Account for distance discrepancies based on angle.
@@ -349,7 +349,7 @@ public class StolenPlanetoid : ModProjectile, IProjOwnedByBoss<AvatarOfEmptiness
 
         // Update the rumble sound's volume.
         float volumeFade = InverseLerp(1000f, 1550f, distanceToPlanetoid);
-        if (SoundEngine.TryGetActiveSound(rumbleSound, out var sound))
+        if (SoundEngine.TryGetActiveSound(rumbleSound, out ActiveSound? sound))
         {
             if (Time % 5f == 4f)
                 sound.Volume = volumeFade * 3.7f;
@@ -501,7 +501,7 @@ public class StolenPlanetoid : ModProjectile, IProjOwnedByBoss<AvatarOfEmptiness
         Vector2 planetoidScale = planetoidSize / InvisiblePixel.Size();
 
         // Apply the planetoid shader.
-        var planetoidShader = ShaderManager.GetShader("NoxusBoss.StolenPlanetoidShader");
+        ManagedShader planetoidShader = ShaderManager.GetShader("NoxusBoss.StolenPlanetoidShader");
         planetoidShader.TrySetParameter("disintegrateOnlyAtHighlight", true);
         planetoidShader.TrySetParameter("glowHighlightIntensity", CollisionIntensity * 1.25f);
         planetoidShader.TrySetParameter("glowHighlightColor", new Vector3(3f, 3f, 2.6f));
@@ -528,7 +528,7 @@ public class StolenPlanetoid : ModProjectile, IProjOwnedByBoss<AvatarOfEmptiness
             return;
 
         Texture2D planetoidTreeTexture = planetoidTreeAsset.Value;
-        var planetoidShader = ShaderManager.GetShader("NoxusBoss.StolenPlanetoidShader");
+        ManagedShader planetoidShader = ShaderManager.GetShader("NoxusBoss.StolenPlanetoidShader");
         planetoidShader.TrySetParameter("disintegrateOnlyAtHighlight", true);
         planetoidShader.TrySetParameter("disintegrationColor", Color.OrangeRed);
         planetoidShader.TrySetParameter("disintegrationCompletion", TreeDisintegrationInterpolant);

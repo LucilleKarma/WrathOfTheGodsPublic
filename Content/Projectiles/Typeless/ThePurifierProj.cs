@@ -230,7 +230,7 @@ public class ThePurifierProj : ModProjectile, IPixelatedPrimitiveRenderer
     public void RenderPixelatedPrimitives(SpriteBatch spriteBatch)
     {
         // Configure the streak shader's texture.
-        var streakShader = ShaderManager.GetShader("NoxusBoss.GenericTrailStreak");
+        ManagedShader streakShader = ShaderManager.GetShader("NoxusBoss.GenericTrailStreak");
         streakShader.SetTexture(GennedAssets.Textures.TrailStreaks.StreakBloomLine, 1);
 
         // Draw energy streaks as primitives.

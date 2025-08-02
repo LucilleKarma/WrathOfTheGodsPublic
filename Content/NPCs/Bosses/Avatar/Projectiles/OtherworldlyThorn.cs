@@ -89,7 +89,7 @@ public class OtherworldlyThorn : ModProjectile, IProjOwnedByBoss<AvatarOfEmptine
 
     public void RenderThorn(float width, float height, Vector2 drawBottom, Vector2 cutoffPoint, Matrix rotation)
     {
-        var gd = Main.instance.GraphicsDevice;
+        GraphicsDevice gd = Main.instance.GraphicsDevice;
 
         Vector2 offset = Vector2.UnitY * (MaximumReach - CurrentReach);
         Matrix scale = Matrix.CreateTranslation(0f, 0.5f, 0f) * Matrix.CreateScale(width, -height, width) * rotation * Matrix.CreateTranslation(0f, -0.5f, 0f);

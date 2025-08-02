@@ -112,7 +112,7 @@ public class VoidBlot : ModProjectile, IProjOwnedByBoss<AvatarOfEmptiness>, IDra
     public void DrawWithShader(SpriteBatch spriteBatch)
     {
         // Apply the blot shader.
-        var blotShader = ShaderManager.GetShader("NoxusBoss.VoidBlotEdgeShader");
+        ManagedShader blotShader = ShaderManager.GetShader("NoxusBoss.VoidBlotEdgeShader");
         blotShader.TrySetParameter("edgeColor", Color.Lerp(Color.DarkGray, Color.MediumPurple, Projectile.identity / 3f % 1f) * 0.3f);
         blotShader.TrySetParameter("identity", Projectile.identity * 0.17f);
         blotShader.TrySetParameter("scale", InverseLerpBump(FillInDelay, FillInDelay + FillInTime, Lifetime - DisappearTime, Lifetime, Time).Squared());
@@ -129,7 +129,7 @@ public class VoidBlot : ModProjectile, IProjOwnedByBoss<AvatarOfEmptiness>, IDra
         Main.spriteBatch.PrepareForShaders();
 
         // Apply the blot shader.
-        var blotShader = ShaderManager.GetShader("NoxusBoss.VoidBlotShader");
+        ManagedShader blotShader = ShaderManager.GetShader("NoxusBoss.VoidBlotShader");
         blotShader.TrySetParameter("scale", InverseLerpBump(FillInDelay, FillInDelay + FillInTime, Lifetime - DisappearTime, Lifetime, Time).Squared());
         blotShader.SetTexture(ViscousNoise, 1, SamplerState.LinearWrap);
         blotShader.Apply();

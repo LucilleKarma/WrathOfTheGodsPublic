@@ -432,7 +432,7 @@ public partial class AvatarOfEmptiness
         for (int i = 0; i < blurWeights.Length; i++)
             blurWeights[i] = GaussianDistribution(i - blurWeights.Length * 0.5f, 1.1f) / 7f;
 
-        var colorsSet = LocalDataManager.Read<Vector3>("Content/NPCs/Bosses/Avatar/AvatarColors.json");
+        Dictionary<string, Vector3> colorsSet = LocalDataManager.Read<Vector3>("Content/NPCs/Bosses/Avatar/AvatarColors.json");
         float glowFade = Utils.Remap(ZPosition, 0f, 2.5f, 1f, 0.65f);
         ManagedShader overlayShader = ShaderManager.GetShader("NoxusBoss.AvatarBodyOverlayShader");
         overlayShader.TrySetParameter("headPosition", (HeadPosition - NPC.Center) / target.Size() + Vector2.One * 0.5f);
@@ -474,7 +474,7 @@ public partial class AvatarOfEmptiness
             return;
 
         // Calculate the glow color.
-        var colorsSet = LocalDataManager.Read<Vector3>("Content/NPCs/Bosses/Avatar/AvatarColors.json");
+        Dictionary<string, Vector3> colorsSet = LocalDataManager.Read<Vector3>("Content/NPCs/Bosses/Avatar/AvatarColors.json");
         float glowIncrement = Clamp(0.2f - LilyGlowIntensityBoost * 0.14f, 0.03f, 0.2f);
         Color minRegularGlowColor = new Color(colorsSet["LilyBaseGlowColor_Regular_MinGlow"]);
         Color maxRegularGlowColor = new Color(colorsSet["LilyBaseGlowColor_Regular_MaxGlow"]);

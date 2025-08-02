@@ -11,7 +11,7 @@ public class GiveNamelessDeityLootPacket : Packet
 
     public override void Read(BinaryReader reader)
     {
-        var player = Main.player[reader.ReadInt32()];
+        Player player = Main.player[reader.ReadInt32()];
         player.GetValueRef<bool>(NamelessDeityBoss.PlayerGiveLootFieldName).Value = true;
     }
 

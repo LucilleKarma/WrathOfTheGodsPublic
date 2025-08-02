@@ -134,7 +134,7 @@ public class OriginalLightGlitchOverlaySystem : ModSystem
 
     private static void PrepareNoiseShader()
     {
-        var glitchShader = ShaderManager.GetShader("NoxusBoss.GlitchShader");
+        ManagedShader glitchShader = ShaderManager.GetShader("NoxusBoss.GlitchShader");
         glitchShader.SetTexture(SharpNoise, 1);
         glitchShader.TrySetParameter("coordinateZoomFactor", Vector2.One * 0.5f);
         glitchShader.TrySetParameter("glitchInterpolant", GlitchIntensity);

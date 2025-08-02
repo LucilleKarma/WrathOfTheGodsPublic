@@ -239,8 +239,8 @@ public class ScreenShatterSystem : ModSystem
             // Calculate line intersection points relative to the rectangle.
             for (int i = 0; i < manualSliceLines.Length; i++)
             {
-                var line = manualSliceLines[i];
-                var lineInverted = new LineSegment(line.End, line.Start);
+                LineSegment line = manualSliceLines[i];
+                LineSegment lineInverted = new LineSegment(line.End, line.Start);
 
                 // Calculate collision points for the line.
                 if (IntersectsLine(line, lineArea, out float x, out float y))
@@ -257,8 +257,8 @@ public class ScreenShatterSystem : ModSystem
             intersectionPoints.Add(lineArea.BottomLeft());
 
             // This is probably borked but ICBA.
-            var triangles = EarClippingTriangulation.GenerateMesh(intersectionPoints);
-            foreach (var triangle in triangles)
+            List<DataStructures.Triangle> triangles = EarClippingTriangulation.GenerateMesh(intersectionPoints);
+            foreach (DataStructures.Triangle triangle in triangles)
             {
                 Vector2 a = triangle.Vertex1 / lineArea.Size();
                 Vector2 b = triangle.Vertex2 / lineArea.Size();

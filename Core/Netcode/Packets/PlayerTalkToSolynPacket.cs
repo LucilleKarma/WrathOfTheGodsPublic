@@ -15,11 +15,9 @@ public class PlayerTalkToSolynPacket : Packet
 
     public override void Read(BinaryReader reader)
     {
-        var solyn = Main.npc[reader.ReadInt32()].As<Solyn>();
+        Solyn solyn = Main.npc[reader.ReadInt32()].As<Solyn>();
         solyn.TalkingTo = reader.ReadInt32();
         if (solyn.TalkingTo != -1)
-        {
             solyn.TimeSinceLastTalk = 1;
-        }
     }
 }

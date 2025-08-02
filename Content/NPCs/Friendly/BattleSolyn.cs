@@ -385,14 +385,17 @@ public partial class BattleSolyn : ModNPC
     /// </summary>
     public void SwitchTo(Player player, bool playTeleportEffect = true)
     {
-        //For some reason things are bad when client tries to execute this code, so better not to do it
-        if (Main.netMode == NetmodeID.MultiplayerClient) return;
-        if (!player.active || player.whoAmI == MultiplayerIndex || IsMultiplayerClone) return;
+        // For some reason things are bad when client tries to execute this code, so better not to do it
+        if (Main.netMode == NetmodeID.MultiplayerClient)
+            return;
+
+        if (!player.active || player.whoAmI == MultiplayerIndex || IsMultiplayerClone)
+            return;
 
         Vector2 oldPosition = NPC.position;
         Vector2 newPosition;
 
-        var targetSolyn = GetSolynRelatedTo(player);
+        BattleSolyn? targetSolyn = GetSolynRelatedTo(player);
         if (targetSolyn is null)
         {
             newPosition = player.position;
@@ -411,7 +414,7 @@ public partial class BattleSolyn : ModNPC
             targetSolyn.NPC.netUpdate = true;
         }
 
-        if (playTeleportEffect) 
+        if (playTeleportEffect)
         {
             PlayTeleportEffect(oldPosition, newPosition);
         }
@@ -502,7 +505,7 @@ public partial class BattleSolyn : ModNPC
 
     public static BattleSolyn? GetOriginalSolyn()
     {
-        foreach (var npc in Main.ActiveNPCs)
+        foreach (NPC? npc in Main.ActiveNPCs)
         {
             if (npc.ModNPC is BattleSolyn solyn && !solyn.IsMultiplayerClone) return solyn;
         }
@@ -512,7 +515,7 @@ public partial class BattleSolyn : ModNPC
 
     public static BattleSolyn? GetSolynRelatedTo(Player player)
     {
-        foreach (var npc in Main.ActiveNPCs)
+        foreach (NPC? npc in Main.ActiveNPCs)
         {
             if (npc.ModNPC is BattleSolyn solyn && solyn.Player == player) return solyn;
         }

@@ -207,7 +207,7 @@ public class DivineRoseSystem : ModSystem
             Main.spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend, SamplerState.AnisotropicWrap, DepthStencilState.None, RasterizerState.CullNone, null, Matrix.Identity);
 
             // Apply a static shader.
-            var censorShader = ShaderManager.GetShader("NoxusBoss.StaticOverlayShader");
+            ManagedShader censorShader = ShaderManager.GetShader("NoxusBoss.StaticOverlayShader");
             censorShader.SetTexture(MulticoloredNoise, 1, SamplerState.PointWrap);
             censorShader.Apply();
 
@@ -246,7 +246,7 @@ public class DivineRoseSystem : ModSystem
 
     public static void DrawGalaxies()
     {
-        var galaxyShader = ShaderManager.GetShader("NoxusBoss.GalaxyShader");
+        ManagedShader galaxyShader = ShaderManager.GetShader("NoxusBoss.GalaxyShader");
 
         ActiveGalaxies.RemoveAll(g => g.Time >= g.Lifetime);
         foreach (Galaxy g in ActiveGalaxies)

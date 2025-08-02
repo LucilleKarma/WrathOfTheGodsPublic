@@ -17,19 +17,22 @@ public class PlayDialoguePacket : Packet
 
     public override void Read(BinaryReader reader)
     {
-        var dialogueKey = reader.ReadString();
-        var dialogue = DialogueManager.FindDialogue(dialogueKey);
-        if (dialogue is null) return;
+        string dialogueKey = reader.ReadString();
+        Dialogue? dialogue = DialogueManager.FindDialogue(dialogueKey);
+        if (dialogue is null)
+            return;
 
-        var solynIndex = NPC.FindFirstNPC(ModContent.NPCType<Solyn>());
-        var solyn = Main.npc[solynIndex].As<Solyn>();
-        if (solyn is null) return;
+        int solynIndex = NPC.FindFirstNPC(ModContent.NPCType<Solyn>());
+        Solyn solyn = Main.npc[solynIndex].As<Solyn>();
+        if (solyn is null)
+            return;
 
         if (dialogue.SpokenByPlayer)
         {
-            if (solyn.TalkingTo == -1) return;
+            if (solyn.TalkingTo == -1)
+                return;
 
-            var player = Main.player[solyn.TalkingTo];
+            Player player = Main.player[solyn.TalkingTo];
             Main.NewText($"[{player.name}]: {dialogue.Text}");
         }
         else

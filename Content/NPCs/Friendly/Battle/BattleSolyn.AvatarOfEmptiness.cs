@@ -3,6 +3,7 @@ using NoxusBoss.Content.NPCs.Bosses.Avatar.SecondPhaseForm;
 using NoxusBoss.Core.World.Subworlds;
 
 using Terraria;
+using Terraria.Enums;
 using Terraria.ModLoader;
 
 namespace NoxusBoss.Content.NPCs.Friendly;
@@ -37,7 +38,7 @@ public partial class BattleSolyn : ModNPC
 
         if (AvatarOfEmptiness.Myself is not null)
         {
-            var avatar = AvatarOfEmptiness.Myself.As<AvatarOfEmptiness>();
+            AvatarOfEmptiness avatar = AvatarOfEmptiness.Myself.As<AvatarOfEmptiness>();
             if (Avatar_ShouldSwap(avatar))
             {
                 SwitchTo(Main.player[avatar.NPC.target]);
@@ -47,7 +48,7 @@ public partial class BattleSolyn : ModNPC
         }
         else
         {
-            var rift = AvatarRift.Myself.As<AvatarRift>();
+            AvatarRift rift = AvatarRift.Myself.As<AvatarRift>();
             if (AvatarRift_ShouldSwap(rift))
             {
                 SwitchTo(rift.Target);
@@ -59,14 +60,19 @@ public partial class BattleSolyn : ModNPC
 
     private bool AvatarRift_ShouldSwap(AvatarRift rift)
     {
-        if (IsMultiplayerClone) return false;
+        if (IsMultiplayerClone)
+            return false;
         return rift.NPC.target != MultiplayerIndex;
     }
 
     private bool Avatar_ShouldSwap(AvatarOfEmptiness avatar)
     {
-        if (IsMultiplayerClone) return false;
-        if (avatar.Target.Type != Terraria.Enums.NPCTargetType.Player) return false;
+        if (IsMultiplayerClone)
+            return false;
+
+        if (avatar.Target.Type != NPCTargetType.Player)
+            return false;
+
         return avatar.NPC.target != MultiplayerIndex;
     }
 }

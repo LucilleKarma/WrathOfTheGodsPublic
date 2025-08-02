@@ -7,15 +7,23 @@ namespace NoxusBoss.Core.Netcode.Packets;
 public class DialogueEventPacket : Packet
 {
     public const int CLICK_ACTION = 0;
+
     public const int END_ACTION = 1;
+
+    public override void Write(ModPacket packet, params object[] context)
+    {
+        packet.Write((string)context[0]);
+        packet.Write((int)context[1]);
+    }
 
     public override void Read(BinaryReader reader)
     {
-        var dialogueKey = reader.ReadString();
-        var action = reader.ReadInt32();
+        string dialogueKey = reader.ReadString();
+        int action = reader.ReadInt32();
 
-        var dialogue = DialogueManager.FindDialogue(dialogueKey);
-        if (dialogue is null) return;
+        Dialogue? dialogue = DialogueManager.FindDialogue(dialogueKey);
+        if (dialogue is null)
+            return;
 
         switch (action)
         {
@@ -26,11 +34,5 @@ public class DialogueEventPacket : Packet
                 dialogue.InvokeEndAction(true);
                 break;
         }
-    }
-
-    public override void Write(ModPacket packet, params object[] context)
-    {
-        packet.Write((string)context[0]);
-        packet.Write((int)context[1]);
     }
 }

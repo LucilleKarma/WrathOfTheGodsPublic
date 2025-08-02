@@ -97,7 +97,7 @@ public class PostMLRiftAppearanceSystem : BaseAvatarAppearanceSystem
 
         // Get rid of all falling stars. Their noises completely ruin the ambience.
         // active = false must be used over Kill because the Kill method causes them to drop their fallen star items.
-        var fallingStars = AllProjectilesByID(ProjectileID.FallingStar);
+        IEnumerable<Projectile> fallingStars = AllProjectilesByID(ProjectileID.FallingStar);
         foreach (Projectile star in fallingStars)
             star.active = false;
 

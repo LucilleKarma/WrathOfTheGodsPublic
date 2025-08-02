@@ -70,7 +70,7 @@ public class PortalSkirtDrawLayer : PlayerDrawLayer
         Main.spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend, SamplerState.LinearWrap, DepthStencilState.Default, RasterizerState.CullNone, null);
 
         Texture2D innerRiftTexture = GennedAssets.Textures.FirstPhaseForm.RiftInnerTexture.Value;
-        var riftShader = ShaderManager.GetShader("NoxusBoss.DarkPortalShader");
+        ManagedShader riftShader = ShaderManager.GetShader("NoxusBoss.DarkPortalShader");
         riftShader.TrySetParameter("time", Main.GlobalTimeWrappedHourly * 0.1f);
         riftShader.TrySetParameter("baseCutoffRadius", 0.1f);
         riftShader.TrySetParameter("swirlOutwardnessExponent", 0.151f);

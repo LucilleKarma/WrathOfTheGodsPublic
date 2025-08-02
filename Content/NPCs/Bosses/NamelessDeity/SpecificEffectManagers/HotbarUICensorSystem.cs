@@ -125,7 +125,7 @@ public class HotbarUICensorSystem : ModSystem
     public static void DrawCensor(Vector2 drawPosition)
     {
         // Apply a static shader.
-        var censorShader = ShaderManager.GetShader("NoxusBoss.StaticOverlayShader");
+        ManagedShader censorShader = ShaderManager.GetShader("NoxusBoss.StaticOverlayShader");
         censorShader.SetTexture(MulticoloredNoise, 1, SamplerState.PointWrap);
         censorShader.Apply();
 

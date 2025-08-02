@@ -24,7 +24,7 @@ public class ParadiseStaticTargetSystem : ModSystem
                 Main.spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend);
 
                 // Prepare the static shader.
-                var staticShader = ShaderManager.GetShader("NoxusBoss.StaticOverlayShader");
+                ManagedShader staticShader = ShaderManager.GetShader("NoxusBoss.StaticOverlayShader");
                 staticShader.TrySetParameter("staticInterpolant", 1.1f);
                 staticShader.TrySetParameter("staticZoomFactor", 4.5f);
                 staticShader.TrySetParameter("neutralizationInterpolant", WoTGConfig.Instance.PhotosensitivityMode ? 0.7f : 0f);

@@ -1,4 +1,5 @@
-﻿using NoxusBoss.Core.Graphics.SpecificEffectManagers;
+﻿using Microsoft.Xna.Framework;
+using NoxusBoss.Core.Graphics.SpecificEffectManagers;
 
 using Terraria.ModLoader;
 
@@ -14,8 +15,8 @@ public class UnlockPermafrostKeepDoorPacket : Packet
 
     public override void Read(BinaryReader reader)
     {
-        var i = reader.ReadInt32();
-        var j = reader.ReadInt32();
-        PermafrostDoorUnlockSystem.Start(new(i, j));
+        int i = reader.ReadInt32();
+        int j = reader.ReadInt32();
+        PermafrostDoorUnlockSystem.Start(new Point(i, j));
     }
 }

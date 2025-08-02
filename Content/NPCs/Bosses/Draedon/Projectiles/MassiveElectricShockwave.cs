@@ -111,13 +111,11 @@ public class MassiveElectricShockwave : ModProjectile, IProjOwnedByBoss<MarsBody
 
     public override void OnKill(int timeLeft)
     {
-        //Solyn's positions are getting desynced after shockwave for some reason
-        foreach (var npc in Main.ActiveNPCs)
+        // Solyn's positions are getting desynced after shockwave for some reason.
+        foreach (NPC? npc in Main.ActiveNPCs)
         {
             if (npc.ModNPC is BattleSolyn)
-            {
                 npc.netUpdate = true;
-            }
         }
     }
 

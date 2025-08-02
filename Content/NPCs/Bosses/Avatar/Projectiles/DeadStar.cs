@@ -573,7 +573,7 @@ public class DeadStar : ModProjectile, IDrawsWithShader, IProjOwnedByBoss<Avatar
         Vector3 accentColor = new Vector3(0.35f, 0f, -3f) * opacity;
 
         // Supply information to the star shader.
-        var sunShader = ShaderManager.GetShader("NoxusBoss.AvatarSunShader");
+        ManagedShader sunShader = ShaderManager.GetShader("NoxusBoss.AvatarSunShader");
         sunShader.TrySetParameter("coronaIntensityFactor", 0.11f);
         sunShader.TrySetParameter("mainColor", coronaColor);
         sunShader.TrySetParameter("darkerColor", darkerColor);
@@ -596,7 +596,7 @@ public class DeadStar : ModProjectile, IDrawsWithShader, IProjOwnedByBoss<Avatar
         Vector2 heatCrackDirection = Lerp(1f, 0.21f, ShatterInterpolant) * TelegraphDirection;
         float specialHeatCrackIntensity = MathF.Max(TelegraphIntensity * 0.6f, ShatterInterpolant * 1.067f);
 
-        var sunShader = ShaderManager.GetShader("NoxusBoss.DeadSunShader");
+        ManagedShader sunShader = ShaderManager.GetShader("NoxusBoss.DeadSunShader");
         sunShader.TrySetParameter("sphereSpinTime", SpinOffset + 0.25f);
 
         // Supply information to the star shader pertaining to heat cracks.
@@ -651,7 +651,7 @@ public class DeadStar : ModProjectile, IDrawsWithShader, IProjOwnedByBoss<Avatar
         // Calculate telegraph draw information.
         float laserStretch = Pow(TelegraphIntensity, 3f) * TelegraphLengthFactor;
         float laserLength = Lerp(220f, 330f, Cos01(Main.GlobalTimeWrappedHourly * 34f)) * laserStretch;
-        var telegraphShader = ShaderManager.GetShader("NoxusBoss.DeadSunTelegraphBeamShader");
+        ManagedShader telegraphShader = ShaderManager.GetShader("NoxusBoss.DeadSunTelegraphBeamShader");
         telegraphShader.TrySetParameter("laserStretch", laserStretch);
 
         // Draw the telegraph.

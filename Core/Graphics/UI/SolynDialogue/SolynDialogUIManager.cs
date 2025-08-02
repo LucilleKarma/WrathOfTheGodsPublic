@@ -146,7 +146,7 @@ public class SolynDialogUIManager
     {
         // Check if the dialog node has children that are spoken by the player.
         // These only appear once the dialogue has been said completely.
-        var childrenNodes = CurrentDialogueNode?.Children;
+        List<Dialogue>? childrenNodes = CurrentDialogueNode?.Children;
         List<string> playerResponses = [];
         if (childrenNodes is not null && childrenNodes.Count != 0 && DialogueText == ResponseToSay)
         {
@@ -280,7 +280,7 @@ public class SolynDialogUIManager
 
         for (int i = 0; i < totalLines + 1; i++)
         {
-            var linesForText = splitText.Where(t => t.LineIndex == i).ToList();
+            List<TextPart> linesForText = splitText.Where(t => t.LineIndex == i).ToList();
 
             // Draw the line parts.
             int partIndex = 0;
@@ -406,7 +406,7 @@ public class SolynDialogUIManager
         if (CurrentDialogueNode is null)
             return;
 
-        var childrenNodes = CurrentDialogueNode.Children;
+        List<Dialogue>? childrenNodes = CurrentDialogueNode.Children;
         if (childrenNodes is null)
             return;
 
@@ -456,7 +456,7 @@ public class SolynDialogUIManager
     {
         // If the dialogue has no children on the dialogue tree, terminate immediately, since there's no dialogue to transfer to.
         // This should never happen in practice, but it's a useful sanity check.
-        var childrenNodes = CurrentDialogueNode?.Children;
+        List<Dialogue>? childrenNodes = CurrentDialogueNode?.Children;
         if (childrenNodes is null || childrenNodes.Count == 0)
             return;
 

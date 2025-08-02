@@ -39,8 +39,8 @@ public abstract class NamelessDeitySubtitleSystem : ModSystem
 
         Main.spriteBatch.Begin();
 
-        var font = FontRegistry.Instance.NamelessDeityText;
-        var currentlyUsedSentence = Sentences.Last(s => DialogueTimer >= SecondsToFrames(s.DialogDelay)) ?? Sentences.Last();
+        ReLogic.Graphics.DynamicSpriteFont font = FontRegistry.Instance.NamelessDeityText;
+        NamelessDeityDialog currentlyUsedSentence = Sentences.Last(s => DialogueTimer >= SecondsToFrames(s.DialogDelay)) ?? Sentences.Last();
         string subtitleText = Language.GetTextValue($"Mods.NoxusBoss.Subtitles.{currentlyUsedSentence.TextKey}");
         Color textColor = DialogColorRegistry.NamelessDeityTextColor;
         Vector2 scale = Vector2.One * Main.instance.GraphicsDevice.Viewport.Width / 2560f * 0.64f;

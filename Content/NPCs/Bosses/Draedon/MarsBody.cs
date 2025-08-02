@@ -506,7 +506,7 @@ public partial class MarsBody : ModNPC, IBossDowned
         writer.Write(EnergyWeaveSequence_SolynDashPlayer);
 
         // Write state data.
-        var stateStack = (StateMachine?.StateStack ?? new Stack<EntityAIState<MarsAIType>>()).ToList();
+        List<EntityAIState<MarsAIType>> stateStack = (StateMachine?.StateStack ?? new Stack<EntityAIState<MarsAIType>>()).ToList();
         writer.Write(stateStack.Count);
         for (int i = stateStack.Count - 1; i >= 0; i--)
         {

@@ -93,7 +93,7 @@ public partial class AvatarOfEmptiness
                 // not working due to assuming that it was going to follow after the interrupted attack.
                 // In order to address this, the state stack is completely cleared.
                 StateMachine.StateStack.Clear();
-                foreach (var attack in Phase3StartingAttacks.Reverse())
+                foreach (AvatarAIType attack in Phase3StartingAttacks.Reverse())
                     StateMachine.StateStack.Push(StateMachine.StateRegistry[attack]);
 
                 return AvatarAIType.TravelThroughVortex;

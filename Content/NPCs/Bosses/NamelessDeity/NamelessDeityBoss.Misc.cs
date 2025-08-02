@@ -58,7 +58,7 @@ public partial class NamelessDeityBoss : ModNPC
             writer.WriteVector2(StarSpawnOffsets[i]);
 
         // Write state data.
-        var stateStack = (StateMachine?.StateStack ?? new Stack<EntityAIState<NamelessAIType>>()).ToList();
+        List<EntityAIState<NamelessAIType>> stateStack = (StateMachine?.StateStack ?? new Stack<EntityAIState<NamelessAIType>>()).ToList();
         writer.Write(stateStack.Count);
         for (int i = stateStack.Count - 1; i >= 0; i--)
         {

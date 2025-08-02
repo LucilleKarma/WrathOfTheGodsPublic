@@ -696,7 +696,7 @@ public class Aelithrysuwl : ModNPC, IDrawsWithShader
     {
         // Prepare the eye shader.
         Texture2D eyeTexture = GennedAssets.Textures.EternalGarden.AelithrysuwlEyes.Value;
-        var eyeShader = ShaderManager.GetShader("NoxusBoss.AelithrysuwlEyeShader");
+        ManagedShader eyeShader = ShaderManager.GetShader("NoxusBoss.AelithrysuwlEyeShader");
         eyeShader.TrySetParameter("baseTextureSize", eyeTexture.Size());
         eyeShader.TrySetParameter("drawAreaRectangle", NPC.frame);
         eyeShader.TrySetParameter("eyeColor1", VioletEyeColor);

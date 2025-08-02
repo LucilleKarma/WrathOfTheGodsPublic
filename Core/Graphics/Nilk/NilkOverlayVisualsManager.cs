@@ -116,7 +116,7 @@ public class NilkOverlayVisualsManager : ModSystem
         if (FannyData.Opacity <= 0.01f && Main.rand.NextBool(1800) && NilkEffectManager.NilkInsanityInterpolant >= 1f && ModReferences.CalamityRemixMod is not null && Main.instance.IsActive)
             FannyData.Activate();
 
-        var gd = Main.instance.GraphicsDevice;
+        GraphicsDevice gd = Main.instance.GraphicsDevice;
         gd.SetRenderTarget(OverlayTarget);
         gd.Clear(Color.Transparent);
         Main.spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend);

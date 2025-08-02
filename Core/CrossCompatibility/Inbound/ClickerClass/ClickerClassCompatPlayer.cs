@@ -26,7 +26,7 @@ internal sealed class ClickerClassCompatPlayer : ModPlayer
     {
         base.UpdateEquips();
 
-        foreach (var npc in Main.ActiveNPCs)
+        foreach (NPC? npc in Main.ActiveNPCs)
         {
             if (npc.ModNPC is not IClickerClassPhaseReach || !(Vector2.Distance(npc.Center, Player.Center) < NPC.sWidth))
                 continue;

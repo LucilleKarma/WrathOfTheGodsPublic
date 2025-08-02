@@ -12,7 +12,7 @@ public class ShapeCurveManager : ModSystem
         // Load all shape points.
         // In binary they are simply stored as a list of paired, unordered X/Y floats. They are normalized such that their values never exceed a 0 to 1 range, and can thusly
         // be scaled up easily via the inbuilt ShapeCurve methods.
-        foreach (var path in Mod.GetFileNames().Where(f => f.Contains("Core/DataStructures/ShapeCurves/") && Path.GetExtension(f) == ".vec"))
+        foreach (string? path in Mod.GetFileNames().Where(f => f.Contains("Core/DataStructures/ShapeCurves/") && Path.GetExtension(f) == ".vec"))
         {
             byte[] curveBytes = Mod.GetFileBytes(path);
             if (curveBytes.Length <= 0)

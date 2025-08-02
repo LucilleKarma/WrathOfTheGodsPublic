@@ -36,7 +36,7 @@ public class GameSceneSlowdownSystem : ModSystem
             internal set;
         }
     }
-    
+
     private static bool musicBeingAffected;
 
     private static readonly List<SlowdownEffectCondition> slowdownEffects = [];
@@ -241,7 +241,8 @@ public class GameSceneSlowdownSystem : ModSystem
 
     public override void PostUpdateEverything()
     {
-        if (Main.netMode == NetmodeID.Server) return;
+        if (Main.netMode == NetmodeID.Server)
+            return;
 
         if (MonoStereoSystem.Enabled)
             UpdatePitchFilter();

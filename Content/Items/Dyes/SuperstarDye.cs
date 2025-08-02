@@ -14,7 +14,7 @@ public class SuperstarDye : BaseDye
     {
         ManagedShader dyeShader = ShaderManager.GetShader("NoxusBoss.SuperstarDyeShader");
         string paletteFilePath = $"{this.GetModRelativeDirectory()}Palettes.json";
-        var palettes = LocalDataManager.Read<Vector3[]>(paletteFilePath);
+        Dictionary<string, Vector3[]>? palettes = LocalDataManager.Read<Vector3[]>(paletteFilePath);
         if (palettes is not null)
         {
             Vector3[] goldPalette = palettes["Gold"];

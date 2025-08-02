@@ -61,7 +61,7 @@ public class DialogueTree
                 flattened.Add((path, t.ToString()));
         }
 
-        foreach (var kv in flattened)
+        foreach ((string, string) kv in flattened)
         {
             string key = kv.Item1.TrimEnd('.');
             Dialogue dialogue = new(key);

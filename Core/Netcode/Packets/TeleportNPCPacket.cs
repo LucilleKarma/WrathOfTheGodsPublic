@@ -9,8 +9,8 @@ public class TeleportNPCPacket : Packet
 
     public override void Write(ModPacket packet, params object[] context)
     {
-        var npcIndex = (int)context[0];
-        var npc = Main.npc[npcIndex];
+        int npcIndex = (int)context[0];
+        NPC npc = Main.npc[npcIndex];
 
         packet.Write(npcIndex);
         packet.WriteVector2(npc.position);
@@ -19,8 +19,8 @@ public class TeleportNPCPacket : Packet
 
     public override void Read(BinaryReader reader)
     {
-        var npcIndex = reader.ReadInt32();
-        var npc = Main.npc[npcIndex];
+        int npcIndex = reader.ReadInt32();
+        NPC npc = Main.npc[npcIndex];
 
         npc.position = reader.ReadVector2();
         npc.velocity = reader.ReadVector2();

@@ -40,13 +40,13 @@ public class AvatarOtherworldyThornRenderManager : ModSystem
     {
         ThornsWereRenderedLastFrame = false;
 
-        var thorns = AllProjectilesByID(ModContent.ProjectileType<OtherworldlyThorn>());
+        IEnumerable<Projectile> thorns = AllProjectilesByID(ModContent.ProjectileType<OtherworldlyThorn>());
         if (!thorns.Any())
             return;
 
         ThornsWereRenderedLastFrame = true;
 
-        var gd = Main.instance.GraphicsDevice;
+        GraphicsDevice gd = Main.instance.GraphicsDevice;
         gd.SetRenderTarget(OtherwordlyThornTarget);
         gd.Clear(Color.Transparent);
 

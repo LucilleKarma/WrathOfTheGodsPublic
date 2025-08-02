@@ -221,7 +221,7 @@ public class StarPatternedStarburst : ModProjectile, IPixelatedPrimitiveRenderer
 
     public void RenderPixelatedPrimitives(SpriteBatch spriteBatch)
     {
-        var fireTrailShader = ShaderManager.GetShader("NoxusBoss.GenericFlameTrail");
+        ManagedShader fireTrailShader = ShaderManager.GetShader("NoxusBoss.GenericFlameTrail");
         fireTrailShader.SetTexture(GennedAssets.Textures.TrailStreaks.StreakMagma, 1);
 
         PrimitiveSettings settings = new PrimitiveSettings(FlameTrailWidthFunction, FlameTrailColorFunction, _ => Projectile.Size * 0.5f, Pixelate: true, Shader: fireTrailShader);

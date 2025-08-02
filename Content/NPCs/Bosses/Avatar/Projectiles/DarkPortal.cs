@@ -129,7 +129,7 @@ public class DarkPortal : ModProjectile, IProjOwnedByBoss<AvatarOfEmptiness>
             // Release a bunch of gas particles.
             if (Action == PortalAttackAction.ShootWavingComets)
             {
-                var metaball = ModContent.GetInstance<PaleAvatarBlobMetaball>();
+                PaleAvatarBlobMetaball metaball = ModContent.GetInstance<PaleAvatarBlobMetaball>();
                 for (int i = 0; i < 30; i++)
                     metaball.CreateParticle(Projectile.Center + Main.rand.NextVector2Circular(15f, 15f), Projectile.velocity.RotatedByRandom(0.68f) * Main.rand.NextFloat(19f), Main.rand.NextFloat(13f, 56f));
             }
@@ -180,7 +180,7 @@ public class DarkPortal : ModProjectile, IProjOwnedByBoss<AvatarOfEmptiness>
         Texture2D innerRiftTexture = GennedAssets.Textures.FirstPhaseForm.RiftInnerTexture.Value;
         Vector2 textureArea = Projectile.Size * new Vector2(1f - squish, 1f) / innerRiftTexture.Size() * MaxScale * scaleFactor * 1.4f;
 
-        var riftShader = ShaderManager.GetShader("NoxusBoss.DarkPortalShader");
+        ManagedShader riftShader = ShaderManager.GetShader("NoxusBoss.DarkPortalShader");
         riftShader.TrySetParameter("time", Main.GlobalTimeWrappedHourly * 0.1f);
         riftShader.TrySetParameter("baseCutoffRadius", 0.1f);
         riftShader.TrySetParameter("swirlOutwardnessExponent", 0.151f);

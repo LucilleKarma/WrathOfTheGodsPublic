@@ -102,7 +102,6 @@ DraedonEndingMonologue: {
 }
 
 DarkRiftVaniquishText: Тёмный разлом побеждён в одно мгновение.
-# TODO -- Add something for multiplayer too.
 SolynHandwrittenNoteFarewellText:
 	'''
 	Привет!

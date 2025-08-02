@@ -71,7 +71,7 @@ public class SolynRopePlacementPreviewSystem : ModSystem
 
     public override void PostUpdatePlayers()
     {
-        foreach (var kv in previews)
+        foreach (KeyValuePair<int, SolynRopeData> kv in previews)
         {
             SolynRopeData rope = kv.Value;
             if (Main.myPlayer == kv.Key)
@@ -90,7 +90,7 @@ public class SolynRopePlacementPreviewSystem : ModSystem
 
         Main.spriteBatch.ResetToDefault(false);
 
-        foreach (var kv in previews)
+        foreach (KeyValuePair<int, SolynRopeData> kv in previews)
         {
             SolynRopeData rope = kv.Value;
             if (Main.myPlayer == kv.Key)

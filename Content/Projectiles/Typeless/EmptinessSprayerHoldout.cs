@@ -69,7 +69,7 @@ public class EmptinessSprayerHoldout : ModProjectile
         }
 
         // Update the sound's position.
-        if (SoundEngine.TryGetActiveSound(StaticSoundSlot, out var t) && t.IsPlaying)
+        if (SoundEngine.TryGetActiveSound(StaticSoundSlot, out ActiveSound? t) && t.IsPlaying)
             t.Position = Projectile.Center;
         else
             StaticSoundSlot = SoundEngine.PlaySound(GennedAssets.Sounds.Item.EmptinessSprayerLoop with { Volume = 0.54f }, Projectile.Center);
@@ -110,7 +110,7 @@ public class EmptinessSprayerHoldout : ModProjectile
     public override void OnKill(int timeLeft)
     {
         // Stop the static sound abruptly if the bottle is destroyed.
-        if (SoundEngine.TryGetActiveSound(StaticSoundSlot, out var s) && s.IsPlaying)
+        if (SoundEngine.TryGetActiveSound(StaticSoundSlot, out ActiveSound? s) && s.IsPlaying)
             s.Stop();
     }
 

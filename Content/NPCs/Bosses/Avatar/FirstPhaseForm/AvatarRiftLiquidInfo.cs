@@ -74,7 +74,7 @@ public class AvatarRiftLiquidInfo
 
     public void DrawLiquid(Vector2 generalOffset)
     {
-        var trailShader = ShaderManager.GetShader("NoxusBoss.AvatarRiftLiquidTrail");
+        ManagedShader trailShader = ShaderManager.GetShader("NoxusBoss.AvatarRiftLiquidTrail");
         trailShader.SetTexture(SwirlNoise, 1, SamplerState.LinearWrap);
 
         PrimitiveSettings settings = new PrimitiveSettings(WidthFunction, LiquidInfoColorFunction, _ => generalOffset, Shader: trailShader, ProjectionAreaWidth: (int)AvatarRiftTargetContent.Size.X, ProjectionAreaHeight: (int)AvatarRiftTargetContent.Size.Y, UseUnscaledMatrix: true);

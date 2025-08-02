@@ -30,7 +30,7 @@ public class SolynProtectiveForcefield : ModProjectile, IProjOwnedByBoss<BattleS
     public ref float FlashInterpolant => ref Projectile.localAI[0];
 
     /// <summary>
-    /// Solyn who created this forcefield
+    /// The Solyn instance who created this forcefield.
     /// </summary>
     public int SolynIndex => (int)Projectile.ai[1];
 
@@ -50,7 +50,7 @@ public class SolynProtectiveForcefield : ModProjectile, IProjOwnedByBoss<BattleS
 
     public override void AI()
     {
-        var solyn = Main.npc[SolynIndex];
+        NPC solyn = Main.npc[SolynIndex];
         if (!solyn.active)
         {
             Projectile.Kill();

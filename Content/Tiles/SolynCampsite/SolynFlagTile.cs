@@ -55,11 +55,7 @@ public class SolynFlagTile : ModTile
         HitSound = SoundID.Tink;
     }
 
-    public override bool CanPlace(int i, int j)
-    {
-        //Do not let player place a flag if flag already exists
-        return SolynCampsiteWorldGen.FlagPosition == Point.Zero;
-    }
+    public override bool CanPlace(int i, int j) => SolynCampsiteWorldGen.FlagPosition == Point.Zero;
 
     public override void PlaceInWorld(int i, int j, Item item)
     {

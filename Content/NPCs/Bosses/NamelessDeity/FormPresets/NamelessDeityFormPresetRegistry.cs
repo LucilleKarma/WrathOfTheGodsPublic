@@ -43,9 +43,9 @@ public class NamelessDeityFormPresetRegistry : ModSystem
     public override void PostSetupContent()
     {
         string dataPath = "Content/NPCs/Bosses/NamelessDeity/FormPresets/NamelessDeityPresets.json";
-        var data = LocalDataManager.Read<NamelessDeityLoadablePresetData>(dataPath);
+        Dictionary<string, NamelessDeityLoadablePresetData> data = LocalDataManager.Read<NamelessDeityLoadablePresetData>(dataPath);
 
-        foreach (var kv in data)
+        foreach (KeyValuePair<string, NamelessDeityLoadablePresetData> kv in data)
         {
             formPresets.Add(kv.Key, new NamelessDeityFormPreset()
             {

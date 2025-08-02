@@ -16,15 +16,15 @@ public class EventStageUpdatedPacket : Packet
 
     public override void Read(BinaryReader reader)
     {
-        var typeName = reader.ReadString();
-        var stage = reader.ReadInt32();
+        string? typeName = reader.ReadString();
+        int stage = reader.ReadInt32();
         GetEvent(typeName).Stage = stage;
     }
 
     private static SolynEvent GetEvent(string typeName)
     {
-        var type = ModLoader.GetMod("NoxusBoss").Code.GetType(typeName)!;
-        var method = typeof(ModContent).GetMethod("GetInstance", BindingFlags.Static | BindingFlags.Public)!;
+        Type type = ModLoader.GetMod("NoxusBoss").Code.GetType(typeName)!;
+        MethodInfo method = typeof(ModContent).GetMethod("GetInstance", BindingFlags.Static | BindingFlags.Public)!;
         method = method.MakeGenericMethod(type);
 
         return (SolynEvent)method.Invoke(null, [])!;

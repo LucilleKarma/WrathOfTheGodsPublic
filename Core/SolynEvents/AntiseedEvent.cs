@@ -315,7 +315,7 @@ public class AntiseedEvent : SolynEvent
         npc.noTileCollide = true;
         npc.noGravity = true;
 
-        var cutscene = ModContent.GetInstance<SolynEnteringRiftScene>();
+        SolynEnteringRiftScene cutscene = ModContent.GetInstance<SolynEnteringRiftScene>();
         
         // Update the event once the cutscene finishes.
         // (As server does not know about cutscenes, we use CutsceneLength with solyn.AITimer instead)

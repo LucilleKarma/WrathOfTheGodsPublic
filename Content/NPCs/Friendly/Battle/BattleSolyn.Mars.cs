@@ -10,9 +10,9 @@ namespace NoxusBoss.Content.NPCs.Friendly;
 public partial class BattleSolyn : ModNPC
 {
     /// <summary>
-    /// Mars states in which solyn should not try to switch players
+    /// Mars states in which solyn should not try to switch players.
     /// </summary>
-    private static readonly HashSet<MarsBody.MarsAIType> MARS_DONT_SWAP_STATES = [
+    private static readonly HashSet<MarsBody.MarsAIType> MarsDontSwapStates = [
         MarsBody.MarsAIType.CarvedLaserbeam,
         MarsBody.MarsAIType.ElectricCageBlasts,
         MarsBody.MarsAIType.EnergyWeaveSequence
@@ -38,7 +38,7 @@ public partial class BattleSolyn : ModNPC
             return;
         }
 
-        var mars = MarsBody.Myself.As<MarsBody>();
+        MarsBody mars = MarsBody.Myself.As<MarsBody>();
         if (Mars_ShouldSwap(mars))
         {
             SwitchTo(mars.Target);
@@ -55,12 +55,14 @@ public partial class BattleSolyn : ModNPC
     private bool Mars_ShouldSwap(MarsBody mars)
     {
         if (IsMultiplayerClone) return false;
-        if (mars.NPC.target == MultiplayerIndex) return false;
+        if (mars.NPC.target == MultiplayerIndex)
+            return false;
 
-        //Dont swap if player is casting beam
-        var beamId = ModContent.ProjectileType<SolynTagTeamBeam>();
-        if (mars.SolynPlayerTeamAttackTimer != 0 || Player.ownedProjectileCounts[beamId] > 0) return false;
+        // Dont swap if the associated player is casting a beam.
+        int beamId = ModContent.ProjectileType<SolynTagTeamBeam>();
+        if (mars.SolynPlayerTeamAttackTimer != 0 || Player.ownedProjectileCounts[beamId] > 0)
+            return false;
 
-        return !MARS_DONT_SWAP_STATES.Contains(mars.CurrentState);
+        return !MarsDontSwapStates.Contains(mars.CurrentState);
     }
 }

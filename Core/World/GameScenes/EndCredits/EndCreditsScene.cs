@@ -444,7 +444,7 @@ public class EndCreditsScene : Cutscene
         int relativeTimer = Timer - CameraPanTime - InitialSitWaitTime;
         solyn.As<Solyn>().Frame = relativeTimer <= 60 ? 20 : 0;
 
-        var apples = AllProjectilesByID(appleID);
+        IEnumerable<Projectile> apples = AllProjectilesByID(appleID);
         if (apples.Count() < 2)
             return;
 

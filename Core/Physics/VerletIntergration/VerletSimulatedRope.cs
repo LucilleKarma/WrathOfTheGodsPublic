@@ -83,7 +83,7 @@ public class VerletSimulatedRope
     public void DrawProjection(Texture2D projection, Vector2 drawOffset, bool flipHorizontally, Func<float, Color> colorFunction, int? projectionWidth = null, int? projectionHeight = null, float widthFactor = 1f, float lengthStretch = 1.3f, bool unscaledMatrix = false)
     {
         // Initialize the rope drawer primitive.
-        var projectionShader = ShaderManager.GetShader("NoxusBoss.PrimitiveProjection");
+        ManagedShader projectionShader = ShaderManager.GetShader("NoxusBoss.PrimitiveProjection");
 
         // This variable is used as a proxy to allow for dynamic updating in the width function for the primitive drawer.
         // Using projection.Width directly inside the width function can (and has, in the past) lead to problems where it'll receive the asynchronous load dummy texture and
@@ -98,7 +98,7 @@ public class VerletSimulatedRope
         projectionShader.TrySetParameter("heightRatio", projection.Height / projectionTextureWidth);
         projectionShader.TrySetParameter("lengthRatio", RopeLength / IdealRopeLength * lengthStretch);
 
-        var ropePositions = Rope.Select(r => r.Position).ToList();
+        List<Vector2> ropePositions = Rope.Select(r => r.Position).ToList();
         PrimitiveSettings settings = new PrimitiveSettings(_ => projectionTextureWidth * widthFactor, new(colorFunction), _ => drawOffset + Main.screenPosition, Shader: projectionShader, ProjectionAreaWidth: projectionWidth, ProjectionAreaHeight: projectionHeight, UseUnscaledMatrix: unscaledMatrix);
         PrimitiveRenderer.RenderTrail(ropePositions, settings, 24);
     }
@@ -106,7 +106,7 @@ public class VerletSimulatedRope
     public void DrawProjectionButItActuallyWorks(Texture2D projection, Vector2 drawOffset, bool flipHorizontally, Func<float, Color> colorFunction, int? projectionWidth = null, int? projectionHeight = null, float widthFactor = 1f, bool unscaledMatrix = false)
     {
         // Initialize the rope drawer primitive.
-        var projectionShader = ShaderManager.GetShader("NoxusBoss.PrimitiveProjection");
+        ManagedShader projectionShader = ShaderManager.GetShader("NoxusBoss.PrimitiveProjection");
 
         // This variable is used as a proxy to allow for dynamic updating in the width function for the primitive drawer.
         // Using projection.Width directly inside the width function can (and has, in the past) lead to problems where it'll receive the asynchronous load dummy texture and
@@ -121,7 +121,7 @@ public class VerletSimulatedRope
         projectionShader.TrySetParameter("heightRatio", projection.Height / projectionTextureWidth);
         projectionShader.TrySetParameter("lengthRatio", 1f);
 
-        var ropePositions = Rope.Select(r => r.Position).ToList();
+        List<Vector2> ropePositions = Rope.Select(r => r.Position).ToList();
         PrimitiveSettings settings = new PrimitiveSettings(_ => projectionTextureWidth * widthFactor, new(colorFunction), _ => drawOffset + Main.screenPosition, Shader: projectionShader, ProjectionAreaWidth: projectionWidth, ProjectionAreaHeight: projectionHeight, UseUnscaledMatrix: unscaledMatrix);
         PrimitiveRenderer.RenderTrail(ropePositions, settings, 24);
     }
@@ -129,7 +129,7 @@ public class VerletSimulatedRope
     public void DrawProjectionScuffed(Texture2D projection, Vector2 drawOffset, bool flipHorizontally, Func<float, Color> colorFunction, Func<float, float> widthFunction, int? projectionWidth = null, int? projectionHeight = null, float lengthStretch = 1.3f)
     {
         // Initialize the rope drawer primitive.
-        var projectionShader = ShaderManager.GetShader("NoxusBoss.PrimitiveProjection");
+        ManagedShader projectionShader = ShaderManager.GetShader("NoxusBoss.PrimitiveProjection");
         Main.instance.GraphicsDevice.Textures[1] = projection;
         Main.instance.GraphicsDevice.SamplerStates[1] = SamplerState.AnisotropicClamp;
         Main.instance.GraphicsDevice.BlendState = BlendState.NonPremultiplied;
@@ -138,7 +138,7 @@ public class VerletSimulatedRope
         projectionShader.TrySetParameter("heightRatio", projection.Height / (float)projection.Width);
         projectionShader.TrySetParameter("lengthRatio", RopeLength / IdealRopeLength * lengthStretch);
 
-        var ropePositions = Rope.Select(r => r.Position).ToList();
+        List<Vector2> ropePositions = Rope.Select(r => r.Position).ToList();
         PrimitiveSettings settings = new PrimitiveSettings(new(widthFunction), new(colorFunction), _ => drawOffset + Main.screenPosition, Shader: projectionShader, ProjectionAreaWidth: projectionWidth, ProjectionAreaHeight: projectionHeight, UseUnscaledMatrix: false);
         PrimitiveRenderer.RenderTrail(ropePositions, settings, 90);
     }

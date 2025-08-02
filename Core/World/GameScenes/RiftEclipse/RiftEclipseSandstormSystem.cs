@@ -98,8 +98,8 @@ public class RiftEclipseSandstormSystem : ModSystem
             return;
 
         // Store the tan and cyan particle singletons separately for later.
-        var tanParticle = ModContent.GetInstance<TanDarkGasMetaball>();
-        var cyanParticle = ModContent.GetInstance<CyanDarkGasMetaball>();
+        TanDarkGasMetaball tanParticle = ModContent.GetInstance<TanDarkGasMetaball>();
+        CyanDarkGasMetaball cyanParticle = ModContent.GetInstance<CyanDarkGasMetaball>();
 
         // Create the particle selector. This will decide which the particles are spawned based on weighted probabilities.
         WeightedRandom<ColoredDarkGasMetaball> particleSelector = new WeightedRandom<ColoredDarkGasMetaball>();
@@ -137,7 +137,7 @@ public class RiftEclipseSandstormSystem : ModSystem
                 for (int i = 0; i < 1; i++)
                 {
                     // Determine the particle type to spawn.
-                    var particleType = particleSelector.Get();
+                    ColoredDarkGasMetaball particleType = particleSelector.Get();
 
                     // Calculate the and velocity of the particle.
                     // Bright particles are faster but smaller.

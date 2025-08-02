@@ -36,7 +36,7 @@ public class StringLineParticleRenderer : ManualParticleRenderer<StringLineParti
 
         Main.spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.LinearClamp, DepthStencilState.None, RasterizerState.CullNone, null, Matrix.CreateScale(0.5f));
 
-        foreach (var particle in ModContent.GetInstance<StringLineParticleRenderer>().Particles)
+        foreach (StringLineParticle particle in ModContent.GetInstance<StringLineParticleRenderer>().Particles)
             Main.spriteBatch.Draw(WhitePixel, particle.Position - Main.screenPosition, null, particle.DrawColor * particle.Opacity, particle.Rotation, WhitePixel.Size() * 0.5f, particle.Scale, 0, 0f);
 
         Main.spriteBatch.End();

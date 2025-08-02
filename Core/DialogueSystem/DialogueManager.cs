@@ -44,9 +44,9 @@ public class DialogueManager : ModSystem
     /// </summary>
     public static Dialogue? FindDialogue(string textKey)
     {
-        foreach (var conv in Conversations.Values)
+        foreach (Conversation conv in Conversations.Values)
         {
-            foreach (var dialogue in conv.Tree.PossibleDialogue.Values)
+            foreach (Dialogue dialogue in conv.Tree.PossibleDialogue.Values)
             {
                 if (dialogue.TextKey == textKey) return dialogue;
             }

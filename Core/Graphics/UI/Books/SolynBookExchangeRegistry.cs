@@ -121,8 +121,8 @@ public class SolynBookExchangeRegistry : ModSystem
     public override void LoadWorldData(TagCompound tag)
     {
         RedeemedBooks = tag.GetList<string>("RedeemedBooks").ToHashSet();
-        var creditMappingKeys = tag.GetList<string>("RedeemedBooksCreditRelationshipKeys");
-        var creditMappingValues = tag.GetList<string>("RedeemedBooksCreditRelationshipValues");
+        IList<string> creditMappingKeys = tag.GetList<string>("RedeemedBooksCreditRelationshipKeys");
+        IList<string> creditMappingValues = tag.GetList<string>("RedeemedBooksCreditRelationshipValues");
 
         RedeemedBooksCreditRelationship = [];
         for (int i = 0; i < creditMappingKeys.Count; i++)
@@ -136,7 +136,7 @@ public class SolynBookExchangeRegistry : ModSystem
             writer.Write(book);
 
         writer.Write(RedeemedBooksCreditRelationship.Count);
-        foreach (var kv in RedeemedBooksCreditRelationship)
+        foreach (KeyValuePair<string, string> kv in RedeemedBooksCreditRelationship)
         {
             writer.Write(kv.Key);
             writer.Write(kv.Value);

@@ -24,7 +24,7 @@ public class SuperstarHairDye : ModItem
             Asset<Effect> shader = ModContent.Request<Effect>("NoxusBoss/Assets/AutoloadedEffects/Shaders/Dyes/Hair/SuperstarHairDyeShader", AssetRequestMode.ImmediateLoad);
 
             string paletteFilePath = $"{this.GetModRelativeDirectory()}Palettes.json";
-            var palettes = LocalDataManager.Read<Vector3[]>(paletteFilePath);
+            Dictionary<string, Vector3[]>? palettes = LocalDataManager.Read<Vector3[]>(paletteFilePath);
             if (palettes is not null)
             {
                 Vector3[] goldPalette = palettes["Gold"];

@@ -147,7 +147,7 @@ public partial class Solyn : ModNPC, IPixelatedPrimitiveRenderer
     }
 
     /// <summary>
-    /// Who is Solyn talking to
+    /// The player Solyn is talking to.
     /// </summary>
     public int TalkingTo
     {
@@ -450,7 +450,7 @@ public partial class Solyn : ModNPC, IPixelatedPrimitiveRenderer
     {
         if (Main.netMode == NetmodeID.Server) return;
 
-        var player = Main.LocalPlayer;
+        Player player = Main.LocalPlayer;
         if (TalkingTo == -1 && player.talkNPC == NPC.whoAmI)
         {
             TalkingTo = player.whoAmI;

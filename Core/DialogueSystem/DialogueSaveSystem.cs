@@ -56,13 +56,13 @@ public class DialogueSaveSystem : ModSystem
     public override void NetSend(BinaryWriter writer)
     {
         writer.Write(seenDialogue.Count);
-        foreach (var item in seenDialogue) writer.Write(item);
+        foreach (string item in seenDialogue) writer.Write(item);
 
         writer.Write(clickedDialogue.Count);
-        foreach (var item in clickedDialogue) writer.Write(item);
+        foreach (string item in clickedDialogue) writer.Write(item);
 
         writer.Write(givenItems.Count);
-        foreach (var item in givenItems) writer.Write(item);
+        foreach (string item in givenItems) writer.Write(item);
     }
 
     public override void NetReceive(BinaryReader reader)
@@ -71,16 +71,16 @@ public class DialogueSaveSystem : ModSystem
         clickedDialogue.Clear();
         givenItems.Clear();
 
-        var seenCount = reader.ReadInt32();
-        for (var i = 0; i < seenCount; i++)
+        int seenCount = reader.ReadInt32();
+        for (int i = 0; i < seenCount; i++)
             seenDialogue.Add(reader.ReadString());
 
-        var clickedCount = reader.ReadInt32();
-        for (var i = 0; i < clickedCount; i++)
+        int clickedCount = reader.ReadInt32();
+        for (int i = 0; i < clickedCount; i++)
             clickedDialogue.Add(reader.ReadString());
 
-        var givenCount = reader.ReadInt32();
-        for (var i = 0; i < givenCount; i++)
+        int givenCount = reader.ReadInt32();
+        for (int i = 0; i < givenCount; i++)
             givenItems.Add(reader.ReadString());
     }
 }

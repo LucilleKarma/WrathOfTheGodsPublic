@@ -113,7 +113,7 @@ public class TESolynTelescope : ModTileEntity, IClientSideTileEntityUpdater
         // Without this the item rendering can momentarily flicker on the first few frames for some reason.
         if (opacity <= 0.2f)
         {
-            foreach (var kv in SolynTelescopeTile.RepairRequirements)
+            foreach (KeyValuePair<int, int> kv in SolynTelescopeTile.RepairRequirements)
                 Main.instance.LoadItem(kv.Key);
 
             return;
@@ -127,7 +127,7 @@ public class TESolynTelescope : ModTileEntity, IClientSideTileEntityUpdater
         // Draw the cost indicators.
         Vector2 uiTop = uiBottom - Vector2.UnitY * scale * 100f;
         Vector2 itemPosition = uiTop + Vector2.UnitY * scale * 30f - Vector2.One * scale * 17.5f;
-        foreach (var kv in SolynTelescopeTile.RepairRequirements)
+        foreach (KeyValuePair<int, int> kv in SolynTelescopeTile.RepairRequirements)
         {
             Color oldBackgroundColor = Main.inventoryBack;
             Main.inventoryBack *= opacity;

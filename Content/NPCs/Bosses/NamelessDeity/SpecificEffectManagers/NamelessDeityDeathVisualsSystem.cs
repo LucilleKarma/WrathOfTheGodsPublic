@@ -79,7 +79,7 @@ public class NamelessDeityDeathVisualsSystem : ModSystem
         }
         cursor.EmitDelegate<Func<string, string>>(originalText =>
         {
-            var modPlayer = Main.LocalPlayer.GetModPlayer<NamelessDeityPlayerDeathVisualsPlayer>();
+            NamelessDeityPlayerDeathVisualsPlayer modPlayer = Main.LocalPlayer.GetModPlayer<NamelessDeityPlayerDeathVisualsPlayer>();
             if (modPlayer.WasKilledByNamelessDeity)
             {
                 float deathTimerInterpolant = modPlayer.DeathTimerOverride / (float)NamelessDeityPlayerDeathVisualsPlayer.DeathTimerMax;

@@ -22,7 +22,7 @@ public class PurifyingMatterMetaball : MetaballType
     public override void PrepareShaderForTarget(int layerIndex)
     {
         // Store the in an easy to use local variables.
-        var metaballShader = ShaderManager.GetShader("NoxusBoss.PurifyingMatterMetaballShader");
+        ManagedShader metaballShader = ShaderManager.GetShader("NoxusBoss.PurifyingMatterMetaballShader");
 
         // Fetch the layer texture. This is the texture that will be overlaid over the greyscale contents on the screen.
         Texture2D layerTexture = LayerTextures[layerIndex]();

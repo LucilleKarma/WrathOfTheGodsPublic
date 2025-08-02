@@ -218,7 +218,7 @@ public partial class NamelessDeityBoss : ModNPC
             }
 
             // Hold all stars in place near the target.
-            var stars = AllProjectilesByID(ModContent.ProjectileType<BackgroundStar>());
+            IEnumerable<Projectile> stars = AllProjectilesByID(ModContent.ProjectileType<BackgroundStar>());
             foreach (Projectile star in stars)
             {
                 if (!star.As<BackgroundStar>().ApproachingScreen)
@@ -247,7 +247,7 @@ public partial class NamelessDeityBoss : ModNPC
             // Cast twinkle telegraphs before the shove occurs.
             if (timeSinceStarsWereShoved == 1f)
             {
-                var stars = AllProjectilesByID(ModContent.ProjectileType<BackgroundStar>());
+                IEnumerable<Projectile> stars = AllProjectilesByID(ModContent.ProjectileType<BackgroundStar>());
                 foreach (Projectile star in stars)
                     CreateTwinkle(star.Center, Vector2.One * 1.55f, Color.Transparent, new(Vector2.Zero, () => star.As<BackgroundStar>()?.WorldDestination ?? Vector2.Zero));
             }
@@ -265,7 +265,7 @@ public partial class NamelessDeityBoss : ModNPC
             // Shove stars. This isn't done all at once for more impact.
             if (timeSinceStarsWereShoved >= starShoveDelay && AITimer % 2f == 1f)
             {
-                var stars = AllProjectilesByID(ModContent.ProjectileType<BackgroundStar>()).OrderBy(p => Main.rand.NextFloat());
+                IOrderedEnumerable<Projectile> stars = AllProjectilesByID(ModContent.ProjectileType<BackgroundStar>()).OrderBy(p => Main.rand.NextFloat());
                 foreach (Projectile star in stars)
                 {
                     if (star.As<BackgroundStar>().ApproachingScreen)
@@ -328,7 +328,7 @@ public partial class NamelessDeityBoss : ModNPC
         if (Hands.Count >= 2)
         {
             int handIndex = 0;
-            foreach (var hand in Hands)
+            foreach (Rendering.NamelessDeityHand hand in Hands)
             {
                 hand.ScaleFactor = Lerp(hand.ScaleFactor, 1f, 0.09f);
                 hand.DirectionOverride = 0;

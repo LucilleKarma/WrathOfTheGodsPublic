@@ -32,8 +32,8 @@ public class MistMetaball : MetaballType
 
     public override void DrawInstances()
     {
-        var texture = AtlasManager.GetTexture(MetaballAtlasTextureToUse);
-        foreach (var particle in Particles)
+        AtlasTexture texture = AtlasManager.GetTexture(MetaballAtlasTextureToUse);
+        foreach (MetaballInstance? particle in Particles)
         {
             Rectangle frame = texture.Frame.Subdivide(1, 4, 0, (int)particle.ExtraInfo[0]);
             Main.spriteBatch.Draw(texture, particle.Center - Main.screenPosition, frame, Color.White, 0f, null, new Vector2(particle.Size) / frame.Size(), SpriteEffects.None);

@@ -11,8 +11,8 @@ public class BattleSolynTeleportEffectPacket : Packet
 {
     public override void Read(BinaryReader reader)
     {
-        var from = reader.ReadVector2();
-        var to = reader.ReadVector2();
+        Vector2 from = reader.ReadVector2();
+        Vector2 to = reader.ReadVector2();
 
         BattleSolyn.PlayTeleportEffect(from, to);
     }

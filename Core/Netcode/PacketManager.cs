@@ -56,7 +56,6 @@ public class PacketManager : ModSystem
             TagCompound tagCompound = new TagCompound();
             for (int i = 0; i < context.Length; i++)
             {
-                //Add type so we can deserialize vectors/points correct way
                 tagCompound[$"{i}_type"] = context[i] switch
                 {
                     Point => POINT,
@@ -119,25 +118,25 @@ public class PacketManager : ModSystem
             context = new object[contextLength];
             for (int i = 0; i < contextLength; i++)
             {
-                var value = tag.Get<object>($"{i}");
-                var valueType = tag.Get<int>($"{i}_type");
-                
+                object value = tag.Get<object>($"{i}");
+                int valueType = tag.Get<int>($"{i}_type");
+
                 switch (valueType)
                 {
                     case VECTOR:
                         {
-                            var subTag = (TagCompound)value;
+                            TagCompound subTag = (TagCompound)value;
                             context[i] = new Vector2(subTag.Get<float>("x"), subTag.Get<float>("y"));
                         }
                         break;
                     case POINT:
                         {
-                            var subTag = (TagCompound)value;
+                            TagCompound subTag = (TagCompound)value;
                             context[i] = new Point(subTag.Get<int>("x"), subTag.Get<int>("y"));
                         }
                         break;
                     default:
-                        context[i] = value; 
+                        context[i] = value;
                         break;
                 }
             }

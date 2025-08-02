@@ -296,12 +296,12 @@ public partial class NamelessDeityBoss : ModNPC, IBossChecklistSupport, IInfernu
         }, RemoveBestiaryStarLimits).Apply();
 
         // Load evil Fanny text.
-        var hatred1 = new FannyDialog("NamelessDeityGFB1", "EvilFannyIdle").WithDuration(6f).WithEvilness().WithCondition(_ =>
+        FannyDialog hatred1 = new FannyDialog("NamelessDeityGFB1", "EvilFannyIdle").WithDuration(6f).WithEvilness().WithCondition(_ =>
         {
             return Myself is not null && Myself.As<NamelessDeityBoss>().CurrentState == NamelessAIType.RealityTearPunches;
         }).WithoutClickability();
-        var hatred2 = new FannyDialog("NamelessDeityGFB2", "EvilFannyIdle").WithDuration(15f).WithEvilness().WithDrawSizes(900).WithParentDialog(hatred1, 3f);
-        var hatred3 = new FannyDialog("NamelessDeityGFB3", "EvilFannyIdle").WithDuration(9f).WithEvilness().WithDrawSizes(600).WithParentDialog(hatred2, 3f);
+        FannyDialog hatred2 = new FannyDialog("NamelessDeityGFB2", "EvilFannyIdle").WithDuration(15f).WithEvilness().WithDrawSizes(900).WithParentDialog(hatred1, 3f);
+        FannyDialog hatred3 = new FannyDialog("NamelessDeityGFB3", "EvilFannyIdle").WithDuration(9f).WithEvilness().WithDrawSizes(600).WithParentDialog(hatred2, 3f);
         hatred1.Register();
         hatred2.Register();
         hatred3.Register();
@@ -340,7 +340,7 @@ public partial class NamelessDeityBoss : ModNPC, IBossChecklistSupport, IInfernu
             Main.spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend, null, null, null, null, Main.UIScaleMatrix);
 
             // Prepare the static shader.
-            var staticShader = ShaderManager.GetShader("NoxusBoss.StaticOverlayShader");
+            ManagedShader staticShader = ShaderManager.GetShader("NoxusBoss.StaticOverlayShader");
             staticShader.TrySetParameter("staticInterpolant", 1f);
             staticShader.TrySetParameter("staticZoomFactor", 8f);
             staticShader.TrySetParameter("neutralizationInterpolant", 0f);

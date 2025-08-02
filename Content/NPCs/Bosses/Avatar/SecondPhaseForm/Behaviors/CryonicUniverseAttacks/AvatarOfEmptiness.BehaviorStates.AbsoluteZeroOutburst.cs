@@ -165,8 +165,8 @@ public partial class AvatarOfEmptiness
         SolynAction = s => StandardSolynBehavior_FlyNearPlayer(s, NPC);
         if (AITimer == explosionWaitTime - SecondsToFrames(3f))
         {
-            var anyPlayerCloseToAvatar = false;
-            foreach (var player in Main.ActivePlayers)
+            bool anyPlayerCloseToAvatar = false;
+            foreach (Player? player in Main.ActivePlayers)
             {
                 if (NPC.WithinRange(player.Center, 1400f))
                 {
@@ -175,7 +175,7 @@ public partial class AvatarOfEmptiness
                 }
             }
 
-            var solyn = BattleSolyn.GetOriginalSolyn();
+            BattleSolyn? solyn = BattleSolyn.GetOriginalSolyn();
             if (solyn is not null && anyPlayerCloseToAvatar) 
             {
                 SolynWorldDialogueManager.CreateNew("Mods.NoxusBoss.Dialog.SolynRunAway", -solyn.NPC.spriteDirection, solyn.NPC.Top, 150, true);

@@ -203,7 +203,7 @@ public partial class AvatarOfEmptiness
 
         // Update planetoids.
         float flyOffInterpolant = InverseLerp(0f, WorldSmash_FlyOffTime, AITimer - enterBackgroundTime - WorldSmash_PlanetoidDescentTime);
-        var planetoids = AllProjectilesByID(ModContent.ProjectileType<StolenPlanetoid>()).ToList();
+        List<Projectile> planetoids = AllProjectilesByID(ModContent.ProjectileType<StolenPlanetoid>()).ToList();
         if (planetoids.Count >= 2 && flyOffInterpolant < 1f)
         {
             // Calculate the planetoids and their Z positions so that the Avatar can change them.

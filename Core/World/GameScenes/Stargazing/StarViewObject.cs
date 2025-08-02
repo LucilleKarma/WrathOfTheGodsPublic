@@ -190,7 +190,7 @@ public class StarViewObject
         Utils.DrawLine(Main.spriteBatch, bottomRight, Vector2.Lerp(bottomRight, topRight, 0.2f), rectangleColor, Color.Transparent, 4f);
         Utils.DrawLine(Main.spriteBatch, topRight, Vector2.Lerp(topRight, bottomRight, 0.2f), rectangleColor, Color.Transparent, 4f);
 
-        var font = FontAssets.MouseText.Value;
+        ReLogic.Graphics.DynamicSpriteFont font = FontAssets.MouseText.Value;
         string text = Language.GetTextValue(NameKey);
         Vector2 textOrigin = font.MeasureString(text) * new Vector2(0f, 0.5f);
         Vector2 textDrawPosition = topRight - universalOffset + new Vector2(20f, 32f) + viewOffset;

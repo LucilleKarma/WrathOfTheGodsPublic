@@ -36,7 +36,7 @@ namespace NoxusBoss.Core.SoundSystems
             set
             {
                 // Assign every recording to match the state specified.
-                foreach (var kvp in RecordedBuffers)
+                foreach (KeyValuePair<MonoStereoProvider, ReversableRecording> kvp in RecordedBuffers)
                 {
                     // If the states are already equal, we don't want to
                     // reverse the recorded audio when it shouldn't be reversed.
@@ -79,7 +79,7 @@ namespace NoxusBoss.Core.SoundSystems
             {
                 // Reversing the stored samples whenever the playback mode is toggled
                 // means that reverse can be switched on and off without lots of memory allocation overhead
-                var buffer = Buffer.Reverse().ToArray();
+                float[] buffer = Buffer.Reverse().ToArray();
 
                 // Make sure that the channels don't end up flipped
                 for (int i = 0; i < buffer.Length; i += 2)
@@ -97,7 +97,7 @@ namespace NoxusBoss.Core.SoundSystems
 
         private bool GetRecording(MonoStereoProvider sampleProvider, out ReversableRecording recording)
         {
-            if (RecordedBuffers.TryGetValue(sampleProvider, out var foundRecording))
+            if (RecordedBuffers.TryGetValue(sampleProvider, out ReversableRecording? foundRecording))
                 recording = foundRecording;
 
             else
@@ -120,7 +120,7 @@ namespace NoxusBoss.Core.SoundSystems
         public override void Unapply(MonoStereoProvider provider)
         {
             // Ensure that we have an entry for this source
-            if (!GetRecording(provider, out var recording))
+            if (!GetRecording(provider, out ReversableRecording? recording))
                 return;
 
             RecordedBuffers.Remove(provider);
@@ -134,7 +134,7 @@ namespace NoxusBoss.Core.SoundSystems
         public override void PostProcess(float[] buffer, int offset, int samplesRead)
         {
             // Ensure that we have an entry for this source
-            if (!GetRecording(out var recording))
+            if (!GetRecording(out ReversableRecording? recording))
                 return;
 
             // If we are actively reversing, we don't want to "record" reversed samples.
@@ -142,7 +142,7 @@ namespace NoxusBoss.Core.SoundSystems
                 return;
 
             // Add all of the samples that we just read to the "recording"
-            var sampleQueue = recording.Buffer;
+            ConcurrentQueue<float> sampleQueue = recording.Buffer;
             float volume = Source.Volume;
 
             for (int i = 0; i < samplesRead; i++)
@@ -152,7 +152,7 @@ namespace NoxusBoss.Core.SoundSystems
         public override int ModifyRead(float[] buffer, int offset, int count)
         {
             // Ensure that we have an entry for this source
-            if (!GetRecording(out var recording))
+            if (!GetRecording(out ReversableRecording? recording))
                 return base.ModifyRead(buffer, offset, count);
 
             // Cache the seek source to prevent multiple unnecessary casts.
@@ -167,7 +167,7 @@ namespace NoxusBoss.Core.SoundSystems
                 return base.ModifyRead(buffer, offset, count);
 
             // The sampleQueue is literally a queue of float samples
-            var sampleQueue = recording.Buffer;
+            ConcurrentQueue<float> sampleQueue = recording.Buffer;
             int samplesRead = 0;
             float volume = Source.Volume;
 

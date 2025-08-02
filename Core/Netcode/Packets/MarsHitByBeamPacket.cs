@@ -14,11 +14,13 @@ public class MarsHitByBeamPacket : Packet
 
     public override void Read(BinaryReader reader)
     {
-        var identity = reader.ReadInt32();
-        if (MarsBody.Myself is null) return;
-        
-        var projectile = Main.projectile.FirstOrDefault(x => x.identity == identity);
-        if (projectile is null || projectile.owner == Main.myPlayer) return;
+        int identity = reader.ReadInt32();
+        if (MarsBody.Myself is null)
+            return;
+
+        Projectile? projectile = Main.projectile.FirstOrDefault(x => x.identity == identity);
+        if (projectile is null || projectile.owner == Main.myPlayer)
+            return;
 
         MarsBody.Myself.As<MarsBody>().RegisterHitByTeamBeam(projectile);
     }

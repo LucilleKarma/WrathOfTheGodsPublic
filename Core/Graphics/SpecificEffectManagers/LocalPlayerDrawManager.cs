@@ -93,7 +93,7 @@ public class LocalPlayerDrawManager : ModSystem
         if (Main.gameMenu)
             UseTargetDrawer = false;
 
-        var gd = Main.instance.GraphicsDevice;
+        GraphicsDevice gd = Main.instance.GraphicsDevice;
 
         if (ShaderDrawAction is not null || UseTargetDrawer || takeSnapshotNextFrame)
         {

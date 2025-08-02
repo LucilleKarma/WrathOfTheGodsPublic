@@ -315,7 +315,6 @@ public class AvatarRift : ModNPC, IBossDowned
             if (!myself.active)
                 return null;
 
-            //There was BattleSolyn for some reason
             if (myself.type != ModContent.NPCType<AvatarRift>())
                 return null;
 
@@ -533,7 +532,7 @@ public class AvatarRift : ModNPC, IBossDowned
 
     public override void ReceiveExtraAI(BinaryReader reader)
     {
-        //Server syncs always AITimer + 1 instead of correct AITimer, causing client to "skip" first frame, causing some audio and visual issues
+        // Server syncs always AITimer + 1 instead of correct AITimer, causing clients to "skip" the first frame, causing some audio and visual issues.
         AITimer--;
 
         Arms.Clear();

@@ -149,7 +149,7 @@ public class SpecialModIconSystem : ModSystem
 
     private static UIArbitraryDrawImage GenerateWrathOfTheGodsIcon()
     {
-        var iconTexture = LazyAsset<Texture2D>.FromPath("NoxusBoss/Assets/Textures/ModIcons/IconBase", AssetRequestMode.ImmediateLoad);
+        LazyAsset<Texture2D> iconTexture = LazyAsset<Texture2D>.FromPath("NoxusBoss/Assets/Textures/ModIcons/IconBase", AssetRequestMode.ImmediateLoad);
         wotgModIcon = new UIArbitraryDrawImage(DrawWrathOfTheGodsIcon, iconTexture);
         wotgModIcon.Left.Percent = 0f;
         wotgModIcon.Top.Percent = 0f;
@@ -218,7 +218,7 @@ public class SpecialModIconSystem : ModSystem
             return;
         }
 
-        var iconTexture = LazyAsset<Texture2D>.FromPath("NoxusBoss/Assets/Textures/ModIcons/IconBase", AssetRequestMode.ImmediateLoad);
+        LazyAsset<Texture2D> iconTexture = LazyAsset<Texture2D>.FromPath("NoxusBoss/Assets/Textures/ModIcons/IconBase", AssetRequestMode.ImmediateLoad);
         Main.spriteBatch.Draw(iconTexture, drawPosition, rectangle, Color.White, rotation, origin, scale, 0, 0f);
 
         if (!GlobalBossDownedSaveSystem.IsDefeated<AvatarOfEmptiness>() || GlobalBossDownedSaveSystem.IsDefeated<NamelessDeityBoss>())
@@ -283,7 +283,7 @@ public class SpecialModIconSystem : ModSystem
     {
         Main.pixelShader.CurrentTechnique.Passes[0].Apply();
 
-        var texture = LazyAsset<Texture2D>.FromPath("NoxusBoss/Assets/Textures/ModIcons/IconStandardBackground", AssetRequestMode.ImmediateLoad);
+        LazyAsset<Texture2D> texture = LazyAsset<Texture2D>.FromPath("NoxusBoss/Assets/Textures/ModIcons/IconStandardBackground", AssetRequestMode.ImmediateLoad);
         Main.spriteBatch.Draw(texture, drawPosition, null, Color.White, 0f, Vector2.Zero, 1f, 0, 0f);
     }
 }

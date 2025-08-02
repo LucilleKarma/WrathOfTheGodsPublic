@@ -917,7 +917,7 @@ public partial class AvatarOfEmptiness : ModNPC
             TwinkleSmashDetails[i].Write(writer);
 
         // Write state data.
-        var stateStack = (StateMachine?.StateStack ?? new Stack<EntityAIState<AvatarAIType>>()).ToList();
+        List<EntityAIState<AvatarAIType>> stateStack = (StateMachine?.StateStack ?? new Stack<EntityAIState<AvatarAIType>>()).ToList();
         writer.Write(stateStack.Count);
         for (int i = stateStack.Count - 1; i >= 0; i--)
         {
@@ -1078,7 +1078,7 @@ public partial class AvatarOfEmptiness : ModNPC
 
         // Get rid of all falling stars. Their noises completely ruin the ambience.
         // active = false must be used over Kill because the Kill method causes them to drop their fallen star items.
-        var fallingStars = AllProjectilesByID(ProjectileID.FallingStar);
+        IEnumerable<Projectile> fallingStars = AllProjectilesByID(ProjectileID.FallingStar);
         foreach (Projectile star in fallingStars)
             star.active = false;
 

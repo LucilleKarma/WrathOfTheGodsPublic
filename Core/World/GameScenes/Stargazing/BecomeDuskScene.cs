@@ -121,7 +121,7 @@ public class BecomeDuskScene : Cutscene
                 npc.direction = -1;
                 npc.netUpdate = true;
 
-                //As cutscene plays on a client & server handles the NPC's, we need to tell server to teleport her
+                // Since the cutscene plays on a client the server handles the NPC's, we need to tell server to teleport her.
                 PacketManager.SendPacket<TeleportNPCPacket>(npc.whoAmI);
             }
         }
@@ -131,7 +131,8 @@ public class BecomeDuskScene : Cutscene
 
     public override void ModifyScreenPosition()
     {
-        if (CutsceneStarterPlayerIndex != Main.myPlayer) return;
+        if (CutsceneStarterPlayerIndex != Main.myPlayer)
+            return;
 
         float moveBackInterpolant = InverseLerp(0.93f, 1f, LifetimeRatio);
         float moveUpInterpolant = InverseLerpBump(0f, 0.3f, 0.93f, 1f, LifetimeRatio);

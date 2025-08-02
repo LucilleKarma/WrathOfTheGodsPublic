@@ -129,7 +129,7 @@ public partial class MarsBody
         }
 
         // Grant everyone infinite flight.
-        foreach (var player in Main.ActivePlayers)
+        foreach (Player? player in Main.ActivePlayers)
         {
             player.wingTime = player.wingTimeMax;
             CalamityCompatibility.GrantInfiniteCalFlight(player);
@@ -372,7 +372,7 @@ public partial class MarsBody
             solynNPC.velocity = Vector2.Lerp(solynNPC.velocity, bobbingVelocity, 0.2f);
 
             // Initialize Solyn's dash if the player reaches her.
-            foreach (var player in Main.ActivePlayers)
+            foreach (Player? player in Main.ActivePlayers)
             {
                 if (player.WithinRange(solynNPC.Center, 60f) && AITimer >= EnergyWeaveSequence_SolynRedirectTime + EnergyWeaveSequence_MarsInterceptionTime + EnergyWeaveSequence_FieldSummonDelay &&
                     EnergyWeaveSequence_PostDashImpactTimer <= 0f)

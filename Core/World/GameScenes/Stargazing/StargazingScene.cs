@@ -550,7 +550,7 @@ public class StargazingScene : ModSystem
         Vector2 headIconDrawPosition = screenSize * new Vector2(1f, 0.75f) - Vector2.UnitX * 640f;
         Main.spriteBatch.Draw(solynHead, headIconDrawPosition, null, Color.White * SolynHeadOpacity, 0f, solynHead.Size() * 0.5f, solynHeadScale, SpriteEffects.FlipHorizontally, 0f);
 
-        var font = FontRegistry.Instance.SolynText;
+        ReLogic.Graphics.DynamicSpriteFont font = FontRegistry.Instance.SolynText;
         float verticalSpacing = 10f;
         string formattedDialogue = SolynSpokenDialogue?.Replace(SpacingCharacter.ToString(), string.Empty) ?? string.Empty;
         Vector2 creditTextScale = Vector2.One * 0.7f;

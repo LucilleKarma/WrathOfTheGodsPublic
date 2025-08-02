@@ -120,11 +120,11 @@ public class AnnihilationSphere : ModProjectile, IProjOwnedByBoss<AvatarOfEmptin
 
     private void UpdateTarget()
     {
-        var annihilationSpheres = AllProjectilesByID(Type);
+        IEnumerable<Projectile> annihilationSpheres = AllProjectilesByID(Type);
         if (!annihilationSpheres.Any())
             return;
 
-        var gd = Main.instance.GraphicsDevice;
+        GraphicsDevice gd = Main.instance.GraphicsDevice;
         gd.SetRenderTarget(AnnihilationTarget);
         gd.Clear(Color.Transparent);
 

@@ -173,7 +173,7 @@ public class GoodAppleResourceOverlay : ModResourceOverlay
     private bool CompareAssets(Asset<Texture2D> existingAsset, string compareAssetPath)
     {
         // This is a helper method for checking if a certain vanilla asset was drawn, provided by TML's ExampleMod.
-        if (!vanillaAssetCache.TryGetValue(compareAssetPath, out var asset))
+        if (!vanillaAssetCache.TryGetValue(compareAssetPath, out Asset<Texture2D>? asset))
             asset = vanillaAssetCache[compareAssetPath] = Main.Assets.Request<Texture2D>(compareAssetPath);
 
         return existingAsset == asset;
