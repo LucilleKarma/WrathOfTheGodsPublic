@@ -208,6 +208,12 @@ public partial class AvatarOfEmptiness
             Player targetPlayer = Main.player[NPC.TranslatedTargetIndex];
             targetPlayer.position.Y = Main.maxTilesY * 16f * 0.9f;
 
+            //Move all players to the same height to make effects look fine
+            foreach (var player in Main.ActivePlayers)
+            {
+                player.position.Y = targetPlayer.position.Y;
+            }
+
             SolynAction = solyn => solyn.NPC.Center = solyn.Player.Center;
             return;
         }
@@ -582,7 +588,8 @@ public partial class AvatarOfEmptiness
     {
         NPC.dontTakeDamage = true;
         NPC.Opacity = 0f;
-        NPC.Center = Target.Center + Vector2.UnitY * 5000f;
+        //This line despawns avatar on a server before death animation fully ends
+        //NPC.Center = Target.Center + Vector2.UnitY * 5000f;
         HideBar = true;
     }
 

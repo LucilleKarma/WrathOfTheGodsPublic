@@ -44,7 +44,7 @@ public class AdvancedProjectileOwnershipSystem : GlobalProjectile
         }
         else if (owner is Projectile projectileOwner)
         {
-            ownerIndex = projectileOwner.whoAmI;
+            ownerIndex = projectileOwner.identity;
             ownerType = EntityOwnerType.Projectile;
         }
 
@@ -77,7 +77,7 @@ public class AdvancedProjectileOwnershipSystem : GlobalProjectile
                     owner = Main.npc[ownerIndex];
                     break;
                 case EntityOwnerType.Projectile:
-                    owner = Main.projectile[ownerIndex];
+                    owner = Main.projectile.FirstOrDefault(x => x.identity == ownerIndex);
                     break;
                 case EntityOwnerType.Player:
                     owner = Main.player[ownerIndex];

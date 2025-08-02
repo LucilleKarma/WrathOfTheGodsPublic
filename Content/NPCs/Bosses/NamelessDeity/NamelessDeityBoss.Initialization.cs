@@ -404,7 +404,7 @@ public partial class NamelessDeityBoss : ModNPC, IBossChecklistSupport, IInfernu
 
     public override void ApplyDifficultyAndPlayerScaling(int numPlayers, float balance, float bossAdjustment)
     {
-        NPC.lifeMax = (int)Round(NPC.lifeMax * bossAdjustment / (Main.masterMode ? 3f : 2f));
+        NPC.lifeMax = (int)Round((NPC.lifeMax * bossAdjustment / (Main.masterMode ? 3f : 2f)) * balance);
     }
 
     public override void SetBestiary(BestiaryDatabase database, BestiaryEntry bestiaryEntry)

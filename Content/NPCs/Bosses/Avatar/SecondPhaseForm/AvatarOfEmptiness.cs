@@ -1,10 +1,14 @@
 ﻿using System.Reflection;
+
 using CalamityMod.Buffs.StatDebuffs;
+
 using Luminance.Common.DataStructures;
 using Luminance.Common.StateMachines;
 using Luminance.Core.Graphics;
+
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+
 using NoxusBoss.Assets;
 using NoxusBoss.Content.Biomes;
 using NoxusBoss.Content.Items.MiscOPTools;
@@ -29,6 +33,7 @@ using NoxusBoss.Core.World.GameScenes.AvatarUniverseExploration;
 using NoxusBoss.Core.World.GameScenes.EndCredits;
 using NoxusBoss.Core.World.Subworlds;
 using NoxusBoss.Core.World.TileDisabling;
+
 using Terraria;
 using Terraria.Audio;
 using Terraria.DataStructures;
@@ -850,6 +855,11 @@ public partial class AvatarOfEmptiness : ModNPC
         Music = MusicLoader.GetMusicSlot(Mod, "Assets/Sounds/Music/AvatarOfEmptinessP2");
     }
 
+    public override void ApplyDifficultyAndPlayerScaling(int numPlayers, float balance, float bossAdjustment)
+    {
+        NPC.lifeMax = (int)(NPC.lifeMax * balance);
+    }
+
     public override void SetBestiary(BestiaryDatabase database, BestiaryEntry bestiaryEntry)
     {
         // Remove the original NPCPortraitInfoElement instance, so that a new one with zero stars can be added.
@@ -928,8 +938,6 @@ public partial class AvatarOfEmptiness : ModNPC
 
     public override void ReceiveExtraAI(BinaryReader reader)
     {
-        AITimer--;
-
         // Read binary data.
         BitsByte b1 = reader.ReadByte();
         FrontArmsAreDetached = b1[0];
@@ -987,6 +995,9 @@ public partial class AvatarOfEmptiness : ModNPC
             StateMachine.StateStack.Push(StateMachine.StateRegistry[(AvatarAIType)stateType]);
             StateMachine.StateRegistry[(AvatarAIType)stateType].Time = time;
         }
+
+        //AI timer here implemented differently, need to move it to bottom of the script
+        AITimer--;
     }
 
     #endregion Networking

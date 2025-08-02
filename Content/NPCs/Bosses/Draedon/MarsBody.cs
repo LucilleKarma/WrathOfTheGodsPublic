@@ -475,7 +475,7 @@ public partial class MarsBody : ModNPC, IBossDowned
     public override void ApplyDifficultyAndPlayerScaling(int numPlayers, float balance, float bossAdjustment)
     {
         // Define stats.
-        NPC.lifeMax = (int)Round(NPC.lifeMax * bossAdjustment / (Main.masterMode ? 3f : 2f));
+        NPC.lifeMax = (int)Round((NPC.lifeMax * bossAdjustment / (Main.masterMode ? 3f : 2f)) * balance);
         NPC.damage = GetAIInt("ContactDamage");
         NPC.defense = GetAIInt("Defense");
     }

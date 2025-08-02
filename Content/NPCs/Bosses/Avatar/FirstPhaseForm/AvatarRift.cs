@@ -515,6 +515,11 @@ public class AvatarRift : ModNPC, IBossDowned
         Music = MusicLoader.GetMusicSlot(Mod, "Assets/Sounds/Music/AvatarRift");
     }
 
+    public override void ApplyDifficultyAndPlayerScaling(int numPlayers, float balance, float bossAdjustment)
+    {
+        NPC.lifeMax = (int)(NPC.lifeMax * balance);
+    }
+
     public override void SetBestiary(BestiaryDatabase database, BestiaryEntry bestiaryEntry)
     {
         bestiaryEntry.Info.AddRange([
