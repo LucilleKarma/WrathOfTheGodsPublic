@@ -266,11 +266,7 @@ public partial class AvatarOfEmptiness
         {
             Vector2 objectSpawnPosition = Target.Center + new Vector2(Main.rand.NextFloatDirection() * 1600f, -1950f);
             Vector2 objectVelocity = Vector2.UnitY.RotatedByRandom(0.5f) * Main.rand.NextFloat(3f, 9.5f);
-
-            if (Main.netMode != NetmodeID.MultiplayerClient)
-            {
-                NewProjectileBetter(NPC.GetSource_FromAI(), objectSpawnPosition, objectVelocity, ModContent.ProjectileType<FallingObject>(), 0, 0f, -1, Main.rand.Next(ParadiseStaticLayerHandlers.layers.Count - 1));
-            }
+            NewProjectileBetter(NPC.GetSource_FromAI(), objectSpawnPosition, objectVelocity, ModContent.ProjectileType<FallingObject>(), 0, 0f, -1, Main.rand.Next(ParadiseStaticLayerHandlers.ParadiseStaticLayerCount - 1));
         }
 
         ScreenShakeSystem.SetUniversalRumble(6f, TwoPi, null, 0.2f);
