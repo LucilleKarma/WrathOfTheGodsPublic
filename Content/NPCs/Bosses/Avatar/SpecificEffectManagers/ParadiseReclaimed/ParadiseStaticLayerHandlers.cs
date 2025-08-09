@@ -14,9 +14,14 @@ namespace NoxusBoss.Content.NPCs.Bosses.Avatar.SpecificEffectManagers.ParadiseRe
 
 public class ParadiseStaticLayerHandlers : ModSystem
 {
+    // layers appears to be unitialized on the server-side
+    // as such we have this const here instead that can notify
+    // DoBehavior_ParadiseReclaimed_StaticChase how many layers are present.
+    public const int ParadiseStaticLayerCount = 4;
+
     internal static InstancedRequestableTarget layerTarget = new InstancedRequestableTarget();
 
-    internal static List<ParadiseStaticLayer> layers = new List<ParadiseStaticLayer>(4);
+    internal static List<ParadiseStaticLayer> layers = new List<ParadiseStaticLayer>(ParadiseStaticLayerCount);
 
     public override void OnModLoad()
     {
