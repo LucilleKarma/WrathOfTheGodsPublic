@@ -56,7 +56,7 @@ public class UIFancyText : UIElement
         /// A regex that searches for and identifies an italics pattern in the following format:<br></br>
         /// **Text**
         /// </summary>
-        public static readonly Regex ItalicsEmphasis = new Regex(@".*(\*\*[0-9a-zа-яA-ZА-Я]+\*\*).*", RegexOptions.Compiled);
+        public static readonly Regex ItalicsEmphasis = new Regex(@".*(\*\*[\p{L}0-9\s\p{P}]+\*\*).*", RegexOptions.Compiled);
 
         /// <summary>
         /// A regex that searches for and identifies a color tag pattern in the following format:<br></br>
